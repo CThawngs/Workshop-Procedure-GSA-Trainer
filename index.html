@@ -684,6 +684,303 @@
       padding: 0 !important;
       border-radius: 8px !important;
     }
+
+    /* ===== MAIN TAB NAVIGATION ===== */
+    .tabs.main-tabs {
+      background: var(--bg-card2);
+      border-bottom: 2px solid var(--border);
+      border-radius: 0;
+      padding: 0;
+      margin-bottom: 30px;
+      width: 100%;
+      gap: 16px;
+    }
+    .tabs.main-tabs .tab-btn {
+      padding: 12px 18px;
+      border-radius: 0;
+      border-bottom: 3px solid transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .tabs.main-tabs .tab-btn.active {
+      background: none;
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+      box-shadow: none;
+    }
+
+    /* ===== CRM TABLE ===== */
+    .crm-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      overflow-x: auto;
+    }
+    .crm-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .crm-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+    .crm-table th {
+      background: var(--bg-card2);
+      padding: 12px 14px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+    .crm-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      white-space: normal;
+    }
+    .crm-table tr:hover td {
+      background: rgba(255,255,255,0.015);
+    }
+    .crm-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .status-chua-li { background: rgba(110,118,129,0.15); color: var(--text-muted); border: 1px solid rgba(110,118,129,0.3); }
+    .status-dang-li { background: rgba(251,188,5,0.15); color: var(--warning); border: 1px solid rgba(251,188,5,0.3); }
+    .status-da-chot { background: rgba(52,168,83,0.15); color: var(--success); border: 1px solid rgba(52,168,83,0.3); }
+    .status-tu-choi { background: rgba(234,67,53,0.15); color: var(--danger); border: 1px solid rgba(234,67,53,0.3); }
+
+    /* ===== TEMPLATES LAYOUT ===== */
+    .templates-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .templates-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    .templates-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      height: fit-content;
+    }
+    .templates-viewer {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      margin-top: 16px;
+    }
+    .section-header-row:first-child {
+      margin-top: 0;
+    }
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .template-item-btn {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      transition: var(--transition);
+      margin-bottom: 6px;
+    }
+    .template-item-btn:hover {
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+    }
+    .template-item-btn.active {
+      background: rgba(66,133,244,0.1);
+      border-color: rgba(66,133,244,0.2);
+      color: var(--primary);
+    }
+    .template-item-actions {
+      display: none;
+      gap: 4px;
+    }
+    .template-item-btn:hover .template-item-actions {
+      display: flex;
+    }
+    .template-crud-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px 6px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+    .template-crud-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+    }
+    .template-crud-btn.delete-btn:hover {
+      background: rgba(234,67,53,0.15);
+      color: var(--danger);
+    }
+    .btn-icon-only {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      transition: var(--transition);
+    }
+    .btn-icon-only:hover {
+      border-color: var(--border-bright);
+      color: var(--text);
+    }
+    .preview-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .preview-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+    .preview-subject {
+      font-size: 0.85rem;
+      color: var(--warning);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .preview-actions-row {
+      display: flex;
+      gap: 8px;
+    }
+    .preview-body-container {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: var(--text);
+      min-height: 250px;
+      flex: 1;
+    }
+    .variables-panel {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 16px;
+    }
+    .variables-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    .variables-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .resource-link-card {
+      background: var(--bg-card2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      transition: var(--transition);
+    }
+    .resource-link-card:hover {
+      border-color: var(--border-bright);
+    }
+    .resource-link-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-width: 75%;
+    }
+    .resource-link-name {
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: var(--primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .resource-link-name:hover {
+      text-decoration: underline;
+    }
+    .resource-link-url {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .resource-link-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .resource-empty-state {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-align: center;
+      padding: 12px;
+    }
   </style>
 </head>
 <body>
@@ -725,31 +1022,275 @@
   </header>
 
   <div class="main-content">
-    <div class="dashboard-title-row">
-      <div class="dashboard-title">Dashboard <span id="dashGreeting"></span></div>
-      <button class="add-workshop-btn" onclick="openAddWorkshop()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Thêm Workshop
-      </button>
+    <!-- Main Tab Navigation -->
+    <div class="tabs main-tabs">
+      <button class="tab-btn active" id="mainTabWorkshops" onclick="switchMainTab('workshops')">📋 Quản lý Workshop</button>
+      <button class="tab-btn" id="mainTabCRM" onclick="switchMainTab('crm')">📊 CRM Trường học</button>
+      <button class="tab-btn" id="mainTabTemplates" onclick="switchMainTab('templates')">📂 Tài liệu & Mẫu</button>
     </div>
 
-    <div class="tabs">
-      <button class="tab-btn active" id="tab1Btn" onclick="switchTab('upcoming')">🗓️ Sắp diễn ra</button>
-      <button class="tab-btn" id="tab2Btn" onclick="switchTab('completed')">✅ Đã hoàn thành</button>
+    <!-- ===== SECTION: WORKSHOPS ===== -->
+    <div id="sectionWorkshops" class="main-section">
+      <div class="dashboard-title-row">
+        <div class="dashboard-title">Danh sách Workshop <span id="dashGreeting"></span></div>
+        <button class="add-workshop-btn" onclick="openAddWorkshop()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Thêm Workshop
+        </button>
+      </div>
+
+      <!-- Workshop Sub-tabs -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tab1Btn" onclick="switchTab('upcoming')">🗓️ Sắp diễn ra</button>
+        <button class="tab-btn" id="tab2Btn" onclick="switchTab('completed')">✅ Đã hoàn thành</button>
+      </div>
+
+      <div class="filter-bar">
+        <span class="filter-label">Sắp xếp:</span>
+        <select class="sort-select" id="sortSelect" onchange="renderWorkshops()">
+          <option value="newest">Mới nhất</option>
+          <option value="oldest">Cũ nhất</option>
+          <option value="name">Tên A-Z</option>
+        </select>
+        <span class="workshop-count" id="workshopCount"></span>
+      </div>
+
+      <div class="workshop-grid" id="workshopGrid"></div>
+      <div class="pagination" id="pagination"></div>
     </div>
 
-    <div class="filter-bar">
-      <span class="filter-label">Sắp xếp:</span>
-      <select class="sort-select" id="sortSelect" onchange="renderWorkshops()">
-        <option value="newest">Mới nhất</option>
-        <option value="oldest">Cũ nhất</option>
-        <option value="name">Tên A-Z</option>
-      </select>
-      <span class="workshop-count" id="workshopCount"></span>
+    <!-- ===== SECTION: CRM ===== -->
+    <div id="sectionCRM" class="main-section" style="display: none;">
+      <div class="dashboard-title-row">
+        <div class="dashboard-title">CRM Trường Học</div>
+        <button class="add-workshop-btn" onclick="openAddCRMSchool()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Thêm Trường học
+        </button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="crmSearchInput" class="sort-select" placeholder="Tìm trường, địa chỉ..." style="width: 250px;" oninput="renderCRM()">
+        <span class="filter-label" style="margin-left: 12px;">Trạng thái:</span>
+        <select class="sort-select" id="crmStatusFilter" onchange="renderCRM()">
+          <option value="all">Tất cả trạng thái</option>
+          <option value="chua-li">Chưa liên hệ</option>
+          <option value="dang-li">Đang liên hệ</option>
+          <option value="da-chot">Đã chốt lịch</option>
+          <option value="tu-choi">Từ chối</option>
+        </select>
+        <span class="workshop-count" id="crmCount"></span>
+      </div>
+
+      <div class="crm-container">
+        <div class="crm-table-wrapper">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Trường / Phân loại / Địa chỉ</th>
+                <th>Người liên hệ / Chức vụ / SĐT / Email</th>
+                <th>Đàm phán / Ghi chú</th>
+                <th>Sự kiện dự kiến / Ngày / Quy mô</th>
+                <th style="text-align: right;">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="crmTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pagination" id="crmPagination"></div>
     </div>
 
-    <div class="workshop-grid" id="workshopGrid"></div>
-    <div class="pagination" id="pagination"></div>
+    <!-- ===== SECTION: TEMPLATES ===== -->
+    <div id="sectionTemplates" class="main-section" style="display: none;">
+      <div class="dashboard-title-row">
+        <div class="dashboard-title">Tài liệu & Mẫu Email</div>
+      </div>
+
+      <div class="templates-layout">
+        <!-- Sidebar: Danh sách mẫu & link -->
+        <div class="templates-sidebar">
+          <div class="section-header-row">
+            <h4 class="section-title">📧 Mẫu Email</h4>
+            <button class="btn-icon-only" onclick="openAddEmailTemplate()" title="Thêm Mẫu Email">➕</button>
+          </div>
+          <div id="emailTemplatesList">
+            <!-- Rendered via JS -->
+          </div>
+
+          <div class="section-header-row">
+            <h4 class="section-title">🔗 Liên kết tài nguyên</h4>
+            <button class="btn-icon-only" onclick="openAddResourceLink()" title="Thêm tài nguyên">➕</button>
+          </div>
+          <div id="resourceLinksList">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Right Pane: Trình xem trước & copy -->
+        <div class="templates-viewer" id="templatesViewer">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: ADD/EDIT CRM SCHOOL ===== -->
+<div class="modal-overlay" id="crmSchoolModal">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title" id="crmModalTitle">Thêm Trường học mới</h2>
+      <button class="modal-close" onclick="closeModal('crmSchoolModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="crmSchoolForm" onsubmit="saveCRMSchool(event)">
+        <input type="hidden" id="crmSchoolId" />
+        
+        <h4 style="margin: 0 0 10px 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; font-size: 0.85rem; text-transform: uppercase;">🏢 Thông tin Mục tiêu</h4>
+        <div class="form-row">
+          <div class="form-group" style="flex: 2;">
+            <label class="form-label" for="crmSchoolName">Tên Trường/Tổ chức *</label>
+            <input class="form-input" id="crmSchoolName" type="text" placeholder="VD: Đại học Ngoại thương (FTU)" required/>
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="crmSchoolType">Phân loại *</label>
+            <input class="form-input" id="crmSchoolType" type="text" placeholder="VD: Đại học" required/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="crmSchoolAddress">Địa chỉ *</label>
+          <input class="form-input" id="crmSchoolAddress" type="text" placeholder="VD: 15 Đường D5, Bình Thạnh, TP.HCM" required/>
+        </div>
+
+        <h4 style="margin: 20px 0 10px 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; font-size: 0.85rem; text-transform: uppercase;">📞 Thông tin Liên hệ</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="crmContactName">Tên Thầy/Cô liên hệ</label>
+            <input class="form-input" id="crmContactName" type="text" placeholder="VD: Thầy Nguyễn Văn A"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="crmContactRole">Chức vụ</label>
+            <input class="form-input" id="crmContactRole" type="text" placeholder="VD: Trưởng phòng CTSV"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="crmContactPhone">Số điện thoại</label>
+            <input class="form-input" id="crmContactPhone" type="text" placeholder="VD: 0901234567"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="crmContactEmail">Email liên hệ</label>
+            <input class="form-input" id="crmContactEmail" type="email" placeholder="VD: ftu@school.edu.vn"/>
+          </div>
+        </div>
+
+        <h4 style="margin: 20px 0 10px 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; font-size: 0.85rem; text-transform: uppercase;">🤝 Tiến độ Đàm phán</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="crmNegotiationStatus">Trạng thái đàm phán</label>
+            <select class="form-select" id="crmNegotiationStatus">
+              <option value="chua-li">Chưa liên hệ</option>
+              <option value="dang-li">Đang liên hệ</option>
+              <option value="da-chot">Đã chốt lịch</option>
+              <option value="tu-choi">Từ chối</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="crmNegotiationNotes">Ghi chú đàm phán</label>
+            <input class="form-input" id="crmNegotiationNotes" type="text" placeholder="VD: Đang chờ trường phản hồi công văn..."/>
+          </div>
+        </div>
+
+        <h4 style="margin: 20px 0 10px 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; font-size: 0.85rem; text-transform: uppercase;">✨ Thông tin Sự kiện</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="crmWorkshopName">Tên Workshop dự kiến</label>
+            <input class="form-input" id="crmWorkshopName" type="text" placeholder="VD: Gemini Academy tại FTU"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="crmWorkshopDate">Ngày dự kiến</label>
+            <input class="form-input" id="crmWorkshopDate" type="text" placeholder="VD: 25/10/2026"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="crmStudentCount">Số lượng sinh viên dự kiến</label>
+            <input class="form-input" id="crmStudentCount" type="text" placeholder="VD: 250+"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="crmEventNotes">Ghi chú sự kiện</label>
+            <input class="form-input" id="crmEventNotes" type="text" placeholder="VD: Trường hỗ trợ in banner hội trường"/>
+          </div>
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('crmSchoolModal')">Hủy</button>
+          <button type="submit" class="btn-primary" id="crmSubmitBtn">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: ADD/EDIT EMAIL TEMPLATE ===== -->
+<div class="modal-overlay" id="emailTemplateModal">
+  <div class="modal modal-md">
+    <div class="modal-header">
+      <h2 class="modal-title" id="emailTemplateModalTitle">Thêm Mẫu Email</h2>
+      <button class="modal-close" onclick="closeModal('emailTemplateModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="emailTemplateForm" onsubmit="saveEmailTemplate(event)">
+        <input type="hidden" id="emailTemplateId" />
+        <div class="form-group">
+          <label class="form-label" for="emailTemplateName">Tên mẫu Email *</label>
+          <input class="form-input" id="emailTemplateName" type="text" placeholder="VD: Đề xuất tổ chức workshop với các trường" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="emailTemplateSubject">Chủ đề Email *</label>
+          <input class="form-input" id="emailTemplateSubject" type="text" placeholder="VD: [Đề xuất Hợp tác] Workshop..." required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="emailTemplateBody">Nội dung Email (Body) *</label>
+          <textarea class="form-input" id="emailTemplateBody" placeholder="Nhập nội dung email..." required style="min-height: 250px; font-family: monospace; font-size: 0.85rem; line-height: 1.5; resize: vertical;"></textarea>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Sử dụng cú pháp [Tên biến] (VD: [Tên sinh viên], [Tên Trường]) để tự động sinh các ô điền biến thử ở phần Preview.</div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('emailTemplateModal')">Hủy</button>
+          <button type="submit" class="btn-primary" id="emailTemplateSubmitBtn">Lưu mẫu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: ADD/EDIT RESOURCE LINK ===== -->
+<div class="modal-overlay" id="resourceLinkModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2 class="modal-title" id="resourceLinkModalTitle">Thêm Liên kết Tài nguyên</h2>
+      <button class="modal-close" onclick="closeModal('resourceLinkModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="resourceLinkForm" onsubmit="saveResourceLink(event)">
+        <input type="hidden" id="resourceLinkId" />
+        <div class="form-group">
+          <label class="form-label" for="resourceLinkNameInput">Tên tài nguyên *</label>
+          <input class="form-input" id="resourceLinkNameInput" type="text" placeholder="VD: Form đăng ký lịch workshop" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="resourceLinkUrlInput">Đường dẫn liên kết (URL) *</label>
+          <input class="form-input" id="resourceLinkUrlInput" type="url" placeholder="VD: https://docs.google.com/..." required/>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('resourceLinkModal')">Hủy</button>
+          <button type="submit" class="btn-primary" id="resourceLinkSubmitBtn">Lưu liên kết</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -1110,17 +1651,40 @@ let editingId = null;
 let deletingId = null;
 let supabaseClient = null;
 
+let currentMainTab = 'workshops';
+let crmSchools = [];
+let emailTemplates = [];
+let linkResources = [];
+
 /* ========== BROADCAST CHANNEL ========== */
 let bc = null;
 try {
   bc = new BroadcastChannel('gsa_sync_v2');
   bc.onmessage = function(e) {
     if (e.data && e.data.type === 'SYNC') {
-      workshops = e.data.workshops;
-      saveLocal(false);
-      renderWorkshops();
+      if (e.data.workshops) {
+        workshops = e.data.workshops;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(workshops));
+      }
+      if (e.data.crmSchools) {
+        crmSchools = e.data.crmSchools;
+        localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(crmSchools));
+      }
+      if (e.data.emailTemplates) {
+        emailTemplates = e.data.emailTemplates;
+        localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(emailTemplates));
+      }
+      if (e.data.linkResources) {
+        linkResources = e.data.linkResources;
+        localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(linkResources));
+      }
+      
+      if (currentMainTab === 'workshops') renderWorkshops();
+      else if (currentMainTab === 'crm') renderCRM();
+      else if (currentMainTab === 'templates') renderTemplates();
+      
       const modal = document.getElementById('workshopDetailModal');
-      if (modal.classList.contains('open') && e.data.openId) {
+      if (modal && modal.classList.contains('open') && e.data.openId) {
         const ws = workshops.find(function(w) { return w.id === e.data.openId; });
         if (ws) renderDetail(ws);
       }
@@ -1131,7 +1695,16 @@ try {
 
 function broadcast(openId) {
   if (!bc) return;
-  try { bc.postMessage({ type: 'SYNC', workshops: workshops, openId: openId || null }); } catch(ex) {}
+  try {
+    bc.postMessage({
+      type: 'SYNC',
+      workshops: workshops,
+      crmSchools: crmSchools,
+      emailTemplates: emailTemplates,
+      linkResources: linkResources,
+      openId: openId || null
+    });
+  } catch(ex) {}
 }
 
 /* ========== STORAGE & SUPABASE ========== */
@@ -1173,14 +1746,14 @@ function initSupabaseRealtime() {
     }
     supabaseSubscription = supabaseClient
       .channel('gsa_realtime_channel')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gsa_storage', filter: 'key=eq.workshops' }, (payload) => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.workshops' }, (payload) => {
         if (payload.new && payload.new.value) {
           const oldStr = localStorage.getItem(STORAGE_KEY);
           const newStr = JSON.stringify(payload.new.value);
           if (oldStr !== newStr) {
             workshops = payload.new.value;
             try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
-            renderWorkshops();
+            if (currentMainTab === 'workshops') renderWorkshops();
             
             // Re-render detail modal if open
             const modal = document.getElementById('workshopDetailModal');
@@ -1195,18 +1768,101 @@ function initSupabaseRealtime() {
           }
         }
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.crm_schools' }, (payload) => {
+        if (payload.new && payload.new.value) {
+          const oldStr = localStorage.getItem(CRM_STORAGE_KEY);
+          const newStr = JSON.stringify(payload.new.value);
+          if (oldStr !== newStr) {
+            crmSchools = payload.new.value;
+            try { localStorage.setItem(CRM_STORAGE_KEY, newStr); } catch(e) {}
+            if (currentMainTab === 'crm') renderCRM();
+            showToast('🔄 Đã tự động cập nhật dữ liệu CRM Realtime!', 'success');
+          }
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.email_templates' }, (payload) => {
+        if (payload.new && payload.new.value) {
+          const oldStr = localStorage.getItem(TEMPLATE_STORAGE_KEY);
+          const newStr = JSON.stringify(payload.new.value);
+          if (oldStr !== newStr) {
+            emailTemplates = payload.new.value;
+            try { localStorage.setItem(TEMPLATE_STORAGE_KEY, newStr); } catch(e) {}
+            if (currentMainTab === 'templates') renderTemplates();
+            showToast('🔄 Đã tự động cập nhật Mẫu Email Realtime!', 'success');
+          }
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.link_resources' }, (payload) => {
+        if (payload.new && payload.new.value) {
+          const oldStr = localStorage.getItem(RESOURCE_STORAGE_KEY);
+          const newStr = JSON.stringify(payload.new.value);
+          if (oldStr !== newStr) {
+            linkResources = payload.new.value;
+            try { localStorage.setItem(RESOURCE_STORAGE_KEY, newStr); } catch(e) {}
+            if (currentMainTab === 'templates') renderTemplates();
+            showToast('🔄 Đã tự động cập nhật Tài nguyên Realtime!', 'success');
+          }
+        }
+      })
       .subscribe();
   } catch(e) {
     console.error("Lỗi cấu hình Realtime:", e);
   }
 }
 
+const CRM_STORAGE_KEY = 'gsa_crm_schools';
+const TEMPLATE_STORAGE_KEY = 'gsa_email_templates';
+const RESOURCE_STORAGE_KEY = 'gsa_link_resources';
+
+function saveCRMData() {
+  try { localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(crmSchools)); } catch(e) {}
+  broadcast();
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'crm_schools', value: crmSchools })
+      .then(function(res) {
+        if (res.error) console.error("Lỗi sync CRM lên Supabase:", res.error);
+      });
+  }
+}
+
+function saveTemplatesData() {
+  try { localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(emailTemplates)); } catch(e) {}
+  broadcast();
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'email_templates', value: emailTemplates })
+      .then(function(res) {
+        if (res.error) console.error("Lỗi sync Templates lên Supabase:", res.error);
+      });
+  }
+}
+
+function saveResourcesData() {
+  try { localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(linkResources)); } catch(e) {}
+  broadcast();
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'link_resources', value: linkResources })
+      .then(function(res) {
+        if (res.error) console.error("Lỗi sync Resources lên Supabase:", res.error);
+      });
+  }
+}
+
 function loadData() {
-  // Load instantly from localStorage cache
   try { workshops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { workshops = []; }
+  try { crmSchools = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY)) || []; } catch(e) { crmSchools = []; }
+  try { emailTemplates = JSON.parse(localStorage.getItem(TEMPLATE_STORAGE_KEY)) || []; } catch(e) { emailTemplates = []; }
+  try { linkResources = JSON.parse(localStorage.getItem(RESOURCE_STORAGE_KEY)) || []; } catch(e) { linkResources = []; }
   try { currentUser = JSON.parse(localStorage.getItem(USER_KEY)); } catch(e) { currentUser = null; }
 
-  // Load asynchronously from Supabase if active
+  if (emailTemplates.length === 0) {
+    emailTemplates = DEFAULT_EMAIL_TEMPLATES.slice();
+    try { localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(emailTemplates)); } catch(e) {}
+  }
+  if (linkResources.length === 0) {
+    linkResources = DEFAULT_LINK_RESOURCES.slice();
+    try { localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(linkResources)); } catch(e) {}
+  }
+
   if (supabaseClient) {
     supabaseClient.from('gsa_storage').select('value').eq('key', 'workshops').single()
       .then(function(res) {
@@ -1216,15 +1872,60 @@ function loadData() {
           if (oldStr !== newStr) {
             workshops = res.data.value;
             try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
-            renderWorkshops();
+            if (currentMainTab === 'workshops') renderWorkshops();
           }
         }
       })
-      .catch(function(err) {
-        console.error("Lỗi tải từ Supabase:", err);
-      });
+      .catch(function(err) { console.error("Lỗi tải workshops:", err); });
+
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'crm_schools').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          const oldStr = localStorage.getItem(CRM_STORAGE_KEY);
+          const newStr = JSON.stringify(res.data.value);
+          if (oldStr !== newStr) {
+            crmSchools = res.data.value;
+            try { localStorage.setItem(CRM_STORAGE_KEY, newStr); } catch(e) {}
+            if (currentMainTab === 'crm') renderCRM();
+          }
+        } else {
+          supabaseClient.from('gsa_storage').upsert({ key: 'crm_schools', value: crmSchools }).then();
+        }
+      })
+      .catch(function(err) { console.error("Lỗi tải CRM:", err); });
+
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'email_templates').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          const oldStr = localStorage.getItem(TEMPLATE_STORAGE_KEY);
+          const newStr = JSON.stringify(res.data.value);
+          if (oldStr !== newStr) {
+            emailTemplates = res.data.value;
+            try { localStorage.setItem(TEMPLATE_STORAGE_KEY, newStr); } catch(e) {}
+            if (currentMainTab === 'templates') renderTemplates();
+          }
+        } else {
+          supabaseClient.from('gsa_storage').upsert({ key: 'email_templates', value: emailTemplates }).then();
+        }
+      })
+      .catch(function(err) { console.error("Lỗi tải Email Templates:", err); });
+
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'link_resources').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          const oldStr = localStorage.getItem(RESOURCE_STORAGE_KEY);
+          const newStr = JSON.stringify(res.data.value);
+          if (oldStr !== newStr) {
+            linkResources = res.data.value;
+            try { localStorage.setItem(RESOURCE_STORAGE_KEY, newStr); } catch(e) {}
+            if (currentMainTab === 'templates') renderTemplates();
+          }
+        } else {
+          supabaseClient.from('gsa_storage').upsert({ key: 'link_resources', value: linkResources }).then();
+        }
+      })
+      .catch(function(err) { console.error("Lỗi tải Resource Links:", err); });
       
-    // Fetch password from Supabase cache
     supabaseClient.from('gsa_storage').select('value').eq('key', 'ct_password').single()
       .then(function(res) {
         if (res.data && res.data.value) {
@@ -1461,7 +2162,7 @@ function showDashboard(c) {
   }
   
   showScreen('dashboardScreen');
-  renderWorkshops();
+  switchMainTab('workshops');
 }
 
 /* ========== TABS ========== */
@@ -2325,9 +3026,661 @@ function resetPassword(e) {
     });
 }
 
-/* ========== CRM ========== */
+/* ========== ESCAPE HTML HELPER ========== */
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/* ========== CRM SYSTEMS ========== */
+let crmPage = 1;
+const CRM_PER_PAGE = 10;
+let editingCrmId = null;
+
+function renderCRM() {
+  const query = document.getElementById('crmSearchInput').value.toLowerCase().trim();
+  const statusFilter = document.getElementById('crmStatusFilter').value;
+  
+  let list = crmSchools;
+  
+  if (statusFilter !== 'all') {
+    list = list.filter(function(s) { return s.negotiationStatus === statusFilter; });
+  }
+  
+  if (query) {
+    list = list.filter(function(s) { 
+      return (s.schoolName && s.schoolName.toLowerCase().indexOf(query) !== -1) ||
+             (s.schoolType && s.schoolType.toLowerCase().indexOf(query) !== -1) ||
+             (s.schoolAddress && s.schoolAddress.toLowerCase().indexOf(query) !== -1) ||
+             (s.contactName && s.contactName.toLowerCase().indexOf(query) !== -1) ||
+             (s.workshopName && s.workshopName.toLowerCase().indexOf(query) !== -1);
+    });
+  }
+  
+  list.sort(function(a, b) { return (a.schoolName || '').localeCompare(b.schoolName || '', 'vi'); });
+  
+  const totalPages = Math.max(1, Math.ceil(list.length / CRM_PER_PAGE));
+  if (crmPage > totalPages) crmPage = 1;
+  
+  const start = (crmPage - 1) * CRM_PER_PAGE;
+  const paged = list.slice(start, start + CRM_PER_PAGE);
+  
+  const tbody = document.getElementById('crmTableBody');
+  const countEl = document.getElementById('crmCount');
+  
+  if (countEl) {
+    countEl.innerHTML = 'Hiển thị <span>' + paged.length + '</span> / <span>' + list.length + '</span> trường';
+  }
+  
+  if (list.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">' +
+      '<div style="font-size: 2rem; margin-bottom: 8px;">📊</div>' +
+      '<h4>Không tìm thấy trường nào</h4>' +
+      '<p style="font-size: 0.8rem; margin: 4px 0 0 0;">Thử thay đổi bộ lọc hoặc thêm trường mới.</p>' +
+      '</td></tr>';
+    document.getElementById('crmPagination').innerHTML = '';
+    return;
+  }
+  
+  let html = '';
+  paged.forEach(function(s) {
+    let statusClass = 'status-chua-li';
+    let statusText = 'Chưa liên hệ';
+    if (s.negotiationStatus === 'dang-li') { statusClass = 'status-dang-li'; statusText = 'Đang liên hệ'; }
+    else if (s.negotiationStatus === 'da-chot') { statusClass = 'status-da-chot'; statusText = 'Đã chốt lịch'; }
+    else if (s.negotiationStatus === 'tu-choi') { statusClass = 'status-tu-choi'; statusText = 'Từ chối'; }
+    
+    html += '<tr>' +
+      '<td>' +
+        '<div style="font-weight: 700; font-size: 0.95rem; color: var(--text);">' + escapeHTML(s.schoolName) + '</div>' +
+        '<div style="margin-top: 4px;"><span class="crm-status-badge status-chua-li" style="font-size:0.65rem; padding: 1px 6px;">' + escapeHTML(s.schoolType) + '</span></div>' +
+        '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; max-width: 250px;">📍 ' + escapeHTML(s.schoolAddress) + '</div>' +
+      '</td>' +
+      '<td>' +
+        '<div style="font-weight: 600;">' + (s.contactName ? escapeHTML(s.contactName) : '<span style="color:var(--text-dim);">--</span>') + '</div>' +
+        '<div style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">' + (s.contactRole ? escapeHTML(s.contactRole) : '') + '</div>' +
+        (s.contactPhone ? '<div style="font-size: 0.75rem; margin-top: 4px;">📞 <a href="tel:' + s.contactPhone + '" style="color: var(--primary); text-decoration:none;">' + escapeHTML(s.contactPhone) + '</a></div>' : '') +
+        (s.contactEmail ? '<div style="font-size: 0.75rem;">✉️ <a href="mailto:' + s.contactEmail + '" style="color: var(--primary); text-decoration:none;">' + escapeHTML(s.contactEmail) + '</a></div>' : '') +
+      '</td>' +
+      '<td>' +
+        '<span class="crm-status-badge ' + statusClass + '">' + statusText + '</span>' +
+        '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; font-style: italic; max-width: 200px;">' + (s.negotiationNotes ? escapeHTML(s.negotiationNotes) : '<span style="color:var(--text-dim);">Chưa có ghi chú</span>') + '</div>' +
+      '</td>' +
+      '<td>' +
+        '<div style="font-weight: 600; color: var(--text);">' + (s.workshopName ? escapeHTML(s.workshopName) : '<span style="color:var(--text-dim);">--</span>') + '</div>' +
+        (s.workshopDate ? '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">📅 ' + escapeHTML(s.workshopDate) + '</div>' : '') +
+        (s.studentCount ? '<div style="font-size: 0.75rem; color: var(--text-muted);">👥 Quy mô: <strong>' + escapeHTML(s.studentCount) + '</strong></div>' : '') +
+        (s.eventNotes ? '<div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; font-style: italic;">' + escapeHTML(s.eventNotes) + '</div>' : '') +
+      '</td>' +
+      '<td style="text-align: right; white-space: nowrap;">' +
+        '<button class="template-crud-btn" onclick="openEditCRMSchool(\'' + s.id + '\')" title="Sửa">✏️ Sửa</button>' +
+        '<button class="template-crud-btn delete-btn" onclick="deleteCRMSchool(\'' + s.id + '\')" title="Xóa" style="margin-left: 6px;">🗑️ Xóa</button>' +
+      '</td>' +
+      '</tr>';
+  });
+  
+  tbody.innerHTML = html;
+  renderCRMPagination(totalPages);
+}
+
+function renderCRMPagination(totalPages) {
+  var pagEl = document.getElementById('crmPagination');
+  if (totalPages <= 1) {
+    pagEl.innerHTML = '';
+    return;
+  }
+  var html = '';
+  html += '<button class="pag-btn" ' + (crmPage === 1 ? 'disabled' : '') + ' onclick="changeCRMPage(' + (crmPage - 1) + ')">Trước</button>';
+  for (var i = 1; i <= totalPages; i++) {
+    html += '<button class="pag-btn ' + (crmPage === i ? 'active' : '') + '" onclick="changeCRMPage(' + i + ')">' + i + '</button>';
+  }
+  html += '<button class="pag-btn" ' + (crmPage === totalPages ? 'disabled' : '') + ' onclick="changeCRMPage(' + (crmPage + 1) + ')">Sau</button>';
+  pagEl.innerHTML = html;
+}
+
+function changeCRMPage(p) {
+  crmPage = p;
+  renderCRM();
+}
+
+function openAddCRMSchool() {
+  editingCrmId = null;
+  document.getElementById('crmModalTitle').textContent = 'Thêm Trường học mới';
+  document.getElementById('crmSchoolForm').reset();
+  document.getElementById('crmSchoolId').value = '';
+  openModal('crmSchoolModal');
+}
+
+function openEditCRMSchool(id) {
+  const s = crmSchools.find(function(item) { return item.id === id; });
+  if (!s) return;
+  editingCrmId = id;
+  document.getElementById('crmModalTitle').textContent = 'Chỉnh sửa Trường học';
+  document.getElementById('crmSchoolId').value = s.id;
+  document.getElementById('crmSchoolName').value = s.schoolName || '';
+  document.getElementById('crmSchoolType').value = s.schoolType || '';
+  document.getElementById('crmSchoolAddress').value = s.schoolAddress || '';
+  document.getElementById('crmContactName').value = s.contactName || '';
+  document.getElementById('crmContactRole').value = s.contactRole || '';
+  document.getElementById('crmContactPhone').value = s.contactPhone || '';
+  document.getElementById('crmContactEmail').value = s.contactEmail || '';
+  document.getElementById('crmNegotiationStatus').value = s.negotiationStatus || 'chua-li';
+  document.getElementById('crmNegotiationNotes').value = s.negotiationNotes || '';
+  document.getElementById('crmWorkshopName').value = s.workshopName || '';
+  document.getElementById('crmWorkshopDate').value = s.workshopDate || '';
+  document.getElementById('crmStudentCount').value = s.studentCount || '';
+  document.getElementById('crmEventNotes').value = s.eventNotes || '';
+  
+  openModal('crmSchoolModal');
+}
+
+function saveCRMSchool(e) {
+  e.preventDefault();
+  const id = document.getElementById('crmSchoolId').value;
+  const schoolData = {
+    id: id || 'crm-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+    schoolName: document.getElementById('crmSchoolName').value.trim(),
+    schoolType: document.getElementById('crmSchoolType').value.trim(),
+    schoolAddress: document.getElementById('crmSchoolAddress').value.trim(),
+    contactName: document.getElementById('crmContactName').value.trim(),
+    contactRole: document.getElementById('crmContactRole').value.trim(),
+    contactPhone: document.getElementById('crmContactPhone').value.trim(),
+    contactEmail: document.getElementById('crmContactEmail').value.trim(),
+    negotiationStatus: document.getElementById('crmNegotiationStatus').value,
+    negotiationNotes: document.getElementById('crmNegotiationNotes').value.trim(),
+    workshopName: document.getElementById('crmWorkshopName').value.trim(),
+    workshopDate: document.getElementById('crmWorkshopDate').value.trim(),
+    studentCount: document.getElementById('crmStudentCount').value.trim(),
+    eventNotes: document.getElementById('crmEventNotes').value.trim()
+  };
+  
+  if (id) {
+    const idx = crmSchools.findIndex(function(item) { return item.id === id; });
+    if (idx !== -1) crmSchools[idx] = schoolData;
+  } else {
+    crmSchools.push(schoolData);
+  }
+  
+  saveCRMData();
+  closeModal('crmSchoolModal');
+  renderCRM();
+  showToast(id ? '✅ Đã cập nhật thông tin trường học!' : '🎉 Đã thêm trường học mới thành công!', 'success');
+}
+
+function deleteCRMSchool(id) {
+  if (!currentUser || currentUser.id !== 'chi-thang') {
+    showToast('❌ Chỉ admin (Chí Thắng) mới có quyền xóa dữ liệu này!', 'error');
+    return;
+  }
+  
+  const s = crmSchools.find(function(item) { return item.id === id; });
+  if (!s) return;
+  
+  if (confirm('Bạn có chắc chắn muốn xóa trường "' + s.schoolName + '"? Hành động này không thể hoàn tác.')) {
+    crmSchools = crmSchools.filter(function(item) { return item.id !== id; });
+    saveCRMData();
+    renderCRM();
+    showToast('🗑️ Đã xóa trường học thành công!', 'success');
+  }
+}
+
+/* ========== TEMPLATES SYSTEMS ========== */
+let selectedTemplateId = 'tpl-proposal';
+let selectedResourceType = 'email'; // 'email' or 'resource'
+let editingEmailTemplateId = null;
+let editingResourceLinkId = null;
+
+let previewVars = {
+  'Tên sinh viên': 'Nguyễn Văn A',
+  'Tên Trường': 'Đại học Kinh tế TP.HCM (UEH)',
+  'Tên/Chức vụ': 'Thầy Nguyễn Văn A - Trưởng phòng CTSV',
+  'Tên của bạn': 'Chí Thắng',
+  'Số điện thoại của bạn': '0901234567',
+  'Giờ bắt đầu': '08:00',
+  'Giờ kết thúc': '11:00',
+  'Ngày/Tháng/Năm': '25/10/2026',
+  'Tên Phòng/Hội trường cụ thể': 'Hội trường B1.302',
+  'Tên Trường Đại học': 'UEH',
+  'MSSV': '31211026402',
+  'Lớp': 'AI001'
+};
+
+const DEFAULT_EMAIL_TEMPLATES = [
+  {
+    id: 'tpl-proposal',
+    name: 'Đề xuất hợp tác với các trường',
+    subject: '[Đề xuất Hợp tác] Workshop MIỄN PHÍ "Gemini Academy" – Dự án Giáo dục AI bảo trợ bởi Google',
+    body: `[Đề xuất Hợp tác] Workshop MIỄN PHÍ "Gemini Academy" – Dự án Giáo dục AI bảo trợ bởi Google
+Kính gửi Thầy/Cô [Tên/Chức vụ],
+Em là [Tên của bạn] – Đại diện đội ngũ GSA Trainer (Đại sứ Sinh viên Google) của chiến dịch "Gemini Academy for Students". Đây là dự án giáo dục cộng đồng quy mô lớn được khởi xướng và bảo trợ trực tiếp bởi Google, cùng sứ mệnh phổ cập bộ kỹ năng công nghệ AI tiên tiến đến sinh viên toàn quốc.
+Với kinh nghiệm điều phối thành công các không gian chia sẻ học thuật, hôm nay, em đại diện dự án liên hệ với mong muốn được hợp tác cùng [Tên Trường] tổ chức một buổi workshop HOÀN TOÀN MIỄN PHÍ dành cho sinh viên của trường.
+🌟 GIÁ TRỊ VÀ ĐẶC QUYỀN TỪ DỰ ÁN:
+Dành cho Sinh viên:
+Tiếp cận chuẩn mực toàn cầu: Học hỏi kiến thức AI thực chiến từ bộ giáo trình được chuẩn hóa bởi các chuyên gia Google.
+Quyền lợi độc quyền: Có cơ hội nhận Chứng nhận chính thức từ Google, Ebook Prompting và gói Google AI Pro 3 tháng thông qua khóa học của Google trên Coursera hoàn toàn miễn phí chỉ trong 7 ngày, cũng như các phần quà khác.
+Dành cho Nhà trường & Quý Thầy Cô: Dự án chuẩn bị sẵn một hệ thống Quà tặng tri ân đặc biệt và độc quyền dành riêng cho các Thầy Cô đã hỗ trợ điều phối chương trình.
+📋 ĐỀ XUẤT PHỐI HỢP TỪ PHÍA NHÀ TRƯỜNG:
+Để đảm bảo quy mô tối thiểu 250 người tham dự và tạo ra một không gian công nghệ bùng nổ, chúng em kính mong nhà trường hỗ trợ:
+Truyền thông & In ấn Poster: Hỗ trợ in ấn và treo các poster dọc khuôn viên trường, bảng tin và sảnh chung nhằm thu hút sinh viên. Đội ngũ GSA Trainer sẽ cung cấp sẵn file thiết kế chuẩn hóa theo 3 tỷ lệ (dọc, ngang, vuông) để trường tiện sử dụng.
+Cơ sở vật chất: 01 Hội trường sức chứa 250+ chỗ ngồi, trang bị máy chiếu, hệ thống âm thanh và ánh sáng tiêu chuẩn.
+Hình ảnh & Mạng xã hội: Cử Ban Truyền thông/Nhiếp ảnh của trường hỗ trợ chụp hình workshop (phục vụ báo cáo trực tiếp cho dự án). Đặc biệt, nếu sự kiện diễn ra thành công, những hình ảnh đẹp của [Tên Trường] có khả năng cao sẽ được chọn để vinh danh trên kênh TikTok chính thức có tích xanh của Google Việt Nam.
+Do toàn bộ giáo trình giảng dạy đều là tài liệu chuẩn hóa nội bộ từ Google và không thể chia sẻ công khai, Thầy/Cô vui lòng phản hồi trực tiếp qua email này để chúng em có thể gửi lịch trình tổng quan của sự kiện và thống nhất các bước tiếp theo.
+Trong trường hợp Thầy/Cô cần trao đổi thông tin gấp, Thầy/Cô có thể kết nối với em qua Zalo: [Số điện thoại của bạn].
+Em rất mong nhận được phản hồi từ Thầy/Cô để hai bên có thể trao đổi chi tiết hơn về lịch trình ạ.
+Trân trọng,
+Đội ngũ GSA Trainer - Gemini Academy`
+  },
+  {
+    id: 'tpl-checkin',
+    name: 'Xác nhận Check-in',
+    subject: '[Xác nhận] Chỗ ngồi của bạn tại Workshop AI "Gemini Academy" đã sẵn sàng! 🚀',
+    body: `[Xác nhận] Chỗ ngồi của bạn tại Workshop AI "Gemini Academy" đã sẵn sàng! 🚀
+ 
+Chào [Tên sinh viên],
+Chúc mừng bạn đã đăng ký thành công và chính thức sở hữu tấm vé tham gia sự kiện Workshop "Gemini Academy: Vươn mình bứt phá cùng AI".
+Đội ngũ GSA Trainer rất háo hức được đồng hành cùng bạn trong hành trình khám phá và làm chủ các kỹ năng ứng dụng AI (Google Gemini) vào học tập và công việc.
+🎁 BẬT MÍ NHỮNG ĐẶC QUYỀN ĐỘC QUYỀN TỪ GOOGLE DÀNH CHO BẠN TẠI SỰ KIỆN:
+Khi tham gia trọn vẹn chương trình, bạn sẽ có cơ hội nhận được trọn bộ quà tặng siêu hấp dẫn:
+Học bổng Khóa học Google AI Professional Certificate (Miễn phí 7 ngày học trên Coursera).
+Gói trải nghiệm Google AI Pro miễn phí trong vòng 3 tháng thông qua khóa học Google AI Professional Certificate.
+Trọn bộ Ebook Prompting Guide 101 (Ngôn ngữ Anh/Việt) được thiết kế riêng bởi Google.
+Chứng nhận tham gia workshop Gemini Academy từ Google (Có hạn).
+📌 ĐIỀU KIỆN ĐỂ NHẬN QUÀ (BẠN LƯU Ý NHÉ):
+Để đảm bảo quyền lợi, hệ thống của chúng mình sẽ tiến hành check chéo dữ liệu. Bạn sẽ nhận được Email Check-out đính kèm toàn bộ quà tặng trên NẾU thỏa mãn đồng thời 2 điều kiện sau:
+Đã điền đầy đủ Form Đăng ký workshop ban đầu.
+Hoàn thành Form Feedback vào cuối buổi workshop.
+Để chuẩn bị tốt nhất cho sự kiện, bạn vui lòng lưu lại các thông tin quan trọng sau nhé:
+⏰ Thời gian: [Giờ bắt đầu] - [Giờ kết thúc], ngày [Ngày/Tháng/Năm]
+📍 Địa điểm: [Tên Phòng/Hội trường cụ thể], [Tên Trường Đại học]
+🎒 Hành trang cần chuẩn bị:
+Thiết bị thực hành (Laptop hoặc Điện thoại thông minh) đã được sạc đầy pin.
+Một tinh thần cởi mở để sẵn sàng trải nghiệm các công cụ AI mới nhất!
+Đừng quên theo dõi và tương tác với chúng mình qua các kênh chính thức để cập nhật nhanh nhất các thông tin về sự kiện và nhận thêm nhiều mẹo ứng dụng AI cực đỉnh:
+👍 Fanpage: https://www.facebook.com/profile.php?id=61590871972502&mibextid=wwXIfr&rdid=ViuEpaAeqWD1YHkp&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1D3gNR6DWw%2F%3Fmibextid%3DwwXIfr#
+🎵 TikTok: https://www.tiktok.com/@techgrowth.vietna
+Nếu bạn có bất kỳ thắc mắc nào hoặc cần hỗ trợ thêm, đừng ngần ngại phản hồi (reply) trực tiếp email này hoặc nhắn tin cho chúng mình qua Fanpage nhé.
+Hẹn gặp bạn tại sự kiện!
+Trân trọng,
+Đội ngũ GSA Trainer - Gemini Academy`
+  },
+  {
+    id: 'tpl-checkout',
+    name: 'Check-out & Quà tặng',
+    subject: '[Quà Tặng Đặc Biệt] Ebook Prompting & Ưu đãi học Google AI từ Gemini Academy 🎁',
+    body: `[Quà Tặng Đặc Biệt] Ebook Prompting & Ưu đãi học Google AI từ Gemini Academy 🎁
+Chào [Tên sinh viên],
+Sự kiện Workshop "Gemini Academy: Vươn mình bứt phá cùng AI" đã khép lại thành công rực rỡ. Cảm ơn bạn vì sự nhiệt huyết và tinh thần cởi mở học hỏi, góp phần tạo nên một không gian chia sẻ vô cùng bùng nổ!
+Để giúp bạn tiếp tục mài giũa kỹ năng và ứng dụng trí tuệ nhân tạo vào thực tế một cách sắc bén nhất, BTC xin gửi tặng bạn bộ tài liệu và các đặc quyền độc quyền từ dự án:
+🎁 QUÀ TẶNG 1: Trọn bộ Ebook Prompting Guide 101 - Bí kíp "prompting" chuẩn xác giúp bạn tối ưu hóa công việc và học tập.
+📘 Phiên bản Tiếng Việt: Tải tại đây
+📙 Phiên bản Tiếng Anh: Tải tại đây
+🎁 QUÀ TẶNG 2: Khóa học "Google AI Professional Certificate" & 3 tháng dùng thử Google AI Pro - Bạn được cấp quyền truy cập vào chương trình học của Google trên nền tảng Coursera, kèm theo gói dùng thử 3 tháng Google AI Pro.
+🔗 Truy cập và kích hoạt quà tặng tại đây: Grow with Google - AI Professional
+🚨 LƯU Ý QUAN TRỌNG ĐỂ SỬ DỤNG MIỄN PHÍ AN TOÀN:
+Nhằm bảo vệ quyền lợi của bạn, BTC xin lưu ý rõ cơ chế của món quà này như sau:
+Khi bạn bấm "Get started" / "Enroll for free" trên Coursera, hệ thống sẽ yêu cầu thông tin thẻ để kích hoạt 7 ngày học thử miễn phí (7-day free trial).
+Khóa học CHỈ MIỄN PHÍ TRONG 7 NGÀY ĐẦU TIÊN. Sau 7 ngày, nếu không hủy gia hạn, Coursera sẽ bắt đầu tính phí gia hạn theo tháng.
+Hành động cần làm: Nếu bạn chỉ muốn trải nghiệm nội dung và lấy gói 3 tháng Google AI Pro và không tốn phí, bạn BẮT BUỘC PHẢI HỦY GIA HẠN (Cancel Subscription) trên nền tảng Coursera trước khi thời hạn 7 ngày kết thúc. Vui lòng cài báo thức hoặc lịch nhắc nhở để tránh phát sinh chi phí ngoài ý muốn nhé!
+🌟 Sự tiến bộ của bạn chính là mục tiêu lớn nhất của chương trình! Đừng quên theo dõi các kênh truyền thông của dự án để không bỏ lỡ những sự kiện hấp dẫn tiếp theo:
+👍 Fanpage: https://www.facebook.com/profile.php?id=61590871972502&mibextid=wwXIfr&rdid=urZof9f8WU12UqPq&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1D3gNR6DWw%2F%3Fmibextid%3DwwXIfr#
+🎵 TikTok: https://www.tiktok.com/@techgrowth.vietna?_r=1&_t=ZS-97BBN1WyMpZ
+Chúc bạn luôn tràn đầy năng lượng và bứt phá mạnh mẽ cùng AI!
+Trân trọng,
+Đội ngũ GSA Trainer - Gemini Academy`
+  }
+];
+
+const DEFAULT_LINK_RESOURCES = [
+  {
+    id: 'link-register',
+    name: 'Form đăng ký lịch workshop',
+    url: 'https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform'
+  },
+  {
+    id: 'link-feedback',
+    name: 'Form Feedback sinh viên điền cuối buổi',
+    url: 'https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform'
+  },
+  {
+    id: 'link-report',
+    name: 'Form Report',
+    url: 'https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform'
+  },
+  {
+    id: 'link-deck',
+    name: 'Bộ Training Deck',
+    url: 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k'
+  }
+];
+
+function renderTemplates() {
+  const emailListEl = document.getElementById('emailTemplatesList');
+  let emailHtml = '';
+  if (emailTemplates.length === 0) {
+    emailHtml = '<div class="resource-empty-state">Chưa có mẫu email nào.</div>';
+  } else {
+    emailTemplates.forEach(function(t) {
+      const activeClass = (selectedResourceType === 'email' && selectedTemplateId === t.id) ? 'active' : '';
+      emailHtml += '<div class="template-item-btn ' + activeClass + '" onclick="selectTemplate(\'email\', \'' + t.id + '\')">' +
+        '<span>📧 ' + escapeHTML(t.name) + '</span>' +
+        '<div class="template-item-actions">' +
+          '<button class="template-crud-btn" onclick="event.stopPropagation(); openEditEmailTemplate(\'' + t.id + '\');">✏️</button>' +
+          '<button class="template-crud-btn delete-btn" onclick="event.stopPropagation(); deleteEmailTemplate(\'' + t.id + '\');">🗑️</button>' +
+        '</div>' +
+        '</div>';
+    });
+  }
+  if (emailListEl) emailListEl.innerHTML = emailHtml;
+
+  const resourcesListEl = document.getElementById('resourceLinksList');
+  let resourceHtml = '';
+  if (linkResources.length === 0) {
+    resourceHtml = '<div class="resource-empty-state">Chưa có tài nguyên nào.</div>';
+  } else {
+    linkResources.forEach(function(r) {
+      resourceHtml += '<div class="resource-link-card">' +
+        '<div class="resource-link-info" style="display:flex; flex-direction:column; gap:2px; max-width:75%;">' +
+          '<a class="resource-link-name" href="' + r.url + '" target="_blank" title="' + escapeHTML(r.name) + '">🔗 ' + escapeHTML(r.name) + '</a>' +
+          '<span class="resource-link-url" style="font-size:0.68rem; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + escapeHTML(r.url) + '</span>' +
+        '</div>' +
+        '<div class="resource-link-actions" style="display:flex; gap:4px;">' +
+          '<button class="template-crud-btn" onclick="openEditResourceLink(\'' + r.id + '\');">✏️</button>' +
+          '<button class="template-crud-btn delete-btn" onclick="deleteResourceLink(\'' + r.id + '\');">🗑️</button>' +
+        '</div>' +
+        '</div>';
+    });
+  }
+  if (resourcesListEl) resourcesListEl.innerHTML = resourceHtml;
+
+  renderTemplatePreview();
+}
+
+function selectTemplate(type, id) {
+  selectedResourceType = type;
+  selectedTemplateId = id;
+  renderTemplates();
+}
+
+function renderTemplatePreview() {
+  const viewer = document.getElementById('templatesViewer');
+  if (!viewer) return;
+  
+  if (selectedResourceType !== 'email' || !selectedTemplateId) {
+    if (emailTemplates.length > 0) {
+      selectedResourceType = 'email';
+      selectedTemplateId = emailTemplates[0].id;
+    } else {
+      viewer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 80px 20px;">' +
+        '<div style="font-size: 3rem; margin-bottom: 12px;">📧</div>' +
+        '<h3>Chọn một mẫu email để xem trước</h3>' +
+        '<p style="font-size: 0.85rem; margin-top: 4px;">Hoặc thêm mẫu email mới ở cột bên trái.</p>' +
+        '</div>';
+      return;
+    }
+  }
+
+  const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
+  if (!t) {
+    viewer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 80px 20px;">Mẫu không tồn tại.</div>';
+    return;
+  }
+
+  const fullText = (t.subject || '') + '\n' + (t.body || '');
+  const varRegex = /\[([^\]]+)\]/g;
+  let match;
+  const uniqueVars = new Set();
+  while ((match = varRegex.exec(fullText)) !== null) {
+    uniqueVars.add(match[1]);
+  }
+
+  let varsHtml = '';
+  if (uniqueVars.size > 0) {
+    varsHtml += '<div class="variables-panel">' +
+      '<div class="variables-title">📝 Thử điền biến (Test variables)</div>' +
+      '<div class="variables-grid">';
+    
+    uniqueVars.forEach(function(vName) {
+      const currentVal = previewVars[vName] !== undefined ? previewVars[vName] : '';
+      varsHtml += '<div class="form-group" style="margin-bottom:0;">' +
+        '<label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;">' + escapeHTML(vName) + '</label>' +
+        '<input type="text" class="sort-select" style="width: 100%; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" value="' + escapeHTML(currentVal) + '" oninput="updatePreviewVar(\'' + escapeHTML(vName) + '\', this.value)"/>' +
+        '</div>';
+    });
+    
+    varsHtml += '</div></div>';
+  }
+
+  let previewSubject = t.subject || '';
+  let previewBody = t.body || '';
+  uniqueVars.forEach(function(vName) {
+    const val = previewVars[vName] !== undefined ? previewVars[vName] : ('[' + vName + ']');
+    const escVal = val === '' ? ('[' + vName + ']') : val;
+    previewSubject = previewSubject.split('[' + vName + ']').join(escVal);
+    previewBody = previewBody.split('[' + vName + ']').join(escVal);
+  });
+
+  viewer.innerHTML = '<div class="preview-header-row">' +
+    '<div style="flex:1; min-width: 250px;">' +
+      '<div class="preview-title">📧 ' + escapeHTML(t.name) + '</div>' +
+      '<div class="preview-subject"><strong>Tiêu đề:</strong> ' + escapeHTML(previewSubject) + '</div>' +
+    '</div>' +
+    '<div class="preview-actions-row">' +
+      '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">📋 Copy Tiêu đề</button>' +
+      '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Nội dung</button>' +
+    '</div>' +
+    '</div>' +
+    '<div class="preview-body-container" id="previewBodyContainer">' + escapeHTML(previewBody) + '</div>' +
+    varsHtml;
+}
+
+function updatePreviewVar(name, val) {
+  previewVars[name] = val;
+  const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
+  if (!t) return;
+  
+  const fullText = (t.subject || '') + '\n' + (t.body || '');
+  const varRegex = /\[([^\]]+)\]/g;
+  let match;
+  const uniqueVars = new Set();
+  while ((match = varRegex.exec(fullText)) !== null) {
+    uniqueVars.add(match[1]);
+  }
+  
+  let previewBody = t.body || '';
+  uniqueVars.forEach(function(vName) {
+    const vVal = previewVars[vName] !== undefined ? previewVars[vName] : ('[' + vName + ']');
+    const escVal = vVal === '' ? ('[' + vName + ']') : vVal;
+    previewBody = previewBody.split('[' + vName + ']').join(escVal);
+  });
+  
+  const container = document.getElementById('previewBodyContainer');
+  if (container) container.textContent = previewBody;
+}
+
+function copyTemplateText(field, id) {
+  const t = emailTemplates.find(function(item) { return item.id === id; });
+  if (!t) return;
+  
+  let text = field === 'subject' ? t.subject : t.body;
+  
+  const fullText = (t.subject || '') + '\n' + (t.body || '');
+  const varRegex = /\[([^\]]+)\]/g;
+  let match;
+  const uniqueVars = new Set();
+  while ((match = varRegex.exec(fullText)) !== null) {
+    uniqueVars.add(match[1]);
+  }
+  
+  uniqueVars.forEach(function(vName) {
+    const val = previewVars[vName] !== undefined ? previewVars[vName] : ('[' + vName + ']');
+    const escVal = val === '' ? ('[' + vName + ']') : val;
+    text = text.split('[' + vName + ']').join(escVal);
+  });
+  
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('📋 Đã sao chép nội dung vào Clipboard!', 'success');
+  }).catch(function(err) {
+    showToast('❌ Sao chép thất bại!', 'error');
+  });
+}
+
+function openAddEmailTemplate() {
+  editingEmailTemplateId = null;
+  document.getElementById('emailTemplateModalTitle').textContent = 'Thêm Mẫu Email Mới';
+  document.getElementById('emailTemplateForm').reset();
+  document.getElementById('emailTemplateId').value = '';
+  openModal('emailTemplateModal');
+}
+
+function openEditEmailTemplate(id) {
+  const t = emailTemplates.find(function(item) { return item.id === id; });
+  if (!t) return;
+  editingEmailTemplateId = id;
+  document.getElementById('emailTemplateModalTitle').textContent = 'Chỉnh sửa Mẫu Email';
+  document.getElementById('emailTemplateId').value = t.id;
+  document.getElementById('emailTemplateName').value = t.name || '';
+  document.getElementById('emailTemplateSubject').value = t.subject || '';
+  document.getElementById('emailTemplateBody').value = t.body || '';
+  openModal('emailTemplateModal');
+}
+
+function saveEmailTemplate(e) {
+  e.preventDefault();
+  const id = document.getElementById('emailTemplateId').value;
+  const tData = {
+    id: id || 'tpl-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+    name: document.getElementById('emailTemplateName').value.trim(),
+    subject: document.getElementById('emailTemplateSubject').value.trim(),
+    body: document.getElementById('emailTemplateBody').value
+  };
+  
+  if (id) {
+    const idx = emailTemplates.findIndex(function(item) { return item.id === id; });
+    if (idx !== -1) emailTemplates[idx] = tData;
+  } else {
+    emailTemplates.push(tData);
+  }
+  
+  saveTemplatesData();
+  closeModal('emailTemplateModal');
+  selectedResourceType = 'email';
+  selectedTemplateId = tData.id;
+  renderTemplates();
+  showToast(id ? '✅ Đã cập nhật mẫu email!' : '🎉 Đã thêm mẫu email mới!', 'success');
+}
+
+function deleteEmailTemplate(id) {
+  if (!currentUser || currentUser.id !== 'chi-thang') {
+    showToast('❌ Chỉ admin (Chí Thắng) mới có quyền xóa dữ liệu này!', 'error');
+    return;
+  }
+  
+  const t = emailTemplates.find(function(item) { return item.id === id; });
+  if (!t) return;
+  
+  if (confirm('Bạn có chắc chắn muốn xóa mẫu email "' + t.name + '"?')) {
+    emailTemplates = emailTemplates.filter(function(item) { return item.id !== id; });
+    saveTemplatesData();
+    if (selectedTemplateId === id) selectedTemplateId = null;
+    renderTemplates();
+    showToast('🗑️ Đã xóa mẫu email thành công!', 'success');
+  }
+}
+
+function openAddResourceLink() {
+  editingResourceLinkId = null;
+  document.getElementById('resourceLinkModalTitle').textContent = 'Thêm Liên kết Tài nguyên';
+  document.getElementById('resourceLinkForm').reset();
+  document.getElementById('resourceLinkId').value = '';
+  openModal('resourceLinkModal');
+}
+
+function openEditResourceLink(id) {
+  const r = linkResources.find(function(item) { return item.id === id; });
+  if (!r) return;
+  editingResourceLinkId = id;
+  document.getElementById('resourceLinkModalTitle').textContent = 'Chỉnh sửa Liên kết';
+  document.getElementById('resourceLinkId').value = r.id;
+  document.getElementById('resourceLinkNameInput').value = r.name || '';
+  document.getElementById('resourceLinkUrlInput').value = r.url || '';
+  openModal('resourceLinkModal');
+}
+
+function saveResourceLink(e) {
+  e.preventDefault();
+  const id = document.getElementById('resourceLinkId').value;
+  const rData = {
+    id: id || 'link-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+    name: document.getElementById('resourceLinkNameInput').value.trim(),
+    url: document.getElementById('resourceLinkUrlInput').value.trim()
+  };
+  
+  if (id) {
+    const idx = linkResources.findIndex(function(item) { return item.id === id; });
+    if (idx !== -1) linkResources[idx] = rData;
+  } else {
+    linkResources.push(rData);
+  }
+  
+  saveResourcesData();
+  closeModal('resourceLinkModal');
+  renderTemplates();
+  showToast(id ? '✅ Đã cập nhật liên kết tài nguyên!' : '🎉 Đã thêm liên kết tài nguyên mới!', 'success');
+}
+
+function deleteResourceLink(id) {
+  if (!currentUser || currentUser.id !== 'chi-thang') {
+    showToast('❌ Chỉ admin (Chí Thắng) mới có quyền xóa dữ liệu này!', 'error');
+    return;
+  }
+  
+  const r = linkResources.find(function(item) { return item.id === id; });
+  if (!r) return;
+  
+  if (confirm('Bạn có chắc chắn muốn xóa tài nguyên "' + r.name + '"?')) {
+    linkResources = linkResources.filter(function(item) { return item.id !== id; });
+    saveResourcesData();
+    renderTemplates();
+    showToast('🗑️ Đã xóa liên kết tài nguyên thành công!', 'success');
+  }
+}
+
+/* ========== MAIN TAB NAVIGATION ========== */
+function switchMainTab(tab) {
+  currentMainTab = tab;
+  
+  const tabW = document.getElementById('mainTabWorkshops');
+  const tabC = document.getElementById('mainTabCRM');
+  const tabT = document.getElementById('mainTabTemplates');
+  
+  if (tabW) tabW.classList.toggle('active', tab === 'workshops');
+  if (tabC) tabC.classList.toggle('active', tab === 'crm');
+  if (tabT) tabT.classList.toggle('active', tab === 'templates');
+  
+  const secW = document.getElementById('sectionWorkshops');
+  const secC = document.getElementById('sectionCRM');
+  const secT = document.getElementById('sectionTemplates');
+  
+  if (secW) secW.style.display = tab === 'workshops' ? 'block' : 'none';
+  if (secC) secC.style.display = tab === 'crm' ? 'block' : 'none';
+  if (secT) secT.style.display = tab === 'templates' ? 'block' : 'none';
+  
+  if (tab === 'workshops') {
+    renderWorkshops();
+  } else if (tab === 'crm') {
+    renderCRM();
+  } else if (tab === 'templates') {
+    renderTemplates();
+  }
+}
+
 function openCRM() {
-  window.open('https://docs.google.com/spreadsheets/d/1w6JTT8O52NWs6i_uIoKwti2UIPkGIdqBCKSycgl3z78/edit?usp=sharing', '_blank');
+  switchMainTab('crm');
 }
 
 /* ========== START ========== */
