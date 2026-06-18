@@ -1368,8 +1368,12 @@ function init() {
     allowInput: true
   });
 
-  // Check if redirected from Supabase password recovery email
-  if (window.location.hash && window.location.hash.indexOf('type=recovery') !== -1) {
+  // Check if redirected from Supabase password recovery or login email
+  if (window.location.hash && (
+      window.location.hash.indexOf('type=recovery') !== -1 ||
+      window.location.hash.indexOf('type=magiclink') !== -1 ||
+      window.location.hash.indexOf('type=signup') !== -1
+  )) {
     // Clear hash parameters to prevent looping/confusing URL
     history.replaceState(null, null, ' ');
     
@@ -1377,7 +1381,7 @@ function init() {
     selectedCharId = 'chi-thang';
     showPWView('reset');
     openModal('passwordModal');
-    showToast("🔑 Đang nhận diện liên kết khôi phục mật khẩu...", "info");
+    showToast("🔑 Đang nhận diện liên kết xác thực từ email...", "info");
     return; // Don't show character selection screen or dashboard immediately
   }
 
