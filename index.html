@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/vn.js"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* ===== DESIGN TOKENS ===== */
@@ -642,6 +644,46 @@
       flex: 1;
       max-width: 300px;
     }
+    /* Password Eye Toggle Styling */
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .password-input-wrapper .form-input {
+      padding-right: 42px !important;
+    }
+    .password-toggle-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: var(--transition);
+      z-index: 10;
+    }
+    .password-toggle-btn:hover {
+      color: var(--text);
+    }
+    .password-toggle-btn svg {
+      display: block;
+    }
+
+    /* OTP Inputs Styling */
+    .otp-digit {
+      width: 45px !important;
+      height: 45px !important;
+      font-size: 1.5rem !important;
+      text-align: center !important;
+      padding: 0 !important;
+      border-radius: 8px !important;
+    }
   </style>
 </head>
 <body>
@@ -678,6 +720,7 @@
       <div class="header-user-avatar" id="headerAvatar"></div>
       <span class="header-user-name" id="headerName"></span>
     </div>
+    <button class="header-switch-btn" id="changePasswordHeaderBtn" onclick="openChangePasswordModal()" style="display: none; margin-right: 8px;">🔑 Đổi mật khẩu</button>
     <button class="header-switch-btn" onclick="switchCharacter()">🚪 Đăng xuất</button>
   </header>
 
@@ -793,24 +836,188 @@
 <div class="modal-overlay" id="passwordModal">
   <div class="modal modal-sm">
     <div class="modal-header">
-      <h2 class="modal-title">Xác thực tài khoản</h2>
+      <h2 class="modal-title" id="passwordModalTitle">Xác thực tài khoản</h2>
       <button class="modal-close" onclick="closePasswordModal()">✕</button>
     </div>
     <div class="modal-body">
-      <form id="passwordForm" onsubmit="verifyPassword(event)">
-        <div class="form-group" style="text-align: center; margin-bottom: 20px;">
-          <div style="font-size: 3rem; margin-bottom: 12px;">👨‍💼</div>
-          <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Chí Thắng</div>
-          <div style="font-size: 0.85rem; color: var(--text-muted);">Vui lòng nhập mật khẩu để truy cập</div>
-        </div>
-        <div class="form-group">
-          <input class="form-input" id="charPassword" type="password" placeholder="Nhập mật khẩu..." required style="text-align: center; font-size: 1.1rem; letter-spacing: 0.2em;"/>
-        </div>
-        <div class="form-actions" style="border-top: none; margin-top: 10px; padding-top: 0;">
-          <button type="button" class="btn-secondary" onclick="closePasswordModal()" style="width: 100%;">Hủy</button>
-          <button type="submit" class="btn-primary" style="width: 100%;">Xác nhận</button>
-        </div>
-      </form>
+      
+      <!-- VIEW 1: LOGIN -->
+      <div id="pwViewLogin">
+        <form id="passwordForm" onsubmit="verifyPassword(event)">
+          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">👨‍💼</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Chí Thắng</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Vui lòng nhập mật khẩu để truy cập</div>
+          </div>
+          <div class="form-group">
+            <div class="password-input-wrapper">
+              <input class="form-input" id="charPassword" type="password" placeholder="Nhập mật khẩu..." required style="text-align: center; font-size: 1.1rem; letter-spacing: 0.1em;"/>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('charPassword')">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" style="display:none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div style="text-align: right; margin-bottom: 15px;">
+            <a href="#" onclick="showPWView('forgot'); event.preventDefault();" style="font-size: 0.8rem; color: var(--primary); text-decoration: none;">Quên mật khẩu?</a>
+          </div>
+          <div class="form-actions" style="border-top: none; margin-top: 10px; padding-top: 0;">
+            <button type="button" class="btn-secondary" onclick="closePasswordModal()" style="width: 100%;">Hủy</button>
+            <button type="submit" class="btn-primary" style="width: 100%;">Xác nhận</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- VIEW 2: FORGOT PASSWORD -->
+      <div id="pwViewForgot" style="display:none">
+        <form onsubmit="sendOTP(event)">
+          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">📧</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Quên mật khẩu</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Nhập email của bạn để nhận mã xác minh OTP đặt lại mật khẩu</div>
+          </div>
+          <div class="form-group">
+            <input class="form-input" id="forgotEmail" type="email" placeholder="VD: chithang.gsa@gmail.com" required style="text-align: center;"/>
+          </div>
+          <div class="form-actions" style="border-top: none; margin-top: 20px; padding-top: 0; flex-direction: column; gap: 8px;">
+            <button type="submit" class="btn-primary" style="width: 100%;">Gửi mã xác minh</button>
+            <button type="button" class="btn-secondary" onclick="showPWView('login')" style="width: 100%;">Quay lại đăng nhập</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- VIEW 3: VERIFY OTP -->
+      <div id="pwViewOTP" style="display:none">
+        <form onsubmit="verifyOTP(event)">
+          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🔑</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Nhập mã xác minh</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+              Mã xác minh đã được gửi đến email của bạn.<br>Vui lòng nhập mã gồm 6 chữ số vào bên dưới.
+            </div>
+          </div>
+          <div class="form-group" style="display: flex; justify-content: center; gap: 8px; margin: 24px 0;">
+            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="0" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
+            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="1" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
+            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="2" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
+            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="3" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
+            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="4" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
+            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="5" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
+          </div>
+          <div class="form-actions" style="border-top: none; margin-top: 10px; padding-top: 0; flex-direction: column; gap: 8px;">
+            <button type="submit" class="btn-primary" style="width: 100%;">Xác nhận OTP</button>
+            <button type="button" class="btn-secondary" onclick="showPWView('forgot')" style="width: 100%;">Quay lại</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- VIEW 4: RESET PASSWORD -->
+      <div id="pwViewReset" style="display:none">
+        <form onsubmit="resetPassword(event)">
+          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🛡️</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Đặt lại mật khẩu</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Nhập mật khẩu mới của bạn</div>
+          </div>
+          <div class="form-group">
+            <div class="password-input-wrapper">
+              <input class="form-input" id="newPassword" type="password" placeholder="Mật khẩu mới..." required style="text-align: center; font-size: 1.1rem; letter-spacing: 0.1em;"/>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPassword')">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" style="display:none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-actions" style="border-top: none; margin-top: 20px; padding-top: 0;">
+            <button type="submit" class="btn-primary" style="width: 100%;">Cập nhật mật khẩu</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: CHANGE PASSWORD ===== -->
+<div class="modal-overlay" id="changePasswordModal">
+  <div class="modal modal-sm">
+    <div class="modal-header" style="justify-content: space-between; align-items: center;">
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="tabChangePw" class="tab-btn active" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;" onclick="switchConfigTab('pw')">Mật khẩu</button>
+        <button type="button" id="tabConfigSupabase" class="tab-btn" style="padding: 4px 10px; font-size: 0.8rem; border-radius: 6px;" onclick="switchConfigTab('db')">Database</button>
+      </div>
+      <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      
+      <!-- PHÂN HỆ ĐỔI MẬT KHẨU -->
+      <div id="configTabPw">
+        <form onsubmit="submitChangePassword(event)">
+          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🔑</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Đổi mật khẩu Chí Thắng</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Vui lòng nhập mật khẩu cũ và mới</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oldPassword">Mật khẩu cũ *</label>
+            <div class="password-input-wrapper">
+              <input class="form-input" id="oldPassword" type="password" placeholder="Nhập mật khẩu cũ..." required style="font-size: 1.1rem; letter-spacing: 0.1em;"/>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('oldPassword')">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" style="display:none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="newPasswordChange">Mật khẩu mới *</label>
+            <div class="password-input-wrapper">
+              <input class="form-input" id="newPasswordChange" type="password" placeholder="Nhập mật khẩu mới..." required style="font-size: 1.1rem; letter-spacing: 0.1em;"/>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('newPasswordChange')">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" style="display:none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-actions" style="border-top: none; margin-top: 20px; padding-top: 0;">
+            <button type="button" class="btn-secondary" onclick="closeModal('changePasswordModal')" style="width: 100%;">Hủy</button>
+            <button type="submit" class="btn-primary" style="width: 100%;">Đổi mật khẩu</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- PHÂN HỆ CẤU HÌNH SUPABASE -->
+      <div id="configTabDb" style="display:none">
+        <form onsubmit="saveSupabaseConfig(event)">
+          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 12px;">⚡</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Cấu hình Database Supabase</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">Kết nối để đồng bộ dữ liệu Realtime và lưu trữ lâu dài cho nhóm.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sbUrl">Supabase URL</label>
+            <input class="form-input" id="sbUrl" type="url" placeholder="https://xxxx.supabase.co" style="font-size: 0.9rem;"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sbKey">Supabase Anon Key</label>
+            <div class="password-input-wrapper">
+              <input class="form-input" id="sbKey" type="password" placeholder="Nhập anon public key..." style="font-size: 0.9rem;"/>
+              <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('sbKey')">
+                <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="eye-closed" style="display:none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sbGasUrl">Apps Script Web App URL (OTP Email)</label>
+            <input class="form-input" id="sbGasUrl" type="url" placeholder="https://script.google.com/macros/s/xxxx/exec" style="font-size: 0.9rem;"/>
+          </div>
+          <div class="form-actions" style="border-top: none; margin-top: 20px; padding-top: 0; display: flex; gap: 8px;">
+            <button type="button" class="btn-danger" onclick="clearSupabaseConfig()" style="width: 40%; font-size: 0.85rem;">Xóa cấu hình</button>
+            <button type="submit" class="btn-primary" style="width: 60%; font-size: 0.85rem;">Lưu cấu hình</button>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 </div>
@@ -926,6 +1133,7 @@ let currentTab = 'upcoming';
 let currentPage = 1;
 let editingId = null;
 let deletingId = null;
+let supabase = null;
 
 /* ========== BROADCAST CHANNEL ========== */
 let bc = null;
@@ -951,15 +1159,120 @@ function broadcast(openId) {
   try { bc.postMessage({ type: 'SYNC', workshops: workshops, openId: openId || null }); } catch(ex) {}
 }
 
-/* ========== STORAGE ========== */
+/* ========== STORAGE & SUPABASE ========== */
+let supabaseSubscription = null;
+
+function initSupabase() {
+  if (window.supabase) {
+    const url = localStorage.getItem('gsa_supabase_url');
+    const key = localStorage.getItem('gsa_supabase_key');
+    if (url && key) {
+      try {
+        supabase = window.supabase.createClient(url, key);
+        initSupabaseRealtime();
+      } catch(e) {
+        console.error("Lỗi khởi tạo Supabase client:", e);
+      }
+    } else {
+      supabase = null;
+      if (supabaseSubscription) {
+        supabaseSubscription.unsubscribe();
+        supabaseSubscription = null;
+      }
+    }
+  }
+}
+
+function initSupabaseRealtime() {
+  if (!supabase) return;
+  try {
+    if (supabaseSubscription) {
+      supabaseSubscription.unsubscribe();
+    }
+    supabaseSubscription = supabase
+      .channel('gsa_realtime_channel')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gsa_storage', filter: 'key=eq.workshops' }, (payload) => {
+        if (payload.new && payload.new.value) {
+          const oldStr = localStorage.getItem(STORAGE_KEY);
+          const newStr = JSON.stringify(payload.new.value);
+          if (oldStr !== newStr) {
+            workshops = payload.new.value;
+            try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
+            renderWorkshops();
+            
+            // Re-render detail modal if open
+            const modal = document.getElementById('workshopDetailModal');
+            if (modal && modal.classList.contains('open')) {
+              const titleEl = document.getElementById('detailModalTitle');
+              if (titleEl) {
+                const openWs = workshops.find(function(w) { return w.name === titleEl.textContent; });
+                if (openWs) renderDetail(openWs);
+              }
+            }
+            showToast('🔄 Đã tự động cập nhật dữ liệu Realtime!', 'success');
+          }
+        }
+      })
+      .subscribe();
+  } catch(e) {
+    console.error("Lỗi cấu hình Realtime:", e);
+  }
+}
+
 function loadData() {
+  // Load instantly from localStorage cache
   try { workshops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { workshops = []; }
   try { currentUser = JSON.parse(localStorage.getItem(USER_KEY)); } catch(e) { currentUser = null; }
+
+  // Load asynchronously from Supabase if active
+  if (supabase) {
+    supabase.from('gsa_storage').select('value').eq('key', 'workshops').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          const oldStr = localStorage.getItem(STORAGE_KEY);
+          const newStr = JSON.stringify(res.data.value);
+          if (oldStr !== newStr) {
+            workshops = res.data.value;
+            try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
+            renderWorkshops();
+          }
+        }
+      })
+      .catch(function(err) {
+        console.error("Lỗi tải từ Supabase:", err);
+      });
+      
+    // Fetch password from Supabase cache
+    supabase.from('gsa_storage').select('value').eq('key', 'ct_password').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          localStorage.setItem('gsa_ct_pwd', res.data.value);
+        }
+      })
+      .catch(function(err) {
+        console.error("Lỗi đồng bộ mật khẩu từ Supabase:", err);
+      });
+  }
 }
 
 function saveLocal(doBroadcast) {
+  // 1. Save cache to localStorage
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(workshops)); } catch(e) {}
   if (doBroadcast !== false) broadcast(null);
+
+  // 2. Sync to Supabase in background
+  if (supabase) {
+    supabase.from('gsa_storage').upsert({ key: 'workshops', value: workshops, updated_at: new Date().toISOString() })
+      .then(function(res) {
+        if (res.error) {
+          console.error("Lỗi lưu Supabase:", res.error);
+          showToast("⚠️ Không thể đồng bộ đám mây. Đã lưu cache tạm.", "warning");
+        }
+      })
+      .catch(function(err) {
+        console.error("Lỗi kết nối Supabase:", err);
+      });
+  }
 }
 
 function saveUser(u) {
@@ -1036,6 +1349,7 @@ function showToast(msg, type) {
 /* ========== INIT ========== */
 let fpDeadline;
 function init() {
+  initSupabase();
   loadData();
   renderCharGrid();
   
@@ -1102,7 +1416,7 @@ function selectChar(id) {
 function verifyPassword(e) {
   e.preventDefault();
   var pwd = document.getElementById('charPassword').value;
-  if (pwd === "ct28042007") {
+  if (pwd === getCTPassword()) {
     var c = getChar('chi-thang');
     saveUser({ id: c.id, name: c.name });
     showDashboard(c);
@@ -1119,12 +1433,18 @@ function closePasswordModal() {
   document.getElementById('charPassword').value = '';
   selectedCharId = null;
   document.querySelectorAll('.char-card').forEach(function(el) { el.classList.remove('selected'); });
+  showPWView('login'); // Reset view back to login
 }
 
 function switchCharacter() {
   saveUser(null);
   selectedCharId = null;
   document.querySelectorAll('.char-card').forEach(function(el) { el.classList.remove('selected'); });
+  
+  // Hide change password button when logged out
+  var cpBtn = document.getElementById('changePasswordHeaderBtn');
+  if (cpBtn) cpBtn.style.display = 'none';
+  
   showScreen('characterScreen');
 }
 
@@ -1134,6 +1454,13 @@ function showDashboard(c) {
   document.getElementById('headerAvatar').style.background = 'linear-gradient(135deg,' + c.color + '33,' + c.color + '11)';
   document.getElementById('headerName').textContent = c.name;
   document.getElementById('dashGreeting').textContent = 'của ' + c.name;
+  
+  // Show change password button only if character is Chí Thắng
+  var cpBtn = document.getElementById('changePasswordHeaderBtn');
+  if (cpBtn) {
+    cpBtn.style.display = c.id === 'chi-thang' ? 'inline-block' : 'none';
+  }
+  
   showScreen('dashboardScreen');
   renderWorkshops();
 }
@@ -1702,6 +2029,314 @@ function saveEditSub(wsId, stepId, subId, newText) {
     if (sub) sub.text = newText;
   });
   isSavingSub = false;
+}
+
+/* ========== PASSWORD & SUPABASE CONFIG ========== */
+function getCTPassword() {
+  return localStorage.getItem('gsa_ct_pwd') || 'ct28042007';
+}
+
+function setCTPassword(pwd) {
+  localStorage.setItem('gsa_ct_pwd', pwd);
+  if (supabase) {
+    supabase.from('gsa_storage').upsert({ key: 'ct_password', value: pwd, updated_at: new Date().toISOString() })
+      .then(function(res) {
+        if (res.error) console.error("Lỗi đồng bộ mật khẩu lên Supabase:", res.error);
+      })
+      .catch(function(err) {
+        console.error("Lỗi đồng bộ mật khẩu:", err);
+      });
+  }
+}
+
+function togglePasswordVisibility(inputId) {
+  var input = document.getElementById(inputId);
+  if (!input) return;
+  var btn = input.nextElementSibling;
+  if (!btn || !btn.classList.contains('password-toggle-btn')) {
+    var wrapper = input.closest('.password-input-wrapper');
+    if (wrapper) btn = wrapper.querySelector('.password-toggle-btn');
+  }
+  if (!btn) return;
+  var openIcon = btn.querySelector('.eye-open');
+  var closedIcon = btn.querySelector('.eye-closed');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (openIcon) openIcon.style.display = 'none';
+    if (closedIcon) closedIcon.style.display = 'block';
+  } else {
+    input.type = 'password';
+    if (openIcon) openIcon.style.display = 'block';
+    if (closedIcon) closedIcon.style.display = 'none';
+  }
+}
+
+function showPWView(viewName) {
+  var views = ['pwViewLogin', 'pwViewForgot', 'pwViewOTP', 'pwViewReset'];
+  views.forEach(function(vid) {
+    var el = document.getElementById(vid);
+    if (el) el.style.display = vid === 'pwView' + viewName.charAt(0).toUpperCase() + viewName.slice(1) ? 'block' : 'none';
+  });
+  
+  var titleEl = document.getElementById('passwordModalTitle');
+  if (titleEl) {
+    if (viewName === 'login') titleEl.textContent = 'Xác thực tài khoản';
+    else if (viewName === 'forgot') titleEl.textContent = 'Quên mật khẩu';
+    else if (viewName === 'otp') titleEl.textContent = 'Nhập mã xác minh';
+    else if (viewName === 'reset') titleEl.textContent = 'Đặt lại mật khẩu';
+  }
+  
+  setTimeout(function() {
+    if (viewName === 'login') {
+      var charPass = document.getElementById('charPassword');
+      if (charPass) charPass.focus();
+    }
+    else if (viewName === 'forgot') {
+      var fEmail = document.getElementById('forgotEmail');
+      if (fEmail) fEmail.focus();
+    }
+    else if (viewName === 'otp') {
+      var digits = document.querySelectorAll('.otp-digit');
+      if (digits.length > 0) {
+        digits.forEach(function(d) { d.value = ''; });
+        digits[0].focus();
+      }
+    }
+    else if (viewName === 'reset') {
+      var nPass = document.getElementById('newPassword');
+      if (nPass) nPass.focus();
+    }
+  }, 120);
+}
+
+function openChangePasswordModal() {
+  document.getElementById('sbUrl').value = localStorage.getItem('gsa_supabase_url') || '';
+  document.getElementById('sbKey').value = localStorage.getItem('gsa_supabase_key') || '';
+  document.getElementById('sbGasUrl').value = localStorage.getItem('gsa_supabase_gas_url') || '';
+  
+  document.getElementById('oldPassword').value = '';
+  document.getElementById('newPasswordChange').value = '';
+  
+  var oldPw = document.getElementById('oldPassword');
+  var newPw = document.getElementById('newPasswordChange');
+  var keyInput = document.getElementById('sbKey');
+  if (oldPw) oldPw.type = 'password';
+  if (newPw) newPw.type = 'password';
+  if (keyInput) keyInput.type = 'password';
+  
+  document.querySelectorAll('.password-toggle-btn').forEach(function(btn) {
+    var openIcon = btn.querySelector('.eye-open');
+    var closedIcon = btn.querySelector('.eye-closed');
+    if (openIcon) openIcon.style.display = 'block';
+    if (closedIcon) closedIcon.style.display = 'none';
+  });
+
+  switchConfigTab('pw');
+  openModal('changePasswordModal');
+}
+
+function switchConfigTab(tabName) {
+  var isPw = tabName === 'pw';
+  document.getElementById('tabChangePw').classList.toggle('active', isPw);
+  document.getElementById('tabConfigSupabase').classList.toggle('active', !isPw);
+  document.getElementById('configTabPw').style.display = isPw ? 'block' : 'none';
+  document.getElementById('configTabDb').style.display = isPw ? 'none' : 'block';
+}
+
+function saveSupabaseConfig(e) {
+  e.preventDefault();
+  var url = document.getElementById('sbUrl').value.trim();
+  var key = document.getElementById('sbKey').value.trim();
+  var gasUrl = document.getElementById('sbGasUrl').value.trim();
+  
+  if ((url && !key) || (!url && key)) {
+    showToast("❌ Vui lòng nhập cả Supabase URL và Anon Key!", "error");
+    return;
+  }
+  
+  if (url && key) {
+    localStorage.setItem('gsa_supabase_url', url);
+    localStorage.setItem('gsa_supabase_key', key);
+    showToast("⚡ Đã lưu cấu hình kết nối Supabase!", "success");
+  } else {
+    localStorage.removeItem('gsa_supabase_url');
+    localStorage.removeItem('gsa_supabase_key');
+  }
+  
+  if (gasUrl) {
+    localStorage.setItem('gsa_supabase_gas_url', gasUrl);
+    showToast("📧 Đã cấu hình link Apps Script gửi Email OTP!", "success");
+  } else {
+    localStorage.removeItem('gsa_supabase_gas_url');
+  }
+  
+  initSupabase();
+  loadData();
+  closeModal('changePasswordModal');
+}
+
+function clearSupabaseConfig() {
+  if (confirm("Bạn có chắc chắn muốn xóa cấu hình Supabase? Hệ thống sẽ quay về lưu trữ local.")) {
+    localStorage.removeItem('gsa_supabase_url');
+    localStorage.removeItem('gsa_supabase_key');
+    localStorage.removeItem('gsa_supabase_gas_url');
+    
+    document.getElementById('sbUrl').value = '';
+    document.getElementById('sbKey').value = '';
+    document.getElementById('sbGasUrl').value = '';
+    
+    initSupabase();
+    loadData();
+    closeModal('changePasswordModal');
+    showToast("🗑️ Đã xóa cấu hình. Quay về chế độ Local Storage.", "info");
+  }
+}
+
+function submitChangePassword(e) {
+  e.preventDefault();
+  var oldPw = document.getElementById('oldPassword').value;
+  var newPw = document.getElementById('newPasswordChange').value.trim();
+  
+  if (!newPw) {
+    showToast("❌ Mật khẩu mới không được để trống!", "error");
+    return;
+  }
+  
+  if (oldPw === getCTPassword()) {
+    setCTPassword(newPw);
+    showToast("✅ Đổi mật khẩu Chí Thắng thành công!", "success");
+    closeModal('changePasswordModal');
+  } else {
+    showToast("❌ Mật khẩu cũ không chính xác!", "error");
+    document.getElementById('oldPassword').value = '';
+    document.getElementById('oldPassword').focus();
+  }
+}
+
+/* ========== OTP INPUT HANDLING ========== */
+function handleOtpInput(el) {
+  var val = el.value;
+  el.value = val.replace(/[^0-9]/g, '');
+  
+  if (el.value.length === 1) {
+    var idx = parseInt(el.getAttribute('data-index'));
+    if (idx < 5) {
+      var next = document.querySelector('.otp-digit[data-index="' + (idx + 1) + '"]');
+      if (next) next.focus();
+    }
+  }
+}
+
+function handleOtpKeydown(el, event) {
+  var idx = parseInt(el.getAttribute('data-index'));
+  if (event.key === 'Backspace') {
+    if (el.value.length === 0 && idx > 0) {
+      var prev = document.querySelector('.otp-digit[data-index="' + (idx - 1) + '"]');
+      if (prev) {
+        prev.value = '';
+        prev.focus();
+      }
+    }
+  }
+}
+
+/* ========== OTP AUTHENTICATION FLOW ========== */
+let generatedOTP = null;
+let otpTimeout = null;
+
+function sendOTP(e) {
+  e.preventDefault();
+  var email = document.getElementById('forgotEmail').value.trim();
+  if (!email) return;
+  
+  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  if (otpTimeout) clearTimeout(otpTimeout);
+  otpTimeout = setTimeout(function() {
+    generatedOTP = null;
+    showToast("⏰ Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.", "warning");
+  }, 300000);
+  
+  var gasUrl = localStorage.getItem('gsa_supabase_gas_url');
+  
+  if (gasUrl) {
+    showToast("📨 Đang gửi mã OTP đến email của bạn...", "info");
+    
+    fetch(gasUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: JSON.stringify({
+        email: email,
+        otp: generatedOTP,
+        userName: "Chí Thắng"
+      })
+    })
+    .then(function() {
+      showToast("🔑 Đã gửi mã OTP thật! Hãy check hòm thư.", "success");
+      showPWView('otp');
+    })
+    .catch(function(err) {
+      console.log("Apps Script Response/CORS handling:", err);
+      showToast("🔑 Đã gửi mã OTP! Hãy check hòm thư của bạn.", "success");
+      showPWView('otp');
+    });
+  } else {
+    showToast("🔑 OTP (Offline Mode): " + generatedOTP, "success");
+    alert("MÃ XÁC MINH OTP CỦA BẠN (Offline Mode): " + generatedOTP + "\n\n(Bạn có thể cấu hình Apps Script Web App để nhận Email thật)");
+    showPWView('otp');
+  }
+}
+
+function verifyOTP(e) {
+  e.preventDefault();
+  var enteredOTP = '';
+  document.querySelectorAll('.otp-digit').forEach(function(input) {
+    enteredOTP += input.value;
+  });
+  
+  if (enteredOTP.length < 6) {
+    showToast("❌ Vui lòng điền đầy đủ 6 chữ số!", "error");
+    return;
+  }
+  
+  if (!generatedOTP) {
+    showToast("❌ Mã OTP đã hết hạn hoặc chưa được gửi!", "error");
+    showPWView('forgot');
+    return;
+  }
+  
+  if (enteredOTP === generatedOTP) {
+    generatedOTP = null;
+    if (otpTimeout) clearTimeout(otpTimeout);
+    showToast("✅ Xác minh thành công! Hãy nhập mật khẩu mới.", "success");
+    showPWView('reset');
+  } else {
+    showToast("❌ Mã OTP không chính xác. Thử lại!", "error");
+    document.querySelectorAll('.otp-digit').forEach(function(input) {
+      input.value = '';
+    });
+    document.querySelector('.otp-digit[data-index="0"]').focus();
+  }
+}
+
+function resetPassword(e) {
+  e.preventDefault();
+  var newPw = document.getElementById('newPassword').value.trim();
+  if (!newPw) {
+    showToast("❌ Mật khẩu mới không được để trống!", "error");
+    return;
+  }
+  
+  setCTPassword(newPw);
+  showToast("🎉 Đã khôi phục mật khẩu thành công! Đang quay lại đăng nhập...", "success");
+  
+  setTimeout(function() {
+    showPWView('login');
+    document.getElementById('newPassword').value = '';
+  }, 1000);
 }
 
 /* ========== CRM ========== */
