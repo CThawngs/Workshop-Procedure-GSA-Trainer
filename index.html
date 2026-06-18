@@ -1164,8 +1164,15 @@ let supabaseSubscription = null;
 
 function initSupabase() {
   if (window.supabase) {
-    const url = localStorage.getItem('gsa_supabase_url');
-    const key = localStorage.getItem('gsa_supabase_key');
+    let url = localStorage.getItem('gsa_supabase_url');
+    let key = localStorage.getItem('gsa_supabase_key');
+    
+    // Cấu hình mặc định tới Supabase Project đã khởi tạo sẵn
+    if (!url || !key) {
+      url = "https://ydzvgippnnlfxgdubret.supabase.co";
+      key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlkenZnaXBwbm5sZnhnZHVicmV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3Nzk2NDUsImV4cCI6MjA5NzM1NTY0NX0.t6aEc7Q54eP6fpZY0mrpsmGaNNOied41AXiu5mHed5E";
+    }
+    
     if (url && key) {
       try {
         supabaseClient = window.supabase.createClient(url, key);
