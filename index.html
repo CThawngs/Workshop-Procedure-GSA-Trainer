@@ -887,7 +887,7 @@
       </div>
 
       <!-- VIEW 3: VERIFY OTP -->
-      <div id="pwViewOTP" style="display:none">
+      <div id="pwViewOtp" style="display:none">
         <form onsubmit="verifyOTP(event)">
           <div class="form-group" style="text-align: center; margin-bottom: 20px;">
             <div style="font-size: 3rem; margin-bottom: 12px;">🔑</div>
@@ -2073,7 +2073,7 @@ function togglePasswordVisibility(inputId) {
 }
 
 function showPWView(viewName) {
-  var views = ['pwViewLogin', 'pwViewForgot', 'pwViewOTP', 'pwViewReset'];
+  var views = ['pwViewLogin', 'pwViewForgot', 'pwViewOtp', 'pwViewReset'];
   views.forEach(function(vid) {
     var el = document.getElementById(vid);
     if (el) el.style.display = vid === 'pwView' + viewName.charAt(0).toUpperCase() + viewName.slice(1) ? 'block' : 'none';
