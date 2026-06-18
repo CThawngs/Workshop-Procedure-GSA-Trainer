@@ -874,39 +874,14 @@
           <div class="form-group" style="text-align: center; margin-bottom: 20px;">
             <div style="font-size: 3rem; margin-bottom: 12px;">📧</div>
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Quên mật khẩu</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted);">Nhập email của bạn để nhận mã xác minh OTP đặt lại mật khẩu</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Nhập email của bạn để nhận liên kết đặt lại mật khẩu mới</div>
           </div>
           <div class="form-group">
             <input class="form-input" id="forgotEmail" type="email" placeholder="VD: chithang.gsa@gmail.com" required style="text-align: center;"/>
           </div>
           <div class="form-actions" style="border-top: none; margin-top: 20px; padding-top: 0; flex-direction: column; gap: 8px;">
-            <button type="submit" class="btn-primary" style="width: 100%;">Gửi mã xác minh</button>
+            <button type="submit" class="btn-primary" style="width: 100%;">Gửi liên kết khôi phục</button>
             <button type="button" class="btn-secondary" onclick="showPWView('login')" style="width: 100%;">Quay lại đăng nhập</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- VIEW 3: VERIFY OTP -->
-      <div id="pwViewOtp" style="display:none">
-        <form onsubmit="verifyOTP(event)">
-          <div class="form-group" style="text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 3rem; margin-bottom: 12px;">🔑</div>
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Nhập mã xác minh</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
-              Mã xác minh đã được gửi đến email của bạn.<br>Vui lòng nhập mã gồm 6 chữ số vào bên dưới.
-            </div>
-          </div>
-          <div class="form-group" style="display: flex; justify-content: center; gap: 8px; margin: 24px 0;">
-            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="0" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
-            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="1" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
-            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="2" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
-            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="3" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
-            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="4" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
-            <input class="form-input otp-digit" type="text" maxlength="1" required data-index="5" oninput="handleOtpInput(this)" onkeydown="handleOtpKeydown(this, event)"/>
-          </div>
-          <div class="form-actions" style="border-top: none; margin-top: 10px; padding-top: 0; flex-direction: column; gap: 8px;">
-            <button type="submit" class="btn-primary" style="width: 100%;">Xác nhận OTP</button>
-            <button type="button" class="btn-secondary" onclick="showPWView('forgot')" style="width: 100%;">Quay lại</button>
           </div>
         </form>
       </div>
@@ -2238,33 +2213,6 @@ function submitChangePassword(e) {
   }
 }
 
-/* ========== OTP INPUT HANDLING ========== */
-function handleOtpInput(el) {
-  var val = el.value;
-  el.value = val.replace(/[^0-9]/g, '');
-  
-  if (el.value.length === 1) {
-    var idx = parseInt(el.getAttribute('data-index'));
-    if (idx < 5) {
-      var next = document.querySelector('.otp-digit[data-index="' + (idx + 1) + '"]');
-      if (next) next.focus();
-    }
-  }
-}
-
-function handleOtpKeydown(el, event) {
-  var idx = parseInt(el.getAttribute('data-index'));
-  if (event.key === 'Backspace') {
-    if (el.value.length === 0 && idx > 0) {
-      var prev = document.querySelector('.otp-digit[data-index="' + (idx - 1) + '"]');
-      if (prev) {
-        prev.value = '';
-        prev.focus();
-      }
-    }
-  }
-}
-
 /* ========== OTP AUTHENTICATION FLOW ========== */
 // Mapping of character IDs to their recovery email addresses (scalable for the future)
 const CHARACTER_EMAILS = {
@@ -2272,10 +2220,6 @@ const CHARACTER_EMAILS = {
   // Scale dynamically here for other characters in the future, e.g.:
   // 'xuan-thi': 'xuanthi@example.com',
 };
-
-let recoveryEmail = '';
-let generatedOTP = null;
-let otpTimeout = null;
 
 function sendOTP(e) {
   e.preventDefault();
@@ -2294,139 +2238,33 @@ function sendOTP(e) {
     return;
   }
   
-  var gasUrl = localStorage.getItem('gsa_supabase_gas_url');
-  
-  if (gasUrl) {
-    // Luồng A: Sử dụng Google Apps Script (Miễn phí, Không giới hạn rate limit, Gửi mã OTP 6 số)
-    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    if (otpTimeout) clearTimeout(otpTimeout);
-    otpTimeout = setTimeout(function() {
-      generatedOTP = null;
-      showToast("⏰ Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.", "warning");
-    }, 300000);
-    
-    showToast("📨 Đang gửi mã OTP đến email của bạn...", "info");
-    
-    fetch(gasUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain'
-      },
-      body: JSON.stringify({
-        email: email,
-        otp: generatedOTP,
-        userName: "Chí Thắng"
-      })
-    })
-    .then(function() {
-      showToast("🔑 Đã gửi mã OTP thật! Hãy check hòm thư.", "success");
-      recoveryEmail = email;
-      showPWView('otp');
-    })
-    .catch(function(err) {
-      console.log("Apps Script Response/CORS handling:", err);
-      showToast("🔑 Đã gửi mã OTP! Hãy check hòm thư của bạn.", "success");
-      recoveryEmail = email;
-      showPWView('otp');
-    });
-  } else {
-    // Luồng B: Sử dụng Supabase Auth mặc định (Bị giới hạn rate limit 2 email/giờ trên Free tier)
-    if (!supabaseClient) {
-      showToast("⚠️ Supabase chưa được cấu hình. Không thể gửi email OTP!", "warning");
-      return;
-    }
-    
-    showToast("📨 Đang gửi yêu cầu xác minh OTP đến email...", "info");
-    generatedOTP = null; // Đánh dấu là dùng Supabase Auth
-    
-    supabaseClient.auth.signInWithOtp({
-      email: email,
-      options: {
-        shouldCreateUser: true
-      }
-    })
-    .then(function(res) {
-      if (res.error) {
-        console.error("Lỗi gửi OTP qua Supabase:", res.error);
-        if (res.error.message.indexOf("rate limit") !== -1) {
-          showToast("❌ Email rate limit exceeded! Vui lòng cấu hình Apps Script Web App để gửi OTP không giới hạn miễn phí.", "error");
-        } else {
-          showToast("❌ Gửi OTP thất bại: " + res.error.message, "error");
-        }
-      } else {
-        showToast("🔑 Mã OTP (hoặc link khôi phục) đã được gửi! Hãy check hòm thư.", "success");
-        recoveryEmail = email;
-        showPWView('otp');
-      }
-    })
-    .catch(function(err) {
-      console.error("Lỗi kết nối:", err);
-      showToast("❌ Lỗi kết nối khi gửi OTP!", "error");
-    });
-  }
-}
-
-function verifyOTP(e) {
-  e.preventDefault();
-  var enteredOTP = '';
-  document.querySelectorAll('.otp-digit').forEach(function(input) {
-    enteredOTP += input.value;
-  });
-  
-  if (enteredOTP.length < 6) {
-    showToast("❌ Vui lòng điền đầy đủ 6 chữ số!", "error");
+  if (!supabaseClient) {
+    showToast("⚠️ Supabase chưa được cấu hình. Không thể gửi liên kết khôi phục!", "warning");
     return;
   }
   
-  if (generatedOTP) {
-    // Xác minh Luồng A (Google Apps Script client-side verification)
-    if (enteredOTP === generatedOTP) {
-      generatedOTP = null;
-      if (otpTimeout) clearTimeout(otpTimeout);
-      showToast("✅ Xác minh OTP thành công! Hãy nhập mật khẩu mới.", "success");
-      showPWView('reset');
-    } else {
-      showToast("❌ Mã OTP không chính xác. Thử lại!", "error");
-      document.querySelectorAll('.otp-digit').forEach(function(input) {
-        input.value = '';
-      });
-      var firstDigit = document.querySelector('.otp-digit[data-index="0"]');
-      if (firstDigit) firstDigit.focus();
-    }
-  } else {
-    // Xác minh Luồng B (Supabase Auth verification)
-    if (!supabaseClient) {
-      showToast("⚠️ Supabase chưa được cấu hình!", "warning");
-      return;
-    }
-    
-    showToast("🔑 Đang xác minh mã OTP...", "info");
-    
-    supabaseClient.auth.verifyOtp({
-      email: recoveryEmail || 'nguyenchithang2804@gmail.com',
-      token: enteredOTP,
-      type: 'email'
-    })
-    .then(function(res) {
-      if (res.error) {
-        console.error("Lỗi xác minh OTP:", res.error);
-        showToast("❌ Mã OTP không chính xác hoặc đã hết hạn!", "error");
-        document.querySelectorAll('.otp-digit').forEach(function(input) {
-          input.value = '';
-        });
-        var firstDigit = document.querySelector('.otp-digit[data-index="0"]');
-        if (firstDigit) firstDigit.focus();
+  showToast("📨 Đang gửi liên kết khôi phục mật khẩu đến email...", "info");
+  
+  supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  })
+  .then(function(res) {
+    if (res.error) {
+      console.error("Lỗi gửi liên kết khôi phục qua Supabase:", res.error);
+      if (res.error.message.indexOf("rate limit") !== -1) {
+        showToast("❌ Gửi thất bại: Vượt quá giới hạn gửi email của Supabase (2 email/giờ)!", "error");
       } else {
-        showToast("✅ Xác minh OTP thành công! Hãy nhập mật khẩu mới.", "success");
-        showPWView('reset');
+        showToast("❌ Gửi yêu cầu thất bại: " + res.error.message, "error");
       }
-    })
-    .catch(function(err) {
-      console.error("Lỗi kết nối:", err);
-      showToast("❌ Lỗi kết nối khi xác minh OTP!", "error");
-    });
-  }
+    } else {
+      showToast("✉️ Đã gửi liên kết khôi phục mật khẩu! Hãy kiểm tra hòm thư.", "success");
+      closePasswordModal();
+    }
+  })
+  .catch(function(err) {
+    console.error("Lỗi kết nối:", err);
+    showToast("❌ Lỗi kết nối khi gửi yêu cầu khôi phục!", "error");
+  });
 }
 
 function resetPassword(e) {
@@ -2454,7 +2292,7 @@ function resetPassword(e) {
   supabaseClient.auth.updateUser({ password: newPw })
     .then(function(res) {
       if (res.error) {
-        // Nếu thất bại do phiên làm việc (ví dụ dùng Apps Script nên không có session), ta vẫn cập nhật trực tiếp cột password trong table và localStorage
+        // Nếu thất bại do phiên làm việc (ví dụ không có session hoạt động), ta vẫn cập nhật trực tiếp cột password trong table và localStorage
         console.warn("Supabase Auth update error (possibly no session):", res.error.message);
         setCTPassword(newPw);
         showToast("🎉 Đã đặt lại mật khẩu Chí Thắng thành công!", "success");
