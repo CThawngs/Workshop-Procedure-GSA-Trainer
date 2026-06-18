@@ -1368,6 +1368,19 @@ function init() {
     allowInput: true
   });
 
+  // Check if redirected from Supabase password recovery email
+  if (window.location.hash && window.location.hash.indexOf('type=recovery') !== -1) {
+    // Clear hash parameters to prevent looping/confusing URL
+    history.replaceState(null, null, ' ');
+    
+    // Auto login/reset flow for Chi Thang
+    selectedCharId = 'chi-thang';
+    showPWView('reset');
+    openModal('passwordModal');
+    showToast("🔑 Đang nhận diện liên kết khôi phục mật khẩu...", "info");
+    return; // Don't show character selection screen or dashboard immediately
+  }
+
   if (currentUser) {
     var c = getChar(currentUser.id);
     if (c) { showDashboard(c); return; }
@@ -2249,52 +2262,59 @@ function handleOtpKeydown(el, event) {
 }
 
 /* ========== OTP AUTHENTICATION FLOW ========== */
-let generatedOTP = null;
-let otpTimeout = null;
+// Mapping of character IDs to their recovery email addresses (scalable for the future)
+const CHARACTER_EMAILS = {
+  'chi-thang': 'nguyenchithang2804@gmail.com'
+  // Scale dynamically here for other characters in the future, e.g.:
+  // 'xuan-thi': 'xuanthi@example.com',
+};
+
+let recoveryEmail = '';
 
 function sendOTP(e) {
   e.preventDefault();
   var email = document.getElementById('forgotEmail').value.trim();
   if (!email) return;
   
-  generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-  
-  if (otpTimeout) clearTimeout(otpTimeout);
-  otpTimeout = setTimeout(function() {
-    generatedOTP = null;
-    showToast("⏰ Mã OTP đã hết hạn. Vui lòng yêu cầu mã mới.", "warning");
-  }, 300000);
-  
-  var gasUrl = localStorage.getItem('gsa_supabase_gas_url');
-  
-  if (gasUrl) {
-    showToast("📨 Đang gửi mã OTP đến email của bạn...", "info");
-    
-    fetch(gasUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain'
-      },
-      body: JSON.stringify({
-        email: email,
-        otp: generatedOTP,
-        userName: "Chí Thắng"
-      })
-    })
-    .then(function() {
-      showToast("🔑 Đã gửi mã OTP thật! Hãy check hòm thư.", "success");
-      showPWView('otp');
-    })
-    .catch(function(err) {
-      console.log("Apps Script Response/CORS handling:", err);
-      showToast("🔑 Đã gửi mã OTP! Hãy check hòm thư của bạn.", "success");
-      showPWView('otp');
-    });
-  } else {
-    showToast("🔑 OTP (Offline Mode): " + generatedOTP, "success");
-    alert("MÃ XÁC MINH OTP CỦA BẠN (Offline Mode): " + generatedOTP + "\n\n(Bạn có thể cấu hình Apps Script Web App để nhận Email thật)");
-    showPWView('otp');
+  // Validate email mapping for the selected character
+  var expectedEmail = CHARACTER_EMAILS[selectedCharId];
+  if (!expectedEmail) {
+    showToast("❌ Nhân vật này chưa được thiết lập email khôi phục mật khẩu!", "error");
+    return;
   }
+  
+  if (email.toLowerCase() !== expectedEmail.toLowerCase()) {
+    showToast("❌ Email không khớp với email khôi phục của nhân vật này!", "error");
+    return;
+  }
+  
+  if (!supabaseClient) {
+    showToast("⚠️ Supabase chưa được cấu hình. Không thể gửi email OTP thật!", "warning");
+    return;
+  }
+  
+  showToast("📨 Đang gửi yêu cầu xác minh OTP đến email...", "info");
+  
+  supabaseClient.auth.signInWithOtp({
+    email: email,
+    options: {
+      shouldCreateUser: true // Register the user in Supabase Auth if not yet registered
+    }
+  })
+  .then(function(res) {
+    if (res.error) {
+      console.error("Lỗi gửi OTP qua Supabase:", res.error);
+      showToast("❌ Gửi OTP thất bại: " + res.error.message, "error");
+    } else {
+      showToast("🔑 Mã OTP (hoặc link khôi phục) đã được gửi! Hãy check hòm thư.", "success");
+      recoveryEmail = email;
+      showPWView('otp');
+    }
+  })
+  .catch(function(err) {
+    console.error("Lỗi kết nối:", err);
+    showToast("❌ Lỗi kết nối khi gửi OTP!", "error");
+  });
 }
 
 function verifyOTP(e) {
@@ -2309,24 +2329,36 @@ function verifyOTP(e) {
     return;
   }
   
-  if (!generatedOTP) {
-    showToast("❌ Mã OTP đã hết hạn hoặc chưa được gửi!", "error");
-    showPWView('forgot');
+  if (!supabaseClient) {
+    showToast("⚠️ Supabase chưa được cấu hình!", "warning");
     return;
   }
   
-  if (enteredOTP === generatedOTP) {
-    generatedOTP = null;
-    if (otpTimeout) clearTimeout(otpTimeout);
-    showToast("✅ Xác minh thành công! Hãy nhập mật khẩu mới.", "success");
-    showPWView('reset');
-  } else {
-    showToast("❌ Mã OTP không chính xác. Thử lại!", "error");
-    document.querySelectorAll('.otp-digit').forEach(function(input) {
-      input.value = '';
-    });
-    document.querySelector('.otp-digit[data-index="0"]').focus();
-  }
+  showToast("🔑 Đang xác minh mã OTP...", "info");
+  
+  supabaseClient.auth.verifyOtp({
+    email: recoveryEmail || 'nguyenchithang2804@gmail.com',
+    token: enteredOTP,
+    type: 'email'
+  })
+  .then(function(res) {
+    if (res.error) {
+      console.error("Lỗi xác minh OTP:", res.error);
+      showToast("❌ Mã OTP không chính xác hoặc đã hết hạn!", "error");
+      document.querySelectorAll('.otp-digit').forEach(function(input) {
+        input.value = '';
+      });
+      var firstDigit = document.querySelector('.otp-digit[data-index="0"]');
+      if (firstDigit) firstDigit.focus();
+    } else {
+      showToast("✅ Xác minh OTP thành công! Hãy nhập mật khẩu mới.", "success");
+      showPWView('reset');
+    }
+  })
+  .catch(function(err) {
+    console.error("Lỗi kết nối:", err);
+    showToast("❌ Lỗi kết nối khi xác minh OTP!", "error");
+  });
 }
 
 function resetPassword(e) {
@@ -2337,13 +2369,52 @@ function resetPassword(e) {
     return;
   }
   
-  setCTPassword(newPw);
-  showToast("🎉 Đã khôi phục mật khẩu thành công! Đang quay lại đăng nhập...", "success");
+  if (!supabaseClient) {
+    // Local fallback
+    setCTPassword(newPw);
+    showToast("🎉 Đã khôi phục mật khẩu thành công! Đang quay lại đăng nhập...", "success");
+    setTimeout(function() {
+      showPWView('login');
+      document.getElementById('newPassword').value = '';
+    }, 1000);
+    return;
+  }
   
-  setTimeout(function() {
-    showPWView('login');
-    document.getElementById('newPassword').value = '';
-  }, 1000);
+  showToast("💾 Đang cập nhật mật khẩu...", "info");
+  
+  supabaseClient.auth.updateUser({ password: newPw })
+    .then(function(res) {
+      if (res.error) {
+        console.error("Lỗi cập nhật mật khẩu Supabase Auth:", res.error);
+        showToast("⚠️ Lỗi Supabase Auth: " + res.error.message, "error");
+      } else {
+        showToast("🎉 Đã cập nhật mật khẩu tài khoản Supabase Auth!", "success");
+        
+        // Sync local password database row and cache
+        setCTPassword(newPw);
+        
+        // Sign out to clean up Supabase session
+        supabaseClient.auth.signOut().catch(function(err) {
+          console.error("Lỗi sign out:", err);
+        });
+        
+        showToast("🎉 Đã khôi phục mật khẩu thành công! Đang quay lại đăng nhập...", "success");
+        setTimeout(function() {
+          showPWView('login');
+          document.getElementById('newPassword').value = '';
+        }, 1000);
+      }
+    })
+    .catch(function(err) {
+      console.error("Lỗi kết nối khi cập nhật mật khẩu:", err);
+      // Fallback
+      setCTPassword(newPw);
+      showToast("🎉 Đã khôi phục mật khẩu thành công! Đang quay lại đăng nhập...", "success");
+      setTimeout(function() {
+        showPWView('login');
+        document.getElementById('newPassword').value = '';
+      }, 1000);
+    });
 }
 
 /* ========== CRM ========== */
