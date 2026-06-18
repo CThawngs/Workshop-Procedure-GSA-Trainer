@@ -1133,7 +1133,7 @@ let currentTab = 'upcoming';
 let currentPage = 1;
 let editingId = null;
 let deletingId = null;
-let supabase = null;
+let supabaseClient = null;
 
 /* ========== BROADCAST CHANNEL ========== */
 let bc = null;
@@ -1168,13 +1168,13 @@ function initSupabase() {
     const key = localStorage.getItem('gsa_supabase_key');
     if (url && key) {
       try {
-        supabase = window.supabase.createClient(url, key);
+        supabaseClient = window.supabase.createClient(url, key);
         initSupabaseRealtime();
       } catch(e) {
         console.error("Lỗi khởi tạo Supabase client:", e);
       }
     } else {
-      supabase = null;
+      supabaseClient = null;
       if (supabaseSubscription) {
         supabaseSubscription.unsubscribe();
         supabaseSubscription = null;
@@ -1184,12 +1184,12 @@ function initSupabase() {
 }
 
 function initSupabaseRealtime() {
-  if (!supabase) return;
+  if (!supabaseClient) return;
   try {
     if (supabaseSubscription) {
       supabaseSubscription.unsubscribe();
     }
-    supabaseSubscription = supabase
+    supabaseSubscription = supabaseClient
       .channel('gsa_realtime_channel')
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'gsa_storage', filter: 'key=eq.workshops' }, (payload) => {
         if (payload.new && payload.new.value) {
@@ -1225,8 +1225,8 @@ function loadData() {
   try { currentUser = JSON.parse(localStorage.getItem(USER_KEY)); } catch(e) { currentUser = null; }
 
   // Load asynchronously from Supabase if active
-  if (supabase) {
-    supabase.from('gsa_storage').select('value').eq('key', 'workshops').single()
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'workshops').single()
       .then(function(res) {
         if (res.data && res.data.value) {
           const oldStr = localStorage.getItem(STORAGE_KEY);
@@ -1243,7 +1243,7 @@ function loadData() {
       });
       
     // Fetch password from Supabase cache
-    supabase.from('gsa_storage').select('value').eq('key', 'ct_password').single()
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'ct_password').single()
       .then(function(res) {
         if (res.data && res.data.value) {
           localStorage.setItem('gsa_ct_pwd', res.data.value);
@@ -1261,8 +1261,8 @@ function saveLocal(doBroadcast) {
   if (doBroadcast !== false) broadcast(null);
 
   // 2. Sync to Supabase in background
-  if (supabase) {
-    supabase.from('gsa_storage').upsert({ key: 'workshops', value: workshops, updated_at: new Date().toISOString() })
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'workshops', value: workshops, updated_at: new Date().toISOString() })
       .then(function(res) {
         if (res.error) {
           console.error("Lỗi lưu Supabase:", res.error);
@@ -2038,8 +2038,8 @@ function getCTPassword() {
 
 function setCTPassword(pwd) {
   localStorage.setItem('gsa_ct_pwd', pwd);
-  if (supabase) {
-    supabase.from('gsa_storage').upsert({ key: 'ct_password', value: pwd, updated_at: new Date().toISOString() })
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'ct_password', value: pwd, updated_at: new Date().toISOString() })
       .then(function(res) {
         if (res.error) console.error("Lỗi đồng bộ mật khẩu lên Supabase:", res.error);
       })
