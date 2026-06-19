@@ -1,1 +1,148 @@
-Mục tiêu quy mô: +250 sinh viên / Workshop Tiến độ cuốn chiếu: 2 tuần / Trường Chủ đề cốt lõi: Đào tạo Công nghệ / Ứng dụng Gemini &amp; AI PHẦN I: BẢNG QUY TRÌNH SONG SONG OFFLINE &amp; ONLINE CHI TIẾT TRONG 1 TUẦN Ngày Bước thực hiện 🏢 Quy trình OFFLINE (Tại Hội Trường) 💻 Quy trình ONLINE (Qua Google Meet/Zoom) Công cụ &amp; Hệ thống Kết quả cần đạt (KPI) / Chi tiết cấu phần NGÀY 1 Bước 1: Tìm trường &amp; Quét thông tin - Tra cứu danh sách các trường Đại học. - Truy cập website trường -&gt; Tìm và thu thập chính xác Email của Trưởng khoa hoặc Phòng Đào tạo / Phòng CTSV (người có thẩm quyền duyệt phối hợp). - Tra cứu tương tự hệ thống các trường Đại học lớn hoặc các Câu lạc bộ/Hội sinh viên toàn trường. - Tìm và thu thập chính xác Email của Trưởng khoa hoặc ban lãnh đạo có thẩm quyền duyệt phối hợp. Google Sheets, Website các trường Đại học Đạt tối thiểu 3 - 5 trường mục tiêu được điền đầy đủ thông tin liên hệ vào file Excel để chuẩn bị gối đầu. NGÀY 2 Bước 2: Gửi Email Đề xuất Phối hợp - Gửi email chính thức từ account Ambassador đề xuất tổ chức WS quy mô +250 sinh viên . - Yêu cầu trường hỗ trợ: Truyền thông (Fanpage/Group trường) và Cơ sở vật chất ( Hội trường lớn, thiết bị âm thanh, ánh sáng, mic, máy chiếu... ). - Quyền lợi đổi lại: Trao giá trị kỹ năng số cho SV; đồng thời sử dụng hình ảnh, tư liệu buổi WS đăng lên Fanpage, TikTok để truyền thông thương hiệu cho cả 2 bên. - Cải tiến: Đính kèm link video/ảnh bùng nổ của trường cũ làm vũ khí uy tín thuyết phục Trưởng khoa duyệt ngay. - Gửi email chính thức đề xuất tổ chức Online Webinar - Yêu cầu trường hỗ trợ: Truyền thông phủ rộng (Đăng Fanpage trường/khoa, gửi link phòng học trực tiếp vào các group lớp, group Zalo SV). Ngân sách thiết bị bằng 0. - Quyền lợi đổi lại: Trao giá trị cho SV; đồng thời sử dụng file quay màn hình (Screen Record) và ảnh chụp màn hình room họp để đăng Fanpage, TikTok truyền thông cho cả 2 bên. - Cải tiến tương tự phương án Offline. Gmail (tài khoản Ambassador chính thức) Nhà trường phản hồi đồng ý phối hợp bằng văn bản hoặc email, chốt ngày giờ tổ chức cụ thể và cử nhân sự đầu mối hỗ trợ. NGÀY 3 Bước 3: Thủ tục Google &amp; Thiết kế Asset - Điền Form đăng ký Workshop của Google (Cá nhân) để hệ thống ghi nhận và phê duyệt nội bộ. - Làm Posters/Banner để treo trong Campus của trường (Nếu trường hỗ trợ in ấn/treo thì càng tốt, còn không hỗ trợ thì phải tự bỏ tiền ra làm và tự edit ). - Tạo Google Form Check-in (Đăng ký) Xuất link thành QR Code chèn trực tiếp lên Poster/Banner . - Điền Form đăng ký Workshop của Google (Cá nhân) để hệ thống ghi nhận và phê duyệt nội bộ. - Làm Banner Online, Thumbnail để đăng Facebook và làm màn hình chờ phòng họp (Tự edit 100% bằng Canva, không tốn chi phí in ấn). - Tạo Google Form Check-in (Đăng ký) Lấy Link đăng ký trực tiếp để chèn vào các bài đăng truyền thông Online. Google Form nội bộ của Google, Canva, QR Generator File thiết kế sẵn sàng (Banner sân khấu + Poster dọc); Link/QR Form Check-in hoạt động mượt mà, không bị lỗi hiển thị. NGÀY 4 Bước 4: Cài đặt Automation Đăng ký (n8n) - Xây dựng kịch bản tự động hóa trên n8n . - Luồng hoạt động: Sinh viên hoàn thành điền Form Check-in n8n chạy node trung gian kiểm tra đúng cú pháp email -&gt; Hệ thống n8n tự động gửi Email xác nhận đăng ký thành công kèm vé mời điện tử, thời gian, địa điểm hội trường (Tránh lỗi Bounce mail). - Xây dựng kịch bản tự động hóa trên n8n . - Luồng hoạt động: Sinh viên hoàn thành điền Form Check-in -&gt; n8n chạy node trung gian kiểm tra đúng cú pháp email -&gt; Hệ thống n8n tự động gửi Email xác nhận đăng ký thành công kèm Link phòng họp trực tuyến (Meet/Zoom) và hướng dẫn tham gia. n8n , Google Forms, Gmail Hệ thống chạy tự động 100% . Sinh viên nhận được email xác nhận ngay lập tức sau khi bấm gửi form. NGÀY 5 Bước 5: Duyệt &amp; Chụp hình Truyền thông - Thúc đẩy trường đăng bài; tự lan tỏa nội dung trên kênh cá nhân để quét lượng đăng ký chặng cuối. - Đến trường trước 1 ngày để duyệt lại hội trường, banner, poster xem đã được triển khai treo tại campus chưa. - Chụp hình truyền thông thực tế trước 1 ngày (không gian hội trường, banner tại campus) để đăng bài nhắc hẹn, hâm nóng không khí trước giờ G. - Thúc đẩy trường/khoa/CLB chia sẻ link phòng họp vào các group lớp; tự lan tỏa nội dung trên kênh cá nhân. - Kiểm tra hệ thống đường truyền mạng và room họp trực tuyến (Đảm bảo room họp đã nâng cấp sức chứa +250 người). - Chụp ảnh màn hình slide hoặc không gian test phòng họp trước 1 ngày để đăng bài đếm ngược (Countdown) nhắc hẹn kèm link phòng lên Fanpage/TikTok. Máy ảnh / Điện thoại, Fanpage, TikTok Đạt mốc đăng ký +250 sinh viên . Bài đăng hâm nóng hình ảnh thực tế thu hút tương tác tốt trước ngày diễn ra sự kiện. NGÀY 6 Bước 6 &amp; 7: VẬN HÀNH &amp; AUTOMATION CHECK-OUT - Trước WS 2 tiếng: Có mặt tại hội trường để mượn thiết bị từ cán bộ trường &amp; tiến hành setup âm thanh, máy chiếu, micro, chạy thử slide, video bài giảng (Sound-check). - Trong WS: Đội media tập trung quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người. - Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) -&gt; Kích hoạt luồng n8n tự động gửi email cảm ơn, kèm link slide và tặng quà tự động ngay khi điền xong. - Trước WS 1 tiếng: Mở phòng họp trực tuyến, setup quyền Host/Co-host, kiểm tra mic/loa/chia sẻ màn hình , bật nhạc nền chờ sinh viên. - Trong WS: Bật tính năng Record cuộc họp , chụp ảnh màn hình (Screenshot) khoảnh khắc room đạt +250 người cùng lúc. - Cuối WS: Gửi Link Form Check-out vào ô Chat -&gt; Kích hoạt luồng n8n tự động gửi email cảm ơn, kèm link slide và tặng quà tự động ngay khi điền xong. Thiết bị hội trường (Offline) / Room họp trực tuyến (Online), n8n , Gmail Sự kiện diễn ra thành công mượt mà . Sinh viên nhận được trọn bộ tài liệu/quà tặng tự động qua hòm thư ngay khi vừa kết thúc. NGÀY 7 Bước 8 &amp; 9: Hậu kỳ, Báo cáo &amp; Tìm trường mới - Tiến hành edit hình ảnh thực tế &amp; dựng video WS (dạng recap ngắn, highlight khoảnh khắc đám đông bùng nổ) để đăng lên Fanpage, TikTok nghiệm thu. - Điền form báo cáo Workshop cho Google (Cá nhân) để ghi nhận KPI Đại sứ. - Tìm trường khác (Quay lại Bước 1 để lấy data trường mới, dùng chính video recap vừa làm làm vũ khí tiếp cận để bắt đầu chu kỳ 1 tuần tiếp theo). - Tiến hành edit video record màn hình &amp; phối ảnh screenshot thành video recap ngắn, lồng nhạc bắt trend để đăng lên Fanpage, TikTok nghiệm thu. - Điền form báo cáo Workshop cho Google (Cá nhân) để ghi nhận KPI Đại sứ. - Tìm trường khác (Quay lại Bước 1 để lấy data trường mới, dùng chính video recap vừa làm làm vũ khí tiếp cận để bắt đầu chu kỳ 1 tuần tiếp theo). CapCut, Lightroom, Google Form hệ thống (Internal) Hoàn thành nghiệm thu truyền thông trên các kênh cá nhân và gửi báo cáo cho Google đúng hạn; kích hoạt thành công chu kỳ trường tiếp theo . PHẦN II: CHI TIẾT NỘI DUNG BIẾN SỐ AUTOMATION TRONG NODE GMAIL (n8n) Khi bạn cấu hình node Gmail trong công cụ n8n, hãy sao chép (copy-paste) chính xác cấu trúc text và các nhãn biến số dưới đây để hệ thống tự động cá nhân hóa nội dung gửi cho từng sinh viên: 1. Mẫu Email Automation Đăng ký Thành công (Gửi sau khi SV điền Form Check-in) Tiêu đề: [Xác nhận Đăng ký] Vé mời tham dự Workshop Gemini &amp; AI - Google Student Ambassador x {{ university_name }} Nội dung: Chào {{ student_name }} (MSSV: {{ student_id }} ), Chúc mừng bạn đã đăng ký thành công vé tham dự buổi Workshop chuyên sâu về Công nghệ &amp; Sáng tạo nội dung bằng AI từ Đại sứ Sinh viên Google. Dưới đây là thông tin phòng học chính thức của bạn: Thời gian: {{ ws_time }} Địa điểm: {{ ws_location }} (Vui lòng xuất trình email này tại cửa hội trường nếu tham gia Offline hoặc bấm trực tiếp vào link nếu tham gia Online). Hẹn gặp bạn tại buổi chia sẻ! 2. Mẫu Email Automation Check-out &amp; Tặng quà (Gửi sau khi SV điền Form Khảo sát cuối buổi) Tiêu đề: [Quà tặng Độc quyền] Tài liệu Workshop Sáng tạo nội dung cùng Gemini &amp; AI tại {{ university_name }} Nội dung: Chào {{ student_name }} , Cảm ơn bạn đã dành thời gian tham gia và đóng góp ý kiến thông qua Form Khảo sát cuối buổi Workshop của chúng mình tại {{ university_name }} . Như đã hứa, hòm thư tự động của Đại sứ xin gửi tặng bạn trọn bộ tài liệu độc quyền để thực hành: Link tải Slide bài giảng gốc: [Bấm vào đây để tải] Kho lưu trữ quà tặng Digital (Bộ Prompt nâng cao, E-book kỹ năng số): {{ gift_link }} Hy vọng những kiến thức này sẽ giúp ích cho hành trình học tập và làm truyền thông của bạn. Hãy theo dõi các dự án tiếp theo của mình trên TikTok và Fanpage nhé! PHẦN III: BẢNG DỰ TOÁN NGÂN SÁCH TỰ TÚC TỐI ƯU (Khi trường không hỗ trợ) Để bảo vệ ngân sách cá nhân khi gặp trường hợp Nhà trường không hỗ trợ kinh phí in ấn (chỉ áp dụng đối với hình thức Offline ), đây là bảng định mức chi phí tối giản nhưng vẫn đảm bảo sự chỉn chu và chuyên nghiệp cao nhất tại Campus: Hạng mục Asset Kích thước chuẩn Chất liệu khuyến nghị Số lượng Đơn giá ước tính Tổng chi phí Mục đích sử dụng thực tế Banner ngang phông chính 4m x 2.5m Bạt Hiflex dày, đục lỗ ô-vê 4 góc để căng dây bạt. 1 tấm 180.000 VNĐ 180.000 VNĐ Treo trực tiếp tại phông chính của sân khấu hội trường để làm nền chụp ảnh check-in toàn cảnh +250 người. Standee đứng đón khách 0.6m x 1.6m Bạt Hiflex hoặc PP trong nhà, cán màng mờ chống lóa khi chụp ảnh. 2 tấm 80.000 VNĐ 160.000 VNĐ Tấm 1: Đặt tại sảnh chính tòa nhà hướng dẫn lối đi. Tấm 2: Đặt sát cửa ra vào hội trường (In QR Code thật to để SV quét check-in/out). Chân Standee chữ X Khớp khổ 0.6m x 1.6m Khung sắt loại thường hoặc nhựa cường lực cứng cáp. 2 bộ 70.000 VNĐ 140.000 VNĐ Căng tấm Standee đứng. Chân sắt này bạn giữ lại để mang sang tái sử dụng cho các trường tiếp theo (Tiết kiệm 140k cho các trường sau). Quà tặng Sinh viên Vô hình (Digital) Link Drive lưu trữ dữ liệu đám mây của Google. Không giới hạn 0 VNĐ 0 VNĐ Tự động hóa qua n8n gửi thẳng vào hòm thư. Hệ thống Automation n8n local Gói miễn phí (Free Tier) vừa đủ cho lượt trigger. Toàn chiến dịch 0 VNĐ 0 VNĐ Chạy tự động gửi mail. TỔNG CHI PHÍ 480.000 VNĐ Chi phí tối đa cho trường đầu tiên (Từ trường thứ 2 chỉ tốn ~340k do đã có sẵn chân Standee xách đi). PHẦN IV: QUY TRÌNH BAO QUÁT CÁC TÌNH HUỐNG NÂNG CAO TRÊN THỰC TẾ Quản trị rủi ro n8n (Lỗi hệ thống/Hết lượt gửi free): Bạn luôn phải chuẩn bị sẵn một luồng phụ bằng công cụ Mail Merge (Tiện ích mở rộng miễn phí của Google Sheets). Nếu hệ thống n8n gặp sự cố rớt mạng đột xuất, bạn chỉ cần nạp danh sách Excel sinh viên vào và chạy Mail Merge bằng tay, toàn bộ email vé mời hoặc quà tặng vẫn sẽ được gửi đi hàng loạt chỉ trong vòng 5 phút. Kỹ thuật bắt khoảnh khắc để làm &quot;Vũ khí&quot; gối đầu: Trong thời gian diễn ra Workshop (Ngày 6), khi chụp ảnh toàn cảnh hội trường +250 người, diễn giả hãy hướng dẫn tất cả sinh viên cùng bật màn hình điện thoại hoặc laptop đang mở giao diện ứng dụng Gemini/AI lên và giơ cao. Khoảnh khắc này khi quay phim ngắn hoặc chụp góc rộng sẽ tạo hiệu ứng thị giác cực kỳ bùng nổ, giúp video Recap đăng TikTok (Ngày 7) dễ dàng lên xu hướng và làm tăng tỷ lệ gật đầu của các Trưởng khoa trường sau lên gấp 3 lần khi họ đọc email đề xuất của bạn.
+Mục tiêu quy mô: +250 sinh viên / Workshop
+Tiến độ cuốn chiếu: 2 tuần / Trường
+Chủ đề cốt lõi: Đào tạo Công nghệ / Ứng dụng Gemini & AI
+
+PHẦN I: BẢNG QUY TRÌNH SONG SONG OFFLINE & ONLINE CHI TIẾT TRONG 1 TUẦN
+Ngày
+Bước thực hiện
+🏢 Quy trình OFFLINE (Tại Hội Trường)
+💻 Quy trình ONLINE (Qua Google Meet/Zoom)
+Công cụ & Hệ thống
+Kết quả cần đạt (KPI) / Chi tiết cấu phần
+NGÀY 1
+Bước 1: Tìm trường & Quét thông tin
+- Tra cứu danh sách các trường Đại học.
+
+- Truy cập website trường -> Tìm và thu thập chính xác Email của Trưởng khoa hoặc Phòng Đào tạo / Phòng CTSV (người có thẩm quyền duyệt phối hợp).
+- Tra cứu tương tự hệ thống các trường Đại học lớn hoặc các Câu lạc bộ/Hội sinh viên toàn trường.
+
+- Tìm và thu thập chính xác Email của Trưởng khoa hoặc ban lãnh đạo có thẩm quyền duyệt phối hợp.
+Google Sheets, Website các trường Đại học
+Đạt tối thiểu 3 - 5 trường mục tiêu được điền đầy đủ thông tin liên hệ vào file Excel để chuẩn bị gối đầu.
+NGÀY 2
+Bước 2: Gửi Email Đề xuất Phối hợp
+- Gửi email chính thức từ account Ambassador đề xuất tổ chức WS quy mô +250 sinh viên.
+
+- Yêu cầu trường hỗ trợ: Truyền thông (Fanpage/Group trường) và Cơ sở vật chất (Hội trường lớn, thiết bị âm thanh, ánh sáng, mic, máy chiếu...).
+
+- Quyền lợi đổi lại: Trao giá trị kỹ năng số cho SV; đồng thời sử dụng hình ảnh, tư liệu buổi WS đăng lên Fanpage, TikTok để truyền thông thương hiệu cho cả 2 bên.
+
+- Cải tiến: Đính kèm link video/ảnh bùng nổ của trường cũ làm vũ khí uy tín thuyết phục Trưởng khoa duyệt ngay.
+- Gửi email chính thức đề xuất tổ chức Online Webinar
+
+- Yêu cầu trường hỗ trợ: Truyền thông phủ rộng (Đăng Fanpage trường/khoa, gửi link phòng học trực tiếp vào các group lớp, group Zalo SV). Ngân sách thiết bị bằng 0.
+
+- Quyền lợi đổi lại: Trao giá trị cho SV; đồng thời sử dụng file quay màn hình (Screen Record) và ảnh chụp màn hình room họp để đăng Fanpage, TikTok truyền thông cho cả 2 bên.
+
+- Cải tiến tương tự phương án Offline.
+Gmail (tài khoản Ambassador chính thức)
+Nhà trường phản hồi đồng ý phối hợp bằng văn bản hoặc email, chốt ngày giờ tổ chức cụ thể và cử nhân sự đầu mối hỗ trợ.
+NGÀY 3
+Bước 3: Thủ tục Google & Thiết kế Asset
+- Điền Form đăng ký Workshop của Google (Cá nhân) để hệ thống ghi nhận và phê duyệt nội bộ.
+
+- Làm Posters/Banner để treo trong Campus của trường (Nếu trường hỗ trợ in ấn/treo thì càng tốt, còn không hỗ trợ thì phải tự bỏ tiền ra làm và tự edit).
+
+- Tạo Google Form Check-in (Đăng ký) Xuất link thành QR Code chèn trực tiếp lên Poster/Banner.
+- Điền Form đăng ký Workshop của Google (Cá nhân) để hệ thống ghi nhận và phê duyệt nội bộ.
+
+- Làm Banner Online, Thumbnail để đăng Facebook và làm màn hình chờ phòng họp (Tự edit 100% bằng Canva, không tốn chi phí in ấn).
+
+- Tạo Google Form Check-in (Đăng ký) Lấy Link đăng ký trực tiếp để chèn vào các bài đăng truyền thông Online.
+Google Form nội bộ của Google, Canva, QR Generator
+File thiết kế sẵn sàng (Banner sân khấu + Poster dọc); Link/QR Form Check-in hoạt động mượt mà, không bị lỗi hiển thị.
+NGÀY 4
+Bước 4: Cài đặt Automation Đăng ký (n8n)
+- Xây dựng kịch bản tự động hóa trên n8n.
+
+- Luồng hoạt động: Sinh viên hoàn thành điền Form Check-in n8n chạy node trung gian kiểm tra đúng cú pháp email -> Hệ thống n8n tự động gửi Email xác nhận đăng ký thành công kèm vé mời điện tử, thời gian, địa điểm hội trường (Tránh lỗi Bounce mail).
+- Xây dựng kịch bản tự động hóa trên n8n.
+
+- Luồng hoạt động: Sinh viên hoàn thành điền Form Check-in -> n8n chạy node trung gian kiểm tra đúng cú pháp email -> Hệ thống n8n tự động gửi Email xác nhận đăng ký thành công kèm Link phòng họp trực tuyến (Meet/Zoom) và hướng dẫn tham gia.
+n8n, Google Forms, Gmail
+Hệ thống chạy tự động 100%. Sinh viên nhận được email xác nhận ngay lập tức sau khi bấm gửi form.
+NGÀY 5
+Bước 5: Duyệt & Chụp hình Truyền thông
+- Thúc đẩy trường đăng bài; tự lan tỏa nội dung trên kênh cá nhân để quét lượng đăng ký chặng cuối.
+
+- Đến trường trước 1 ngày để duyệt lại hội trường, banner, poster xem đã được triển khai treo tại campus chưa.
+
+- Chụp hình truyền thông thực tế trước 1 ngày (không gian hội trường, banner tại campus) để đăng bài nhắc hẹn, hâm nóng không khí trước giờ G.
+- Thúc đẩy trường/khoa/CLB chia sẻ link phòng họp vào các group lớp; tự lan tỏa nội dung trên kênh cá nhân.
+
+- Kiểm tra hệ thống đường truyền mạng và room họp trực tuyến (Đảm bảo room họp đã nâng cấp sức chứa +250 người).
+
+- Chụp ảnh màn hình slide hoặc không gian test phòng họp trước 1 ngày để đăng bài đếm ngược (Countdown) nhắc hẹn kèm link phòng lên Fanpage/TikTok.
+Máy ảnh / Điện thoại, Fanpage, TikTok
+Đạt mốc đăng ký +250 sinh viên. Bài đăng hâm nóng hình ảnh thực tế thu hút tương tác tốt trước ngày diễn ra sự kiện.
+NGÀY 6
+Bước 6: Vận hành & Diễn thuyết
+- Trước WS 2 tiếng: Có mặt tại hội trường để mượn thiết bị từ cán bộ trường & tiến hành setup âm thanh, máy chiếu, micro, chạy thử slide, video bài giảng (Sound-check).
+- Trong WS: Đội media tập trung quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người.
+- Chụp ảnh toàn cảnh khoảnh khắc "giơ điện thoại Gemini" đặc sắc.
+- Trước WS 1 tiếng: Mở phòng họp trực tuyến, setup quyền Host/Co-host, kiểm tra mic/loa/chia sẻ màn hình, bật nhạc nền chờ sinh viên.
+- Trong WS: Bật tính năng Record cuộc họp, chụp ảnh màn hình (Screenshot) khoảnh khắc room đạt +250 người cùng lúc.
+Thiết bị hội trường (Offline) / Room họp trực tuyến (Online)
+Sự kiện diễn ra thành công mượt mà, thu hút số lượng sinh viên tham gia bùng nổ.
+
+NGÀY 6
+Bước 7: Automation Check-out & Tặng quà
+- Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) -> Kích hoạt luồng n8n tự động gửi email cảm ơn, kèm link slide và tặng quà tự động ngay khi điền xong.
+- Cuối WS: Gửi Link Form Check-out vào ô Chat -> Kích hoạt luồng n8n tự động gửi email cảm ơn, kèm link slide và tặng quà tự động ngay khi điền xong.
+n8n, Google Forms, Gmail
+Sinh viên nhận được trọn bộ tài liệu/quà tặng tự động qua hòm thư ngay khi vừa khảo sát xong.
+
+NGÀY 7
+Bước 8: Hậu kỳ & Truyền thông Nghiệm thu
+- Upload source hình ảnh/video gốc lên folder "Source Media (Gốc trong Google Drive)" - thông qua link URL (Cung cấp sau bằng việc edit to-do).
+- Edit hình ảnh thực tế (Lightroom) và dựng video Recap ngắn (CapCut).
+- Upload các hình/video đã edit vào trong folder "Source Media (Đã Edit)" - thông qua link URL (Cung cấp sau bằng việc edit to-do).
+- Thêm hình ảnh đã edit vào trong link URL (Cung cấp sau bằng việc edit to-do).
+- Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok.
+- Tiến hành edit video record màn hình & phối ảnh screenshot thành video recap ngắn, lồng nhạc bắt trend để đăng lên Fanpage, TikTok nghiệm thu.
+CapCut, Lightroom, TikTok, Facebook Fanpage, Google Drive
+Hoàn thành đăng tải và nghiệm thu các ấn phẩm truyền thông thực tế sau buổi workshop.
+
+NGÀY 7
+Bước 9: Báo cáo Google
+- Điền form báo cáo Workshop cho Google (Cá nhân) để ghi nhận KPI Đại sứ.
+- Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi.
+- Điền form báo cáo Workshop cho Google (Cá nhân) để ghi nhận KPI Đại sứ.
+Google Form hệ thống (Internal)
+Hoàn thành gửi báo cáo chính thức cho Google đúng hạn.
+
+NGÀY 8
+Bước 10: Bài học & Cải tiến cho workshop
+- Từng thành viên thực hiện nộp báo cáo bài học và cải tiến trực quan bằng giao diện Chat trên Website.
+- Đọc và thảo luận về các bài học rút ra từ các thành viên khác ngay tại popup chi tiết của workshop để dễ phân loại, phân tích.
+Website quy trình (Form Chat), LocalStorage, Supabase
+Tất cả 4 thành viên hoàn thành khảo sát bài học kinh nghiệm của workshop đó.
+
+NGÀY 9
+Bước 11: Tìm trường mới
+- Tìm trường mới (Quay lại Bước 1 để lấy data trường mới, dùng chính video recap vừa làm làm vũ khí tiếp cận để bắt đầu chu kỳ tiếp theo).
+- Tìm trường mới (Quay lại Bước 1 để lấy data trường mới, dùng chính video recap trực tuyến vừa làm làm vũ khí tiếp cận để bắt đầu chu kỳ tiếp theo).
+Google Sheets, Website các trường Đại học
+Bắt đầu một chu kỳ tổ chức mới tại trường đại học tiếp theo.
+PHẦN II: CHI TIẾT NỘI DUNG BIẾN SỐ AUTOMATION TRONG NODE GMAIL (n8n)
+Khi bạn cấu hình node Gmail trong công cụ n8n, hãy sao chép (copy-paste) chính xác cấu trúc text và các nhãn biến số dưới đây để hệ thống tự động cá nhân hóa nội dung gửi cho từng sinh viên:
+1. Mẫu Email Automation Đăng ký Thành công (Gửi sau khi SV điền Form Check-in)
+Tiêu đề: [Xác nhận Đăng ký] Vé mời tham dự Workshop Gemini & AI - Google Student Ambassador x {{ university_name }}
+Nội dung:
+Chào {{ student_name }} (MSSV: {{ student_id }}),
+Chúc mừng bạn đã đăng ký thành công vé tham dự buổi Workshop chuyên sâu về Công nghệ & Sáng tạo nội dung bằng AI từ Đại sứ Sinh viên Google. Dưới đây là thông tin phòng học chính thức của bạn:
+Thời gian: {{ ws_time }}
+Địa điểm: {{ ws_location }} (Vui lòng xuất trình email này tại cửa hội trường nếu tham gia Offline hoặc bấm trực tiếp vào link nếu tham gia Online).
+Hẹn gặp bạn tại buổi chia sẻ!
+2. Mẫu Email Automation Check-out & Tặng quà (Gửi sau khi SV điền Form Khảo sát cuối buổi)
+Tiêu đề: [Quà tặng Độc quyền] Tài liệu Workshop Sáng tạo nội dung cùng Gemini & AI tại {{ university_name }}
+Nội dung:
+Chào {{ student_name }},
+Cảm ơn bạn đã dành thời gian tham gia và đóng góp ý kiến thông qua Form Khảo sát cuối buổi Workshop của chúng mình tại {{ university_name }}.
+Như đã hứa, hòm thư tự động của Đại sứ xin gửi tặng bạn trọn bộ tài liệu độc quyền để thực hành:
+Link tải Slide bài giảng gốc: [Bấm vào đây để tải]
+Kho lưu trữ quà tặng Digital (Bộ Prompt nâng cao, E-book kỹ năng số): {{ gift_link }}
+Hy vọng những kiến thức này sẽ giúp ích cho hành trình học tập và làm truyền thông của bạn. Hãy theo dõi các dự án tiếp theo của mình trên TikTok và Fanpage nhé!
+PHẦN III: QUY TRÌNH BAO QUÁT CÁC TÌNH HUỐNG NÂNG CAO TRÊN THỰC TẾ
+Quản trị rủi ro n8n (Lỗi hệ thống/Hết lượt gửi free): Bạn luôn phải chuẩn bị sẵn một luồng phụ bằng công cụ Mail Merge (Tiện ích mở rộng miễn phí của Google Sheets). Nếu hệ thống n8n gặp sự cố rớt mạng đột xuất, bạn chỉ cần nạp danh sách Excel sinh viên vào và chạy Mail Merge bằng tay, toàn bộ email vé mời hoặc quà tặng vẫn sẽ được gửi đi hàng loạt chỉ trong vòng 5 phút.
+Kỹ thuật bắt khoảnh khắc để làm "Vũ khí" gối đầu: Trong thời gian diễn ra Workshop (Ngày 6), khi chụp ảnh toàn cảnh hội trường +250 người, diễn giả hãy hướng dẫn tất cả sinh viên cùng bật màn hình điện thoại hoặc laptop đang mở giao diện ứng dụng Gemini/AI lên và giơ cao. Khoảnh khắc này khi quay phim ngắn hoặc chụp góc rộng sẽ tạo hiệu ứng thị giác cực kỳ bùng nổ, giúp video Recap đăng TikTok (Ngày 7) dễ dàng lên xu hướng và làm tăng tỷ lệ gật đầu của các Trưởng khoa trường sau lên gấp 3 lần khi họ đọc email đề xuất của bạn.

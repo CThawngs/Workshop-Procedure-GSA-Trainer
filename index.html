@@ -200,6 +200,7 @@
     .tabs {
       display: flex; gap: 4px; background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 12px; padding: 4px; margin-bottom: 24px; width: fit-content;
+      max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
     }
     .tab-btn {
       padding: 8px 24px; border-radius: 8px; border: none; background: none; color: var(--text-muted);
@@ -606,6 +607,11 @@
     .todo-step-header:hover .step-header-actions {
       display: flex;
     }
+    @media (max-width: 768px) {
+      .step-header-actions {
+        display: flex !important;
+      }
+    }
 
     /* Add new step styles */
     .add-step-container {
@@ -981,6 +987,281 @@
       text-align: center;
       padding: 12px;
     }
+
+    /* ===== IMPROVEMENT CHAT MODAL & BUBBLES ===== */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .chat-message {
+      display: flex;
+      gap: 10px;
+      max-width: 85%;
+    }
+    .chat-message.bot {
+      align-self: flex-start;
+    }
+    .chat-message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .chat-avatar.bot {
+      background: var(--primary);
+      color: white;
+    }
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      position: relative;
+    }
+    .chat-message.bot .chat-bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top-left-radius: 4px;
+      color: var(--text);
+    }
+    .chat-message.user .chat-bubble {
+      background: linear-gradient(135deg, var(--google-blue), #1a73e8);
+      color: white;
+      border-top-right-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .chat-message.user .chat-bubble:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.25);
+    }
+    .chat-bubble-edit-tip {
+      font-size: 0.62rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4px;
+      text-align: right;
+      display: block;
+    }
+    .chat-input-area {
+      padding: 10px 12px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-radius: 8px;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 8px 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      resize: none;
+      max-height: 70px;
+      transition: var(--transition);
+      line-height: 1.4;
+    }
+    .chat-input:focus {
+      border-color: var(--primary);
+    }
+    .chat-send-btn {
+      background: var(--primary);
+      border: none;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover {
+      transform: scale(1.05);
+      background: #1a73e8;
+    }
+    /* Typing loader (Gemini Chat style) */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: fit-content;
+      align-self: flex-start;
+      margin-left: 42px;
+      margin-bottom: 10px;
+    }
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1.0); }
+    }
+
+    /* Streaming cursor effect */
+    .streaming-text::after {
+      content: '▋';
+      animation: cursorBlink 0.8s infinite;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    @keyframes cursorBlink {
+      50% { opacity: 0; }
+    }
+
+    /* Bubble edit textarea styles */
+    .bubble-edit-textarea {
+      width: 100%;
+      min-height: 50px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      border-radius: 6px;
+      padding: 6px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      resize: vertical;
+      line-height: 1.4;
+    }
+    .bubble-edit-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .btn-bubble-save, .btn-bubble-cancel {
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      border-radius: 3px;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-bubble-save {
+      background: white;
+      color: var(--google-blue);
+      font-weight: bold;
+    }
+    .btn-bubble-cancel {
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    /* Consolidated reflections styling inside workshop details */
+    .detail-improvements-section {
+      margin-top: 24px;
+    }
+    .detail-improvements-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+    .imp-accordion-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .imp-accordion {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card2);
+      overflow: hidden;
+    }
+    .imp-accordion-header {
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .imp-accordion-header:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .imp-accordion-toggle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+    .imp-accordion.open .imp-accordion-toggle {
+      transform: rotate(180deg);
+    }
+    .imp-accordion-content {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-dark);
+    }
+    .imp-accordion.open .imp-accordion-content {
+      display: flex;
+    }
+    .imp-answer-item {
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+    .imp-q {
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-size: 0.78rem;
+    }
+    .imp-a {
+      color: var(--text);
+      background: var(--bg-card);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+    }
   </style>
 </head>
 <body>
@@ -1009,10 +1290,6 @@
       <span class="header-logo-text">GSA Manager</span>
     </div>
     <div class="header-spacer"></div>
-    <button class="header-crm-btn" onclick="openCRM()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-      <span class="crm-text">📊 CRM School</span>
-    </button>
     <div class="header-user">
       <div class="header-user-avatar" id="headerAvatar"></div>
       <span class="header-user-name" id="headerName"></span>
@@ -1373,6 +1650,91 @@
   </div>
 </div>
 
+<!-- ===== MODAL: BÀI HỌC & CẢI TIẾN WORKSHOP (CHAT LAYOUT) ===== -->
+<div class="modal-overlay" id="workshopImprovementFormModal">
+  <div class="modal modal-md" style="max-width: 600px;">
+    <div class="modal-header">
+      <h2 class="modal-title" id="improvementModalTitle">📝 Báo cáo Bài học & Cải tiến</h2>
+      <button class="modal-close" onclick="closeModal('workshopImprovementFormModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding-top: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);" id="improvementModalSubtitle">Đang nộp cho: <strong>Chí Thắng</strong></span>
+        <span style="font-size: 0.72rem; color: var(--text-muted); cursor: pointer; text-decoration: underline;" onclick="openImprovementsListModalFromChat()">👁️ Xem nhanh tổng hợp</span>
+      </div>
+      <div class="chat-container">
+        <div class="chat-messages" id="improvementChatBox"></div>
+        <div class="typing-indicator" id="improvementTypingIndicator" style="display: none;">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+      <div id="improvementDraftStatus" style="font-size: 0.75rem; color: var(--success); margin-bottom: 10px; text-align: left; display: none;">
+        💾 Bản nháp đã được tự động lưu vào máy
+      </div>
+      <div class="chat-input-area" id="improvementChatInputArea">
+        <textarea class="chat-input" id="improvementChatInput" placeholder="Nhập câu trả lời dài của bạn tại đây... (Nhấn Enter hoặc nút bên cạnh để gửi)" onkeydown="handleChatInputKeyDown(event)"></textarea>
+        <button class="chat-send-btn" onclick="sendChatMessage()" title="Gửi câu trả lời">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div id="improvementSubmitArea" style="display: none; padding: 10px 0; text-align: center;">
+        <button class="btn-success" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 8px;" onclick="showSubmitConfirmModal()">
+          🚀 Nộp báo cáo cải tiến cho Workshop
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: XÁC NHẬN HÌNH THỨC NỘP BÁO CÁO ===== -->
+<div class="modal-overlay" id="improvementSubmitConfirmModal">
+  <div class="modal modal-sm" style="max-width: 420px; z-index: 10100;">
+    <div class="modal-header">
+      <h2 class="modal-title">Chọn hình thức đăng tải</h2>
+      <button class="modal-close" onclick="closeModal('improvementSubmitConfirmModal')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align: center; padding-bottom: 20px;">
+      <div style="font-size: 3rem; margin-bottom: 15px;">👥</div>
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">Bạn muốn nộp báo cáo cải tiến dưới tên nhân vật hay ẩn danh?</h3>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.4;">
+        Mọi thành viên đều có thể thấy câu trả lời của nhau trong popup chi tiết workshop. Bạn có thể chọn hiển thị danh tính hoặc ẩn danh hoàn toàn.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn-primary" style="padding: 10px; font-weight: 600;" onclick="submitImprovementReport(false)">
+          👤 Nộp có danh tính (Công khai)
+        </button>
+        <button class="btn-secondary" style="padding: 10px; font-weight: 600; border-color: var(--border-bright);" onclick="submitImprovementReport(true)">
+          🕵️ Nộp dưới dạng Ẩn danh
+        </button>
+        <button class="btn-secondary" style="padding: 8px; font-size: 0.8rem; color: var(--text-muted); border: none;" onclick="closeModal('improvementSubmitConfirmModal')">
+          Quay lại chỉnh sửa câu trả lời
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: TỔNG HỢP BÀI HỌC & CẢI TIẾN WORKSHOP (XEM NHANH) ===== -->
+<div class="modal-overlay" id="improvementsListModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title" id="improvementsListModalTitle">📊 Tổng hợp Bài học & Cải tiến</h2>
+      <button class="modal-close" onclick="closeModal('improvementsListModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;" id="improvementsListModalSubtitle">Workshop: ...</div>
+      <div id="improvementsListContainer" style="max-height: 500px; overflow-y: auto;">
+        <!-- Consolidated cards rendered dynamically -->
+      </div>
+      <div class="form-actions" style="margin-top: 15px;">
+        <button class="btn-secondary" onclick="closeModal('improvementsListModal')">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL: PASSWORD VERIFICATION ===== -->
 <div class="modal-overlay" id="passwordModal">
   <div class="modal modal-sm">
@@ -1552,22 +1914,22 @@ const CHARACTERS = [
 const TODO_STEPS = [
   {
     id: 'step1', day: 'Ngày 1',
-    label: 'Bước 1: Tìm trường & Chốt lịch',
+    label: 'Bước 1: Tìm trường & Quét thông tin',
     subs: [
       'Rà soát danh sách trường tiềm năng từ CRM School',
       'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC)',
       'Pitch proposal và chốt lịch workshop chính thức',
       'Xác nhận số lượng sinh viên mục tiêu (+250 SV)',
       'Lấy thông tin hội trường và cơ sở vật chất',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Chí Thắng)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Xuân Thi)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Thảo)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Phương Linh)'
+      'Điền form đăng ký workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
+      'Điền form đăng ký workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
+      'Điền form đăng ký workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
+      'Điền form đăng ký workshop cho Google (Cá nhân - Phương Linh) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)'
     ]
   },
   {
     id: 'step2', day: 'Ngày 2',
-    label: 'Bước 2: Booking hội trường & Truyền thông',
+    label: 'Bước 2: Gửi Email Đề xuất Phối hợp',
     subs: [
       'Gửi email booking hội trường chính thức',
       'Tạo key visual và bộ ấn phẩm (poster, banner)',
@@ -1578,18 +1940,18 @@ const TODO_STEPS = [
   },
   {
     id: 'step3', day: 'Ngày 3',
-    label: 'Bước 3: Thiết kế & In ấn',
+    label: 'Bước 3: Thủ tục Google & Thiết kế Asset',
     subs: [
       'Hoàn thiện thiết kế Banner 4m x 2.5m (Bạt Hiflex)',
       'Thiết kế 2 tấm Standee 0.6m x 1.6m',
       'Gửi file đi in ấn (Banner + Standee)',
-      'Chuẩn bị slide bài giảng AI & Gemini',
+      'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k)',
       'Thiết kế QR Code check-in/check-out'
     ]
   },
   {
     id: 'step4', day: 'Ngày 4',
-    label: 'Bước 4: Cài đặt Automation Check-in',
+    label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
     subs: [
       'Tạo Google Form đăng ký (check-in) với đầy đủ trường thông tin',
       'Cấu hình n8n workflow gửi email xác nhận tự động',
@@ -1611,28 +1973,59 @@ const TODO_STEPS = [
   },
   {
     id: 'step6', day: 'Ngày 6',
-    label: 'Bước 6 & 7: Vận hành & Automation Check-out',
+    label: 'Bước 6: Vận hành & Diễn thuyết',
     subs: [
       'Có mặt trước 2 tiếng setup âm thanh, máy chiếu, micro (Sound-check)',
       'Mở phòng họp trực tuyến trước 1 tiếng, setup quyền Host/Co-host',
       'Bật tính năng Record cuộc họp, bật nhạc nền chờ sinh viên',
       'Đội media quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người',
-      'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát)',
-      'Kích hoạt n8n luồng tự động gửi email cảm ơn + tặng quà số',
-      'Chụp ảnh toàn cảnh khoảnh khắc "gio điện thoại Gemini" đặc sắc'
+      'Chụp ảnh toàn cảnh khoảnh khắc "giơ điện thoại Gemini" đặc sắc'
     ]
   },
   {
-    id: 'step7', day: 'Ngày 7',
-    label: 'Bước 8 & 9: Hậu kỳ, Báo cáo & Tìm trường mới',
+    id: 'step7', day: 'Ngày 6',
+    label: 'Bước 7: Automation Check-out & Tặng quà',
     subs: [
+      'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform)',
+      'Kích hoạt n8n luồng tự động gửi email cảm ơn + tặng quà số'
+    ]
+  },
+  {
+    id: 'step8', day: 'Ngày 7',
+    label: 'Bước 8: Hậu kỳ & Truyền thông Nghiệm thu',
+    subs: [
+      'Upload source hình ảnh/video gốc lên folder "Source Media (Gốc trong Google Drive)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
       'Edit hình ảnh thực tế (Lightroom) và dựng video Recap ngắn (CapCut)',
-      'Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Chí Thắng)',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Xuân Thi)',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Thảo)',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Phương Linh)',
-      'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi',
+      'Upload các hình/video đã edit vào trong folder "Source Media (Đã Edit)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
+      'Thêm hình ảnh đã edit vào trong link URL (Cung cấp sau bằng việc edit to-do)',
+      'Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok'
+    ]
+  },
+  {
+    id: 'step9', day: 'Ngày 7',
+    label: 'Bước 9: Báo cáo Google',
+    subs: [
+      'Điền form báo cáo Workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
+      'Điền form báo cáo Workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
+      'Điền form báo cáo Workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
+      'Điền form báo cáo Workshop cho Google (Cá nhân - Phương Linh) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
+      'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
+    ]
+  },
+  {
+    id: 'step10', day: 'Ngày 8',
+    label: 'Bước 10: Bài học & Cải tiến cho workshop',
+    subs: [
+      'Chí Thắng - Nộp báo cáo cải tiến',
+      'Xuân Thi - Nộp báo cáo cải tiến',
+      'Thảo - Nộp báo cáo cải tiến',
+      'Phương Linh - Nộp báo cáo cải tiến'
+    ]
+  },
+  {
+    id: 'step11', day: 'Ngày 9',
+    label: 'Bước 11: Tìm trường mới',
+    subs: [
       'Tìm trường mới (quay lại Bước 1, dùng video Recap làm vũ khí tiếp cận)'
     ]
   }
@@ -1656,6 +2049,62 @@ let crmSchools = [];
 let emailTemplates = [];
 let linkResources = [];
 
+let workshopImprovements = [];
+let currentChatWsId = null;
+let currentChatCharId = null;
+let currentChatAnswers = [];
+let currentQuestionIndex = 0;
+let isTypingBot = false;
+let editingBubbleIndex = null;
+
+const IMPROVEMENT_QUESTIONS = [
+  {
+    id: 'q1',
+    category: 'Suy ngẫm',
+    text: 'Nhìn lại toàn bộ workshop hôm nay, khoảnh khắc nào trên sân khấu hoặc trong hội trường khiến bạn cảm thấy tự hào và bùng nổ năng lượng nhất? Điều gì đã tạo nên khoảnh khắc tuyệt vời đó?'
+  },
+  {
+    id: 'q2',
+    category: 'Suy ngẫm',
+    text: 'Có tình huống phát sinh nào nằm ngoài kịch bản đã chuẩn bị không? Lúc đó bạn đã xử lý như thế nào?'
+  },
+  {
+    id: 'q3',
+    category: 'Suy ngẫm',
+    text: 'Nếu được quay ngược thời gian và thay đổi MỘT hành động/quyết định duy nhất trong khâu chuẩn bị hoặc vận hành của riêng bạn hôm nay, bạn sẽ thay đổi điều gì để mọi thứ trọn vẹn hơn?'
+  },
+  {
+    id: 'q4',
+    category: 'Góc nhìn từ người tham dự',
+    text: 'Nếu được dùng 3 tính từ để miêu tả năng lượng và phản ứng của các bạn sinh viên ngày hôm nay, bạn sẽ dùng từ gì? Theo bạn, yếu tố nào từ phía team mình đã dẫn đến phản ứng đó của các bạn?'
+  },
+  {
+    id: 'q5',
+    category: 'Góc nhìn từ người tham dự',
+    text: 'Ở phần nội dung hoặc hoạt động nào, bạn cảm thấy hội trường có dấu hiệu xao nhãng hoặc mất tập trung nhất? Theo bạn, nguyên nhân do đâu (do thời lượng, cách truyền đạt, hay độ khó của nội dung)?'
+  },
+  {
+    id: 'q6',
+    category: 'Góc nhìn từ người tham dự',
+    text: 'Thử đặt mình vào vị trí của một sinh viên tham dự từ đầu đến cuối, giá trị lớn nhất đọng lại trong bạn khi bước ra khỏi hội trường là gì?'
+  },
+  {
+    id: 'q7',
+    category: 'Rút kinh nghiệm & Cải tiến quy trình',
+    text: 'Có khớp nối nào chúng ta bị "trật khớp" với nhau không, và làm sao để phối hợp mượt mà như một khối thống nhất ở lần sau?'
+  },
+  {
+    id: 'q8',
+    category: 'Rút kinh nghiệm & Cải tiến quy trình',
+    text: 'Nhìn lại tổng thể, bước nào đang khiến bạn và team cảm thấy "bào mòn" thể lực hoặc tốn nhiều thời gian nhất mà hiệu quả mang lại chưa tương xứng?'
+  },
+  {
+    id: 'q9',
+    category: 'Rút kinh nghiệm & Cải tiến quy trình',
+    text: 'Để các chiến dịch sau diễn ra trơn tru và giải phóng sức lao động cho team hơn, bạn đề xuất chúng ta cần thay đổi, thêm, hoặc bớt điều gì vào quy trình tổ chức workshop hiện tại của GSA Trainer? Tại sao? (Website quy trình: https://workshop-procedure-gsa-trainer.netlify.app/)'
+  }
+];
+
 /* ========== BROADCAST CHANNEL ========== */
 let bc = null;
 try {
@@ -1677,6 +2126,10 @@ try {
       if (e.data.linkResources) {
         linkResources = e.data.linkResources;
         localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(linkResources));
+      }
+      if (e.data.workshopImprovements) {
+        workshopImprovements = e.data.workshopImprovements;
+        localStorage.setItem('gsa_improvements', JSON.stringify(workshopImprovements));
       }
       
       if (currentMainTab === 'workshops') renderWorkshops();
@@ -1702,6 +2155,7 @@ function broadcast(openId) {
       crmSchools: crmSchools,
       emailTemplates: emailTemplates,
       linkResources: linkResources,
+      workshopImprovements: workshopImprovements,
       openId: openId || null
     });
   } catch(ex) {}
@@ -1748,10 +2202,11 @@ function initSupabaseRealtime() {
       .channel('gsa_realtime_channel')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.workshops' }, (payload) => {
         if (payload.new && payload.new.value) {
+          var upgradedVal = upgradeWorkshops(payload.new.value);
           const oldStr = localStorage.getItem(STORAGE_KEY);
-          const newStr = JSON.stringify(payload.new.value);
+          const newStr = JSON.stringify(upgradedVal);
           if (oldStr !== newStr) {
-            workshops = payload.new.value;
+            workshops = upgradedVal;
             try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
             if (currentMainTab === 'workshops') renderWorkshops();
             
@@ -1804,6 +2259,27 @@ function initSupabaseRealtime() {
           }
         }
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.workshop_improvements' }, (payload) => {
+        if (payload.new && payload.new.value) {
+          const oldStr = localStorage.getItem('gsa_improvements');
+          const newStr = JSON.stringify(payload.new.value);
+          if (oldStr !== newStr) {
+            workshopImprovements = payload.new.value;
+            try { localStorage.setItem('gsa_improvements', newStr); } catch(e) {}
+            showToast('🔄 Đã tự động cập nhật Báo cáo Cải tiến Realtime!', 'success');
+            
+            // Re-render Detail modal if open (since it has consolidated improvements section)
+            const detailModal = document.getElementById('workshopDetailModal');
+            if (detailModal && detailModal.classList.contains('open')) {
+              const titleEl = document.getElementById('detailModalTitle');
+              if (titleEl) {
+                const openWs = workshops.find(function(w) { return w.name === titleEl.textContent; });
+                if (openWs) renderDetail(openWs);
+              }
+            }
+          }
+        }
+      })
       .subscribe();
   } catch(e) {
     console.error("Lỗi cấu hình Realtime:", e);
@@ -1847,12 +2323,92 @@ function saveResourcesData() {
   }
 }
 
+function upgradeWorkshops(arr) {
+  if (!Array.isArray(arr)) return [];
+  return arr.map(function(ws) {
+    if (!ws.todos) return ws;
+    
+    var hasStep10 = ws.todos.some(function(t) { return t.id === 'step10'; });
+    var hasStep11 = ws.todos.some(function(t) { return t.id === 'step11'; });
+    if (ws.todos.length === 11 && hasStep10 && hasStep11) {
+      return ws;
+    }
+
+    var oldSubStates = {};
+    ws.todos.forEach(function(step) {
+      if (Array.isArray(step.subs)) {
+        step.subs.forEach(function(sub) {
+          if (sub.text) {
+            oldSubStates[sub.text] = !!sub.done;
+          }
+        });
+      }
+    });
+
+    function getOldDone(text, kw) {
+      if (oldSubStates[text] !== undefined) {
+        return oldSubStates[text];
+      }
+      var foundKey = Object.keys(oldSubStates).find(function(k) {
+        return k.indexOf(kw) !== -1;
+      });
+      if (foundKey !== undefined) {
+        return oldSubStates[foundKey];
+      }
+      return false;
+    }
+
+    var newTodos = TODO_STEPS.map(function(stepTmpl) {
+      var oldStep = ws.todos.find(function(t) { return t.id === stepTmpl.id; }) || {};
+      
+      var newSubs = stepTmpl.subs.map(function(subText, subIdx) {
+        var subId = stepTmpl.id + '_' + subIdx;
+        var doneState = false;
+        
+        if (stepTmpl.id === 'step10') {
+          if (subText.indexOf('Chí Thắng') !== -1) doneState = getOldDone(subText, 'Chí Thắng');
+          else if (subText.indexOf('Xuân Thi') !== -1) doneState = getOldDone(subText, 'Xuân Thi');
+          else if (subText.indexOf('Thảo') !== -1) doneState = getOldDone(subText, 'Thảo');
+          else if (subText.indexOf('Phương Linh') !== -1) doneState = getOldDone(subText, 'Phương Linh');
+        } else if (stepTmpl.id === 'step11') {
+          doneState = getOldDone(subText, 'Tìm trường mới');
+        } else {
+          doneState = getOldDone(subText, subText.substring(0, 15));
+        }
+
+        return {
+          id: subId,
+          text: subText,
+          done: doneState
+        };
+      });
+
+      return {
+        id: stepTmpl.id,
+        day: stepTmpl.day,
+        label: stepTmpl.label,
+        done: newSubs.every(function(s) { return s.done; }),
+        assignee: oldStep.assignee || null,
+        expanded: !!oldStep.expanded,
+        subs: newSubs
+      };
+    });
+
+    ws.todos = newTodos;
+    return ws;
+  });
+}
+
 function loadData() {
-  try { workshops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { workshops = []; }
+  try {
+    workshops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    workshops = upgradeWorkshops(workshops);
+  } catch(e) { workshops = []; }
   try { crmSchools = JSON.parse(localStorage.getItem(CRM_STORAGE_KEY)) || []; } catch(e) { crmSchools = []; }
   try { emailTemplates = JSON.parse(localStorage.getItem(TEMPLATE_STORAGE_KEY)) || []; } catch(e) { emailTemplates = []; }
   try { linkResources = JSON.parse(localStorage.getItem(RESOURCE_STORAGE_KEY)) || []; } catch(e) { linkResources = []; }
   try { currentUser = JSON.parse(localStorage.getItem(USER_KEY)); } catch(e) { currentUser = null; }
+  try { workshopImprovements = JSON.parse(localStorage.getItem('gsa_improvements')) || []; } catch(e) { workshopImprovements = []; }
 
   if (emailTemplates.length === 0) {
     emailTemplates = DEFAULT_EMAIL_TEMPLATES.slice();
@@ -1867,10 +2423,11 @@ function loadData() {
     supabaseClient.from('gsa_storage').select('value').eq('key', 'workshops').single()
       .then(function(res) {
         if (res.data && res.data.value) {
+          var upgradedVal = upgradeWorkshops(res.data.value);
           const oldStr = localStorage.getItem(STORAGE_KEY);
-          const newStr = JSON.stringify(res.data.value);
+          const newStr = JSON.stringify(upgradedVal);
           if (oldStr !== newStr) {
-            workshops = res.data.value;
+            workshops = upgradedVal;
             try { localStorage.setItem(STORAGE_KEY, newStr); } catch(e) {}
             if (currentMainTab === 'workshops') renderWorkshops();
           }
@@ -1925,6 +2482,21 @@ function loadData() {
         }
       })
       .catch(function(err) { console.error("Lỗi tải Resource Links:", err); });
+
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'workshop_improvements').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          const oldStr = localStorage.getItem('gsa_improvements');
+          const newStr = JSON.stringify(res.data.value);
+          if (oldStr !== newStr) {
+            workshopImprovements = res.data.value;
+            try { localStorage.setItem('gsa_improvements', newStr); } catch(e) {}
+          }
+        } else {
+          supabaseClient.from('gsa_storage').upsert({ key: 'workshop_improvements', value: [] }).then();
+        }
+      })
+      .catch(function(err) { console.error("Lỗi tải cải tiến:", err); });
       
     supabaseClient.from('gsa_storage').select('value').eq('key', 'ct_password').single()
       .then(function(res) {
@@ -1955,6 +2527,18 @@ function saveLocal(doBroadcast) {
       .catch(function(err) {
         console.error("Lỗi kết nối Supabase:", err);
       });
+  }
+}
+
+function saveImprovements() {
+  try { localStorage.setItem('gsa_improvements', JSON.stringify(workshopImprovements)); } catch(e) {}
+  broadcast(null);
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'workshop_improvements', value: workshopImprovements, updated_at: new Date().toISOString() })
+      .then(function(res) {
+        if (res.error) console.error("Lỗi sync cải tiến lên Supabase:", res.error);
+      })
+      .catch(function(err) { console.error("Lỗi kết nối Supabase:", err); });
   }
 }
 
@@ -2015,6 +2599,15 @@ function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+function escWithLinks(text) {
+  if (!text) return '';
+  var escaped = esc(text);
+  var urlRegex = /(https?:\/\/[^\s\)\"\'\<]+)/g;
+  return escaped.replace(urlRegex, function(url) {
+    return '<a href="' + url + '" target="_blank" onclick="event.stopPropagation()" class="sub-link" style="color:var(--primary);text-decoration:underline;margin-left:4px;">[Link 🔗]</a>';
+  });
+}
+
 /* ========== TOAST ========== */
 function showToast(msg, type) {
   type = type || 'info';
@@ -2030,7 +2623,7 @@ function showToast(msg, type) {
 }
 
 /* ========== INIT ========== */
-let fpDeadline;
+let fpDeadline, fpCrmWorkshopDate;
 function init() {
   initSupabase();
   loadData();
@@ -2038,6 +2631,14 @@ function init() {
   
   // Initialize Flatpickr for Deadline only
   fpDeadline = flatpickr("#wsDeadline", {
+    locale: "vn",
+    dateFormat: "Y-m-d",
+    theme: "dark",
+    allowInput: true
+  });
+
+  // Initialize Flatpickr for CRM workshop date
+  fpCrmWorkshopDate = flatpickr("#crmWorkshopDate", {
     locale: "vn",
     dateFormat: "Y-m-d",
     theme: "dark",
@@ -2424,6 +3025,40 @@ function renderDetail(ws) {
     ? '<button class="btn-danger" style="margin-right:auto" onclick="confirmDelete(\'' + ws.id + '\',null);closeModal(\'workshopDetailModal\')">🗑️ Xóa Workshop</button>'
     : '';
 
+  var filteredImps = workshopImprovements.filter(function(imp) {
+    return imp.workshopId === ws.id;
+  });
+  
+  var impsHtml = '';
+  if (filteredImps.length > 0) {
+    impsHtml = '<div class="detail-improvements-section">' +
+      '<div class="detail-improvements-title">💬 Bài học & Cải tiến từ team (' + filteredImps.length + ')</div>' +
+      '<div class="imp-accordion-container">' +
+      filteredImps.map(function(imp) {
+        var authorHTML = '';
+        if (imp.isAnonymous) {
+          authorHTML = '🕵️ Ẩn danh';
+        } else {
+          var charObj = getChar(imp.characterId);
+          authorHTML = charObj ? (charObj.emoji + ' ' + charObj.name) : imp.characterName;
+        }
+        var answersList = imp.answers.map(function(ans, index) {
+          return '<div class="imp-answer-item">' +
+            '<div class="imp-q">Câu ' + (index+1) + ': ' + esc(ans.questionText) + '</div>' +
+            '<div class="imp-a">' + esc(ans.answerText).replace(/\n/g, '<br/>') + '</div>' +
+            '</div>';
+        }).join('');
+        
+        return '<div class="imp-accordion">' +
+          '<div class="imp-accordion-header" onclick="toggleAccordion(this)">' +
+          '<span>' + authorHTML + '</span><span class="imp-accordion-toggle">▼</span>' +
+          '</div>' +
+          '<div class="imp-accordion-content">' + answersList + '</div>' +
+          '</div>';
+      }).join('') +
+      '</div></div>';
+  }
+
   var html =
     '<div style="margin-bottom:20px">' +
     '<div style="font-size:1.4rem;font-weight:800;margin-bottom:6px">' + esc(ws.name) + '</div>' +
@@ -2439,11 +3074,12 @@ function renderDetail(ws) {
     '<div class="progress-bar-wrap"><div class="progress-bar-fill" id="detail-bar-' + ws.id + '" style="width:' + pct + '%"></div></div>' +
     '</div>' +
     '<div class="divider"></div>' +
-    '<div class="todo-section-title">📋 Quy trình 7 bước tổ chức Workshop GSA</div>' +
+    '<div class="todo-section-title">📋 Quy trình tổ chức Workshop GSA</div>' +
     ws.todos.map(function(step) { return buildTodoStep(ws.id, step); }).join('') +
     '<div class="add-step-container">' +
     '<button class="add-step-btn" onclick="submitAddStep(\'' + ws.id + '\')">＋ Thêm bước mới</button>' +
     '</div>' +
+    impsHtml +
     '<div class="form-actions">' + delBtn +
     '<button class="btn-secondary" onclick="openEdit(\'' + ws.id + '\',null);closeModal(\'workshopDetailModal\')">✏️ Chỉnh sửa</button>' +
     '<button class="btn-secondary" onclick="closeModal(\'workshopDetailModal\')">Đóng</button>' +
@@ -2458,9 +3094,9 @@ function buildTodoStep(wsId, step) {
   var allDone = doneCount === total;
 
   var stepClass = '';
-  if (step.id === 'step6' || step.label.indexOf('6 & 7') !== -1) {
+  if (step.id === 'step6' || step.id === 'step7' || step.label.indexOf('Bước 6') !== -1 || step.label.indexOf('Bước 7') !== -1) {
     stepClass = ' step-blue';
-  } else if (step.id === 'step7' || step.label.indexOf('8 & 9') !== -1) {
+  } else if (step.id === 'step8' || step.id === 'step9' || step.label.indexOf('Bước 8') !== -1 || step.label.indexOf('Bước 9') !== -1) {
     stepClass = ' step-green';
   }
 
@@ -2491,7 +3127,7 @@ function buildTodoStep(wsId, step) {
         ' role="checkbox" aria-checked="' + sub.done + '"' +
         ' onkeydown="if(event.key===\'Enter\'||event.key===\' \')toggleSub(\'' + wsId + '\',\'' + step.id + '\',\'' + sub.id + '\')">' +
         '<div class="sub-checkbox ' + (sub.done?'done':'') + '"></div>' +
-        '<span class="sub-text ' + (sub.done?'done':'') + '" id="sub-text-' + wsId + '-' + step.id + '-' + sub.id + '">' + esc(sub.text) + '</span>' +
+        '<span class="sub-text ' + (sub.done?'done':'') + '" id="sub-text-' + wsId + '-' + step.id + '-' + sub.id + '">' + escWithLinks(sub.text) + '</span>' +
         '<div class="sub-actions" onclick="event.stopPropagation()">' +
         '<button class="sub-action-btn edit" onclick="startEditSub(\'' + wsId + '\',\'' + step.id + '\',\'' + sub.id + '\',event)" title="Chỉnh sửa">✏️</button>' +
         '<button class="sub-action-btn delete" onclick="deleteSub(\'' + wsId + '\',\'' + step.id + '\',\'' + sub.id + '\',event)" title="Xóa">🗑️</button>' +
@@ -2540,6 +3176,10 @@ function toggleExpand(wsId, stepId) {
 
 function toggleAllSubs(wsId, stepId, event) {
   event.stopPropagation();
+  if (stepId === 'step10') {
+    showToast('⚠️ Bạn bắt buộc phải nộp báo cáo bài học & cải tiến để hoàn thành bước này.', 'warning');
+    return;
+  }
   updateWs(wsId, function(ws) {
     var step = ws.todos.find(function(t) { return t.id === stepId; });
     if (!step) return;
@@ -2549,6 +3189,25 @@ function toggleAllSubs(wsId, stepId, event) {
 }
 
 function toggleSub(wsId, stepId, subId) {
+  var ws = workshops.find(function(w) { return w.id === wsId; });
+  if (!ws) return;
+
+  if (stepId === 'step10') {
+    openImprovementForm(wsId, subId);
+    return;
+  }
+
+  if (stepId === 'step11') {
+    var step10 = ws.todos.find(function(t) { return t.id === 'step10'; });
+    if (step10) {
+      var allDone = step10.subs.every(function(s) { return s.done; });
+      if (!allDone) {
+        showToast('⚠️ Cần nộp đủ 4 báo cáo Bài học & Cải tiến (Bước 10) trước khi tìm trường mới!', 'warning');
+        return;
+      }
+    }
+  }
+
   updateWs(wsId, function(ws) {
     var step = ws.todos.find(function(t) { return t.id === stepId; });
     if (!step) return;
@@ -3153,6 +3812,7 @@ function openAddCRMSchool() {
   document.getElementById('crmModalTitle').textContent = 'Thêm Trường học mới';
   document.getElementById('crmSchoolForm').reset();
   document.getElementById('crmSchoolId').value = '';
+  if (fpCrmWorkshopDate) fpCrmWorkshopDate.clear();
   openModal('crmSchoolModal');
 }
 
@@ -3176,6 +3836,7 @@ function openEditCRMSchool(id) {
   document.getElementById('crmStudentCount').value = s.studentCount || '';
   document.getElementById('crmEventNotes').value = s.eventNotes || '';
   
+  if (fpCrmWorkshopDate) fpCrmWorkshopDate.setDate(s.workshopDate || '');
   openModal('crmSchoolModal');
 }
 
@@ -3679,8 +4340,385 @@ function switchMainTab(tab) {
   }
 }
 
-function openCRM() {
-  switchMainTab('crm');
+/* ========== BÀI HỌC & CẢI TIẾN WORKSHOP LOGIC ========== */
+function openImprovementForm(wsId, subId) {
+  currentChatWsId = wsId;
+  
+  var charIndex = -1;
+  if (subId.indexOf('_0') !== -1) charIndex = 0;
+  else if (subId.indexOf('_1') !== -1) charIndex = 1;
+  else if (subId.indexOf('_2') !== -1) charIndex = 2;
+  else if (subId.indexOf('_3') !== -1) charIndex = 3;
+  
+  if (charIndex === -1) {
+    showToast('⚠️ Không xác định được nhân vật phụ trách.', 'error');
+    return;
+  }
+  
+  var charObj = CHARACTERS[charIndex];
+  currentChatCharId = charObj.id;
+  
+  document.getElementById('improvementModalSubtitle').innerHTML = 'Đang nộp cho: <strong>' + charObj.emoji + ' ' + charObj.name + '</strong>';
+  
+  var existing = workshopImprovements.find(function(item) {
+    return item.workshopId === wsId && item.characterId === charObj.id;
+  });
+  
+  if (existing) {
+    currentChatAnswers = existing.answers.map(function(ans) { return ans.answerText; });
+    currentQuestionIndex = IMPROVEMENT_QUESTIONS.length;
+    editingBubbleIndex = null;
+    isTypingBot = false;
+    renderImprovementChat(false);
+  } else {
+    var draftKey = 'gsa_draft_improvement_' + wsId + '_' + charObj.id;
+    var draft = null;
+    try { draft = JSON.parse(localStorage.getItem(draftKey)); } catch(e) {}
+    
+    if (draft && Array.isArray(draft.answers)) {
+      currentChatAnswers = draft.answers;
+      currentQuestionIndex = draft.questionIndex || 0;
+    } else {
+      currentChatAnswers = [];
+      currentQuestionIndex = 0;
+    }
+    editingBubbleIndex = null;
+    isTypingBot = false;
+    
+    renderImprovementChat(true);
+  }
+  
+  document.getElementById('improvementDraftStatus').style.display = 'none';
+  openModal('workshopImprovementFormModal');
+}
+
+let streamTimer = null;
+function streamText(containerEl, fullText, callback) {
+  if (streamTimer) clearInterval(streamTimer);
+  containerEl.classList.add('streaming-text');
+  containerEl.textContent = '';
+  var i = 0;
+  streamTimer = setInterval(function() {
+    if (i < fullText.length) {
+      containerEl.textContent += fullText.charAt(i);
+      i++;
+      var chatBox = document.getElementById('improvementChatBox');
+      if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+    } else {
+      clearInterval(streamTimer);
+      streamTimer = null;
+      containerEl.classList.remove('streaming-text');
+      if (callback) callback();
+    }
+  }, 10);
+}
+
+function renderImprovementChat(doStreamLatest) {
+  var chatBox = document.getElementById('improvementChatBox');
+  if (!chatBox) return;
+  chatBox.innerHTML = '';
+
+  var charObj = getChar(currentChatCharId);
+  if (!charObj) return;
+
+  for (var i = 0; i < currentQuestionIndex; i++) {
+    var q = IMPROVEMENT_QUESTIONS[i];
+    var a = currentChatAnswers[i] || '';
+
+    var botHtml = document.createElement('div');
+    botHtml.className = 'chat-message bot';
+    botHtml.innerHTML = '<div class="chat-avatar bot">🤖</div>' +
+      '<div class="chat-bubble"><strong>Câu ' + (i+1) + ': ' + q.category + '</strong><br/>' + esc(q.text) + '</div>';
+    chatBox.appendChild(botHtml);
+
+    if (i < currentChatAnswers.length) {
+      var userHtml = document.createElement('div');
+      userHtml.className = 'chat-message user';
+      
+      var isEditing = (editingBubbleIndex === i);
+      var bubbleContent = '';
+      if (isEditing) {
+        bubbleContent = '<textarea class="bubble-edit-textarea" id="bubbleEdit-' + i + '">' + esc(a) + '</textarea>' +
+          '<div class="bubble-edit-actions">' +
+          '<button class="btn-bubble-cancel" onclick="cancelBubbleEdit(event)">Hủy</button>' +
+          '<button class="btn-bubble-save" onclick="saveBubbleEdit(' + i + ', event)">Lưu</button>' +
+          '</div>';
+      } else {
+        bubbleContent = esc(a) + '<span class="chat-bubble-edit-tip">✏️ Click để chỉnh sửa</span>';
+      }
+
+      userHtml.innerHTML = '<div class="chat-avatar" style="background:' + charObj.color + ';color:white">' + charObj.emoji + '</div>' +
+        '<div class="chat-bubble" data-index="' + i + '" onclick="handleBubbleClick(this, event)">' + bubbleContent + '</div>';
+      chatBox.appendChild(userHtml);
+    }
+  }
+
+  if (currentQuestionIndex < IMPROVEMENT_QUESTIONS.length) {
+    document.getElementById('improvementChatInputArea').style.display = 'flex';
+    document.getElementById('improvementSubmitArea').style.display = 'none';
+    document.getElementById('improvementChatInput').value = '';
+
+    var q = IMPROVEMENT_QUESTIONS[currentQuestionIndex];
+    if (doStreamLatest) {
+      isTypingBot = true;
+      document.getElementById('improvementTypingIndicator').style.display = 'flex';
+      chatBox.scrollTop = chatBox.scrollHeight;
+      
+      setTimeout(function() {
+        document.getElementById('improvementTypingIndicator').style.display = 'none';
+        
+        var botHtml = document.createElement('div');
+        botHtml.className = 'chat-message bot';
+        
+        var avatar = document.createElement('div');
+        avatar.className = 'chat-avatar bot';
+        avatar.textContent = '🤖';
+        botHtml.appendChild(avatar);
+        
+        var bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        botHtml.appendChild(bubble);
+        chatBox.appendChild(botHtml);
+        
+        var fullText = 'Câu ' + (currentQuestionIndex + 1) + ' (' + q.category + '):\n' + q.text;
+        
+        streamText(bubble, fullText, function() {
+          isTypingBot = false;
+          var input = document.getElementById('improvementChatInput');
+          if (input) {
+            input.focus();
+            input.value = '';
+          }
+        });
+      }, 700);
+    } else {
+      var botHtml = document.createElement('div');
+      botHtml.className = 'chat-message bot';
+      botHtml.innerHTML = '<div class="chat-avatar bot">🤖</div>' +
+        '<div class="chat-bubble"><strong>Câu ' + (currentQuestionIndex + 1) + ': ' + q.category + '</strong><br/>' + esc(q.text) + '</div>';
+      chatBox.appendChild(botHtml);
+      isTypingBot = false;
+      setTimeout(function() {
+        var input = document.getElementById('improvementChatInput');
+        if (input) input.focus();
+      }, 50);
+    }
+  } else {
+    document.getElementById('improvementChatInputArea').style.display = 'none';
+    document.getElementById('improvementSubmitArea').style.display = 'block';
+  }
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function handleChatInputKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChatMessage();
+  }
+}
+
+function sendChatMessage() {
+  if (isTypingBot) return;
+  var input = document.getElementById('improvementChatInput');
+  if (!input) return;
+  var val = input.value.trim();
+  if (!val) return;
+  
+  currentChatAnswers[currentQuestionIndex] = val;
+  currentQuestionIndex++;
+  
+  saveImprovementDraft();
+  renderImprovementChat(true);
+}
+
+function saveImprovementDraft() {
+  var key = 'gsa_draft_improvement_' + currentChatWsId + '_' + currentChatCharId;
+  var draft = {
+    answers: currentChatAnswers,
+    questionIndex: currentQuestionIndex
+  };
+  localStorage.setItem(key, JSON.stringify(draft));
+  
+  var statusEl = document.getElementById('improvementDraftStatus');
+  if (statusEl) {
+    statusEl.textContent = '💾 Bản nháp đã tự động lưu lúc ' + new Date().toLocaleTimeString('vi-VN');
+    statusEl.style.display = 'block';
+  }
+}
+
+function handleBubbleClick(bubbleEl, event) {
+  var index = parseInt(bubbleEl.dataset.index);
+  if (editingBubbleIndex !== null) return;
+  startBubbleEdit(index, event);
+}
+
+function startBubbleEdit(index, event) {
+  if (event) event.stopPropagation();
+  editingBubbleIndex = index;
+  renderImprovementChat(false);
+  
+  setTimeout(function() {
+    var ta = document.getElementById('bubbleEdit-' + index);
+    if (ta) ta.focus();
+  }, 50);
+}
+
+function saveBubbleEdit(index, event) {
+  if (event) event.stopPropagation();
+  var ta = document.getElementById('bubbleEdit-' + index);
+  if (!ta) return;
+  var val = ta.value.trim();
+  if (!val) {
+    showToast('⚠️ Nội dung không được để trống!', 'warning');
+    return;
+  }
+  
+  currentChatAnswers[index] = val;
+  editingBubbleIndex = null;
+  
+  var existingIdx = workshopImprovements.findIndex(function(item) {
+    return item.workshopId === currentChatWsId && item.characterId === currentChatCharId;
+  });
+  
+  if (existingIdx !== -1) {
+    workshopImprovements[existingIdx].answers[index].answerText = val;
+    saveImprovements();
+    showToast('✅ Đã lưu cập nhật chỉnh sửa!', 'success');
+  } else {
+    saveImprovementDraft();
+    showToast('💾 Đã lưu chỉnh sửa vào bản nháp!', 'success');
+  }
+  
+  renderImprovementChat(false);
+}
+
+function cancelBubbleEdit(event) {
+  if (event) event.stopPropagation();
+  editingBubbleIndex = null;
+  renderImprovementChat(false);
+}
+
+function showSubmitConfirmModal() {
+  openModal('improvementSubmitConfirmModal');
+}
+
+function submitImprovementReport(isAnonymous) {
+  var charObj = getChar(currentChatCharId);
+  if (!charObj) return;
+  
+  var answersArr = IMPROVEMENT_QUESTIONS.map(function(q, i) {
+    return {
+      questionId: q.id,
+      questionText: q.text,
+      answerText: currentChatAnswers[i] || ''
+    };
+  });
+  
+  var existingIdx = workshopImprovements.findIndex(function(item) {
+    return item.workshopId === currentChatWsId && item.characterId === currentChatCharId;
+  });
+  
+  var report = {
+    id: existingIdx !== -1 ? workshopImprovements[existingIdx].id : 'imp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    workshopId: currentChatWsId,
+    characterId: currentChatCharId,
+    isAnonymous: isAnonymous,
+    characterName: isAnonymous ? '👤 Ẩn danh' : (charObj.emoji + ' ' + charObj.name),
+    submittedAt: new Date().toISOString(),
+    answers: answersArr
+  };
+  
+  if (existingIdx !== -1) {
+    workshopImprovements[existingIdx] = report;
+  } else {
+    workshopImprovements.push(report);
+  }
+  
+  saveImprovements();
+  
+  updateWs(currentChatWsId, function(ws) {
+    var step10 = ws.todos.find(function(t) { return t.id === 'step10'; });
+    if (step10) {
+      var charIdx = CHARACTERS.findIndex(function(c) { return c.id === currentChatCharId; });
+      if (charIdx !== -1 && step10.subs[charIdx]) {
+        step10.subs[charIdx].done = true;
+      }
+    }
+  });
+  
+  var draftKey = 'gsa_draft_improvement_' + currentChatWsId + '_' + currentChatCharId;
+  localStorage.removeItem(draftKey);
+  
+  closeModal('improvementSubmitConfirmModal');
+  closeModal('workshopImprovementFormModal');
+  
+  showToast(existingIdx !== -1 ? '🔄 Cập nhật báo cáo cải tiến thành công!' : '🎉 Đã nộp báo cáo bài học & cải tiến thành công!', 'success');
+}
+
+function openImprovementsListModalFromChat() {
+  renderImprovementsList();
+  openModal('improvementsListModal');
+}
+
+function renderImprovementsList() {
+  var listContainer = document.getElementById('improvementsListContainer');
+  if (!listContainer) return;
+  listContainer.innerHTML = '';
+
+  var ws = workshops.find(function(w) { return w.id === currentChatWsId; });
+  if (ws) {
+    document.getElementById('improvementsListModalSubtitle').innerHTML = 'Workshop: <strong>' + esc(ws.name) + '</strong>';
+  }
+
+  var filtered = workshopImprovements.filter(function(imp) {
+    return imp.workshopId === currentChatWsId;
+  });
+
+  if (filtered.length === 0) {
+    listContainer.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">' +
+      '<div style="font-size:3rem;margin-bottom:12px;">📭</div>' +
+      '<h4>Chưa có báo cáo cải tiến nào được nộp cho workshop này</h4>' +
+      '<p style="font-size:0.85rem;">Các thành viên trong team cần hoàn thành Bước 10 để nộp báo cáo.</p>' +
+      '</div>';
+    return;
+  }
+
+  listContainer.innerHTML = filtered.map(function(imp) {
+    var authorHTML = '';
+    if (imp.isAnonymous) {
+      authorHTML = '<span style="color:#8b949e">🕵️ Ẩn danh</span>';
+    } else {
+      var charObj = getChar(imp.characterId);
+      if (charObj) {
+        authorHTML = '<span style="color:' + charObj.color + '">' + charObj.emoji + ' ' + charObj.name + '</span>';
+      } else {
+        authorHTML = '<span>' + esc(imp.characterName) + '</span>';
+      }
+    }
+
+    var timeStr = fmtDate(imp.submittedAt);
+    var answersHTML = imp.answers.map(function(ans, index) {
+      return '<div class="imp-answer-item">' +
+        '<div class="imp-q">Câu ' + (index+1) + ': ' + esc(ans.questionText) + '</div>' +
+        '<div class="imp-a">' + esc(ans.answerText).replace(/\n/g, '<br/>') + '</div>' +
+        '</div>';
+    }).join('');
+
+    return '<div class="imp-card">' +
+      '<div class="imp-card-header">' +
+      '<div class="imp-card-author">' + authorHTML + '</div>' +
+      '<div class="imp-card-time">📅 ' + timeStr + '</div>' +
+      '</div>' +
+      '<div class="imp-answers-list">' + answersHTML + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function toggleAccordion(headerEl) {
+  var acc = headerEl.parentElement;
+  if (!acc) return;
+  acc.classList.toggle('open');
 }
 
 /* ========== START ========== */
