@@ -491,23 +491,61 @@
     @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
     .toast.hiding { animation: toastOut 0.3s ease forwards; }
 
-    /* RESPONSIVE */
     @media (max-width: 900px) { .char-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 768px) {
       .form-row { grid-template-columns: 1fr; }
       .workshop-grid { grid-template-columns: 1fr; }
-      .main-content { padding: 20px 16px; }
-      .header { padding: 0 16px; gap: 8px; }
+      .main-content { padding: 16px 12px; }
+      .header { padding: 0 12px; gap: 6px; }
+      .header-title { font-size: 0.9rem; }
       .detail-meta-grid { grid-template-columns: 1fr 1fr; }
-      .modal-body { padding: 0 20px 20px; }
-      .modal-header { padding: 20px 20px 0; }
+      .modal-body { padding: 0 16px 16px; }
+      .modal-header { padding: 16px 16px 0; }
       .header-crm-btn .crm-text { display: none; }
+      /* Workshop cards */
+      .workshop-card { padding: 16px; }
+      .workshop-card-meta { flex-wrap: wrap; gap: 6px; }
+      /* Dashboard title row */
+      .dashboard-title-row { flex-wrap: wrap; gap: 8px; }
+      .dashboard-actions { flex-wrap: wrap; gap: 6px; }
+      /* Templates section */
+      .templates-layout { grid-template-columns: 1fr; min-height: auto; }
+      .templates-sidebar { border-right: none; border-bottom: 1px solid var(--border); max-height: 220px; }
+      .templates-viewer { min-height: 500px; }
+      /* Word editor on mobile */
+      .word-editor-header { flex-direction: column; align-items: flex-start; }
+      .word-editor-actions { width: 100%; justify-content: flex-end; }
+      .word-var-insert-panel { padding: 6px 10px; }
+      .word-body-area { padding: 14px 16px; font-size: 0.85rem; }
+      .email-preview-body-content { padding: 14px 16px; }
+      /* Modal responsive */
+      .modal { max-width: calc(100vw - 24px); margin: 12px; }
+      /* Preview actions */
+      .preview-actions-row { flex-wrap: wrap; gap: 4px; }
+      .preview-header-row { flex-wrap: wrap; }
     }
     @media (max-width: 480px) {
       .char-grid { grid-template-columns: 1fr 1fr; }
       .char-card { padding: 20px 12px; }
       .char-avatar { width: 60px; height: 60px; font-size: 1.5rem; }
+      .main-content { padding: 12px 10px; }
+      .header { padding: 0 10px; height: 52px; }
+      /* Header nav buttons */
+      .header-nav { gap: 4px; }
+      .btn-secondary, .btn-primary { padding: 5px 10px; font-size: 0.78rem; }
+      /* Workshop detail popup */
+      .modal { padding: 0; }
+      .modal-body { padding: 0 12px 12px; }
+      .modal-header { padding: 12px 12px 0; }
+      /* Templates viewer full height on mobile */
+      .templates-viewer { min-height: 400px; }
+      /* Word var buttons - smaller on mobile */
+      .word-var-insert-btn { font-size: 0.68rem; padding: 2px 6px; }
+      /* Email preview */
+      .email-preview-subject-box { padding: 12px 14px; }
+      .word-subject-area { font-size: 0.95rem; }
     }
+
     /* Custom Flatpickr overrides */
     .flatpickr-calendar {
       background: var(--bg-card) !important;
@@ -819,29 +857,39 @@
     /* ===== TEMPLATES LAYOUT ===== */
     .templates-layout {
       display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 24px;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 200px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
     }
     @media (max-width: 900px) {
       .templates-layout {
         grid-template-columns: 1fr;
+        min-height: auto;
       }
     }
     .templates-sidebar {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      height: fit-content;
+      background: var(--bg-card2);
+      border-right: 1px solid var(--border);
+      padding: 14px;
+      overflow-y: auto;
+      max-height: calc(100vh - 200px);
+    }
+    @media (max-width: 900px) {
+      .templates-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 250px;
+      }
     }
     .templates-viewer {
       background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px;
-      min-height: 400px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
     }
     .section-header-row {
       display: flex;
@@ -954,29 +1002,26 @@
       gap: 8px;
     }
     .preview-body-container {
-      background: var(--bg-dark);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-      min-height: 250px;
       flex: 1;
-      overflow: hidden;
-    }
-    /* Beautiful Email Preview Card */
-    .email-preview-card {
-      background: var(--bg-card);
-      border-radius: 10px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      min-height: 0;
+    }
+    /* Email Word-Editor Card */
+    .email-preview-card {
+      background: var(--bg-card);
+      display: flex;
+      flex-direction: column;
       height: 100%;
+      overflow: hidden;
     }
     .email-preview-subject-box {
       background: var(--bg-card2);
-      padding: 24px;
+      padding: 18px 20px;
       text-align: center;
       border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
     .email-preview-subject-label {
       font-size: 0.65rem;
@@ -987,29 +1032,32 @@
       margin-bottom: 8px;
     }
     .email-preview-subject-text {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: var(--text);
+      color: var(--warning);
       line-height: 1.4;
-      display: inline-block;
-      max-width: 100%;
-      word-wrap: break-word;
-      /* Gradient style */
-      background: linear-gradient(135deg, var(--warning) 0%, #ffc107 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .email-preview-subject-text[contenteditable="true"] {
-      color: var(--warning) !important;
-      -webkit-text-fill-color: var(--warning) !important;
-      background: var(--bg-dark) !important;
-      border: 1px dashed var(--border-bright) !important;
-      padding: 10px 20px;
-      cursor: text;
-      outline: none;
       display: block;
       width: 100%;
-      -webkit-background-clip: initial !important;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+    .email-word-subject-input {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--warning);
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: inherit;
+      text-align: center;
+      padding: 4px 0;
+      caret-color: var(--warning);
+      word-break: break-word;
+    }
+    .email-word-subject-input::placeholder {
+      color: rgba(251,188,5,0.35);
     }
     .email-preview-divider {
       height: 1px;
@@ -1018,12 +1066,14 @@
       border: none;
     }
     .email-preview-body-content {
-      padding: 24px;
+      flex: 1;
+      padding: 20px 28px;
       color: var(--text-muted);
       font-size: 0.88rem;
       line-height: 1.75;
       overflow-y: auto;
-      max-height: 600px;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
     .email-paragraph {
       margin-bottom: 14px;
@@ -1064,6 +1114,178 @@
     }
     .email-link:hover {
       color: var(--primary-bright);
+    }
+    /* === Word-like Email Editor === */
+    .word-editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background: var(--bg-card2);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .word-editor-toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding-right: 8px;
+      border-right: 1px solid var(--border);
+      margin-right: 4px;
+    }
+    .word-editor-toolbar-group:last-child {
+      border-right: none;
+    }
+    .word-toolbar-btn {
+      background: none;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 0.78rem;
+      font-family: inherit;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .word-toolbar-btn:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .word-toolbar-btn.active {
+      background: rgba(66,133,244,0.15);
+      border-color: rgba(66,133,244,0.3);
+      color: var(--primary);
+    }
+    .word-var-chip {
+      display: inline-block;
+      background: rgba(66,133,244,0.15);
+      border: 1px solid rgba(66,133,244,0.3);
+      color: var(--primary);
+      border-radius: 4px;
+      padding: 0px 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      vertical-align: baseline;
+      cursor: default;
+      user-select: none;
+    }
+    .word-body-area {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 0.88rem;
+      line-height: 1.8;
+      padding: 20px 28px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      overflow-y: auto;
+      caret-color: var(--primary);
+    }
+    .word-body-area:focus { outline: none; }
+    .word-body-area::placeholder { color: rgba(255,255,255,0.2); }
+    .word-subject-area {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--warning);
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: inherit;
+      text-align: center;
+      padding: 6px 12px;
+      caret-color: var(--warning);
+      resize: none;
+      overflow: hidden;
+    }
+    .word-subject-area::placeholder { color: rgba(251,188,5,0.35); }
+    .word-name-area {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed var(--border);
+      outline: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 6px 12px;
+      caret-color: var(--text);
+    }
+    .word-name-area::placeholder { color: rgba(255,255,255,0.2); }
+    .word-editor-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .word-editor-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+    .word-editor-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+    .word-editor-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .word-var-insert-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 6px 12px 8px;
+      background: var(--bg-dark);
+      border-bottom: 1px solid var(--border);
+    }
+    .word-var-insert-btn {
+      background: rgba(66,133,244,0.1);
+      border: 1px solid rgba(66,133,244,0.2);
+      color: var(--primary);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .word-var-insert-btn:hover {
+      background: rgba(66,133,244,0.2);
+      border-color: var(--primary);
+    }
+    .word-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+    .view-mode-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     .variables-panel {
       background: var(--bg-card2);
@@ -3905,6 +4127,40 @@ function detectTemplateVariables(subject, body) {
   return uniqueVars;
 }
 
+function autoResizeTextarea(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function escapeHTMLPreserveNewlines(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function insertVarAtCursor(varName) {
+  // Determine which textarea is focused: subject or body
+  var bodyEl = document.getElementById('wordEditorBody');
+  var subjectEl = document.getElementById('wordEditorSubject');
+  var activeEl = null;
+  if (document.activeElement === bodyEl) activeEl = bodyEl;
+  else if (document.activeElement === subjectEl) activeEl = subjectEl;
+  else activeEl = bodyEl; // default to body
+
+  if (!activeEl) return;
+  var start = activeEl.selectionStart;
+  var end = activeEl.selectionEnd;
+  var varText = '{{' + varName + '}}';
+  var val = activeEl.value;
+  activeEl.value = val.substring(0, start) + varText + val.substring(end);
+  var newPos = start + varText.length;
+  activeEl.setSelectionRange(newPos, newPos);
+  activeEl.focus();
+}
+
 function htmlToPlainText(html) {
   const temp = document.createElement('div');
   temp.innerHTML = html;
@@ -4448,16 +4704,17 @@ function selectTemplate(type, id) {
 function renderTemplatePreview() {
   const viewer = document.getElementById('templatesViewer');
   if (!viewer) return;
-  
+
+  // If no template selected, pick first
   if (selectedResourceType !== 'email' || !selectedTemplateId) {
     if (emailTemplates.length > 0) {
       selectedResourceType = 'email';
       selectedTemplateId = emailTemplates[0].id;
     } else {
-      viewer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 80px 20px;">' +
-        '<div style="font-size: 3rem; margin-bottom: 12px;">📧</div>' +
-        '<h3>Chọn một mẫu email để xem trước</h3>' +
-        '<p style="font-size: 0.85rem; margin-top: 4px;">Hoặc thêm mẫu email mới ở cột bên trái.</p>' +
+      viewer.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-muted);padding:60px 20px;gap:12px;">' +
+        '<div style="font-size:3.5rem;">📧</div>' +
+        '<h3 style="margin:0;font-size:1rem;">Chưa có mẫu email nào</h3>' +
+        '<p style="font-size:0.82rem;margin:0;opacity:0.7;">Bấm ➕ để tạo mẫu email mới.</p>' +
         '</div>';
       return;
     }
@@ -4465,123 +4722,118 @@ function renderTemplatePreview() {
 
   const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
   if (!t) {
-    viewer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 80px 20px;">Mẫu không tồn tại.</div>';
+    viewer.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:60px 20px;">Mẫu không tồn tại.</div>';
     return;
   }
 
-
-
+  // Build variable list from template
   const uniqueVars = detectTemplateVariables(t.subject, t.body);
 
-  let varsHtml = '';
-  if (uniqueVars.size > 0) {
-    varsHtml += '<div class="variables-panel">' +
-      '<div class="variables-title">📝 Thử điền biến (Test variables)</div>' +
-      '<div class="variables-grid">';
-    
-    uniqueVars.forEach(function(vName) {
-      const currentVal = previewVars[vName] !== undefined ? previewVars[vName] : '';
-      varsHtml += '<div class="form-group" style="margin-bottom:0;">' +
-        '<label class="form-label" style="font-size: 0.7rem; margin-bottom: 2px;">' + escapeHTML(vName) + '</label>' +
-        '<input type="text" class="sort-select" style="width: 100%; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px;" value="' + escapeHTML(currentVal) + '" oninput="updatePreviewVar(\'' + escapeHTML(vName) + '\', this.value)"/>' +
-        '</div>';
-    });
-    
-    varsHtml += '</div></div>';
-  }
-
-  let previewSubject = t.subject || '';
-  let previewBody = t.body || '';
-  uniqueVars.forEach(function(vName) {
-    const val = previewVars[vName] !== undefined ? previewVars[vName] : '';
-    const escVal = val === '' ? ('{{' + vName + '}}') : val;
-    previewSubject = previewSubject.split('{{' + vName + '}}').join(escVal);
-    previewSubject = previewSubject.split('[' + vName + ']').join(escVal);
-    previewBody = previewBody.split('{{' + vName + '}}').join(escVal);
-    previewBody = previewBody.split('[' + vName + ']').join(escVal);
-  });
-
-  let headerHtml = '';
-  let cardHtml = '';
-  
   if (isInlineEditing) {
-    headerHtml = '<div class="preview-header-row">' +
-      '<div style="flex:1; min-width: 250px;">' +
-        '<div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.05em;">Tên mẫu email (Name)</div>' +
-        '<input type="text" id="editTemplateName" class="form-input" style="font-size: 1rem; font-weight: 700; padding: 6px 12px; border-radius: 6px;" value="' + escapeHTML(t.name) + '"/>' +
+    // =====================================================
+    // EDIT MODE: Microsoft Word-style inline editor
+    // =====================================================
+    let varsHtml = '';
+    if (uniqueVars.size > 0) {
+      uniqueVars.forEach(function(vName) {
+        varsHtml += '<button class="word-var-insert-btn" onclick="insertVarAtCursor(\'' + escapeHTML(vName) + '\')" title="Chèn biến tại vị trí con trỏ">{{' + escapeHTML(vName) + '}}</button>';
+      });
+    }
+
+    viewer.innerHTML =
+      '<div class="word-editor-header">' +
+        '<div class="word-editor-header-left">' +
+          '<div class="word-editor-label">Tên mẫu email</div>' +
+          '<input id="wordEditorName" class="word-name-area" type="text" value="' + escapeHTML(t.name) + '" placeholder="Nhập tên mẫu email..." />' +
+        '</div>' +
+        '<div class="word-editor-actions">' +
+          '<button class="btn-success" onclick="saveWordEmail()" style="padding:5px 12px;font-size:0.8rem;border-radius:6px;">💾 Lưu</button>' +
+          '<button class="btn-secondary" onclick="cancelEmailTemplateInline()" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">✕ Hủy</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="preview-actions-row">' +
-        '<button class="btn-success" onclick="saveEmailTemplateInline()" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">💾 Lưu</button>' +
-        '<button class="btn-secondary" onclick="cancelEmailTemplateInline()" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">❌ Hủy</button>' +
+
+      // Subject area
+      '<div class="email-preview-subject-box" style="padding:14px 20px;">' +
+        '<div class="word-editor-label" style="text-align:center;margin-bottom:6px;">Tiêu đề (Subject)</div>' +
+        '<textarea id="wordEditorSubject" class="word-subject-area" rows="2" placeholder="Nhập tiêu đề email..." oninput="autoResizeTextarea(this)">' + escapeHTMLPreserveNewlines(t.subject) + '</textarea>' +
       '</div>' +
-      '</div>';
-      
-    let editSubject = t.subject || '';
-    let editBody = t.body || '';
-    
-    // Escape HTML first to show text literally without tags showing up
-    let escapedSubject = escapeHTML(editSubject);
-    let escapedBody = escapeHTML(editBody);
-    
+
+      '<div class="word-divider"></div>' +
+
+      // Variables insert panel
+      (varsHtml ? '<div class="word-var-insert-panel"><span style="font-size:0.68rem;color:var(--text-dim);font-weight:700;align-self:center;white-space:nowrap;">Chèn biến:</span>' + varsHtml + '</div>' : '') +
+
+      // Body textarea - plain text like Word
+      '<textarea id="wordEditorBody" class="word-body-area" placeholder="Nhập nội dung email... (Enter để xuống dòng, dùng {{Tên biến}} để tự động hóa với n8n)">' + escapeHTMLPreserveNewlines(t.body) + '</textarea>';
+
+    // Focus subject after render
+    setTimeout(function() {
+      var subj = document.getElementById('wordEditorSubject');
+      if (subj) { subj.focus(); subj.select(); autoResizeTextarea(subj); }
+    }, 50);
+
+  } else {
+    // =====================================================
+    // VIEW MODE: Beautiful email preview
+    // =====================================================
+    let previewSubject = t.subject || '';
+    let previewBody = t.body || '';
     uniqueVars.forEach(function(vName) {
-      const badgeHtml = '<span class="email-var-badge" contenteditable="false" data-var-name="' + escapeHTML(vName) + '">{{' + escapeHTML(vName) + '}}</span>';
-      escapedSubject = escapedSubject.split('{{' + vName + '}}').join(badgeHtml);
-      escapedSubject = escapedSubject.split('[' + vName + ']').join(badgeHtml);
-      escapedBody = escapedBody.split('{{' + vName + '}}').join(badgeHtml);
-      escapedBody = escapedBody.split('[' + vName + ']').join(badgeHtml);
+      const val = previewVars[vName] !== undefined ? previewVars[vName] : '';
+      const escVal = val === '' ? ('{{' + vName + '}}') : val;
+      previewSubject = previewSubject.split('{{' + vName + '}}').join(escVal);
+      previewSubject = previewSubject.split('[' + vName + ']').join(escVal);
+      previewBody = previewBody.split('{{' + vName + '}}').join(escVal);
+      previewBody = previewBody.split('[' + vName + ']').join(escVal);
     });
 
-    cardHtml = '<div class="email-preview-card">' +
-        '<div class="email-preview-subject-box">' +
-          '<div class="email-preview-subject-label">Tiêu đề (Subject) - Nhấp trực tiếp để sửa</div>' +
-          '<div class="email-preview-subject-text" contenteditable="true" id="previewSubjectText">' + escapedSubject + '</div>' +
-        '</div>' +
-        '<div class="email-preview-divider"></div>' +
-        '<div class="email-preview-body-content" style="padding: 20px;">' +
-          '<div class="email-preview-subject-label" style="text-align: left; margin-bottom: 6px;">Nội dung (Body) - Nhấp trực tiếp để sửa</div>' +
-          '<div contenteditable="true" id="previewBodyContainer" style="outline: none; border: 1px dashed var(--border-bright); background: var(--bg-dark); border-radius: 6px; padding: 20px; cursor: text; min-height: 350px; white-space: pre-wrap; text-align: left; font-family: inherit; color: var(--text-muted);">' +
-            escapedBody +
-          '</div>' +
-        '</div>' +
-      '</div>';
-  } else {
-    headerHtml = '<div class="preview-header-row">' +
-      '<div style="flex:1; min-width: 250px;">' +
-        '<div class="preview-title">📧 ' + escapeHTML(t.name) + '</div>' +
-      '</div>' +
-      '<div class="preview-actions-row">' +
-        '<button class="btn-primary" onclick="startEmailTemplateInline()" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">✏️ Chỉnh sửa</button>' +
-        '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Tiêu đề</button>' +
-        '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Nội dung</button>' +
-      '</div>' +
-      '</div>';
-      
-    cardHtml = '<div class="email-preview-card">' +
-      '<div class="email-preview-subject-box">' +
-        '<div class="email-preview-subject-label">Tiêu đề (Subject)</div>' +
-        '<div class="email-preview-subject-text" id="previewSubjectText">' + escapeHTML(previewSubject) + '</div>' +
-      '</div>' +
-      '<div class="email-preview-divider"></div>' +
-      '<div class="email-preview-body-content" id="previewBodyContainer">' +
-        formatEmailBodyToHTML(previewSubject, previewBody) +
-      '</div>' +
-    '</div>';
-  }
+    let varsHtml = '';
+    if (uniqueVars.size > 0) {
+      varsHtml = '<div class="variables-panel"><div class="variables-title">📝 Thử điền biến (Test variables)</div><div class="variables-grid">';
+      uniqueVars.forEach(function(vName) {
+        const currentVal = previewVars[vName] !== undefined ? previewVars[vName] : '';
+        varsHtml += '<div class="form-group" style="margin-bottom:0;">' +
+          '<label class="form-label" style="font-size:0.7rem;margin-bottom:2px;">' + escapeHTML(vName) + '</label>' +
+          '<input type="text" class="sort-select" style="width:100%;padding:4px 8px;font-size:0.75rem;border-radius:4px;" value="' + escapeHTML(currentVal) + '" oninput="updatePreviewVar(\'' + escapeHTML(vName) + '\', this.value)"/>' +
+          '</div>';
+      });
+      varsHtml += '</div></div>';
+    }
 
-  viewer.innerHTML = headerHtml +
-    '<div class="preview-body-container" style="padding: 0;">' +
-      cardHtml +
-    '</div>' +
-    (isInlineEditing ? '' : varsHtml);
+    viewer.innerHTML =
+      '<div class="word-editor-header">' +
+        '<div class="word-editor-header-left">' +
+          '<div class="word-editor-label">Mẫu Email</div>' +
+          '<div style="font-weight:700;font-size:0.95rem;color:var(--text);">📧 ' + escapeHTML(t.name) + '</div>' +
+        '</div>' +
+        '<div class="word-editor-actions">' +
+          '<button class="btn-primary" onclick="startEmailTemplateInline()" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">✏️ Chỉnh sửa</button>' +
+          '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">📋 Subject</button>' +
+          '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">📋 Body</button>' +
+        '</div>' +
+      '</div>' +
+
+      // Email card view
+      '<div class="view-mode-body">' +
+        '<div class="email-preview-subject-box">' +
+          '<div class="email-preview-subject-label">Tiêu đề (Subject)</div>' +
+          '<div class="email-preview-subject-text" id="previewSubjectText">' + escapeHTML(previewSubject) + '</div>' +
+        '</div>' +
+        '<div class="word-divider"></div>' +
+        '<div class="email-preview-body-content" id="previewBodyContainer">' +
+          formatEmailBodyToHTML(previewSubject, previewBody) +
+        '</div>' +
+        (varsHtml ? '<div style="padding:0 20px 20px;">' + varsHtml + '</div>' : '') +
+      '</div>';
+  }
 }
+
 
 function updatePreviewVar(name, val) {
   previewVars[name] = val;
   const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
   if (!t) return;
-  
   const uniqueVars = detectTemplateVariables(t.subject, t.body);
-  
   let previewSubject = t.subject || '';
   let previewBody = t.body || '';
   uniqueVars.forEach(function(vName) {
@@ -4592,10 +4844,8 @@ function updatePreviewVar(name, val) {
     previewBody = previewBody.split('{{' + vName + '}}').join(escVal);
     previewBody = previewBody.split('[' + vName + ']').join(escVal);
   });
-  
   const subjectEl = document.getElementById('previewSubjectText');
-  if (subjectEl) subjectEl.innerHTML = escapeHTML(previewSubject);
-  
+  if (subjectEl) subjectEl.textContent = previewSubject;
   const bodyEl = document.getElementById('previewBodyContainer');
   if (bodyEl) bodyEl.innerHTML = formatEmailBodyToHTML(previewSubject, previewBody);
 }
@@ -4622,11 +4872,13 @@ function copyTemplateText(field, id) {
 }
 
 function openAddEmailTemplate() {
-  editingEmailTemplateId = null;
-  document.getElementById('emailTemplateModalTitle').textContent = 'Thêm Mẫu Email Mới';
-  document.getElementById('emailTemplateForm').reset();
-  document.getElementById('emailTemplateId').value = '';
-  openModal('emailTemplateModal');
+  // Create a new blank template, enter edit mode directly (no popup)
+  var newId = 'tpl-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+  emailTemplates.push({ id: newId, name: '', subject: '', body: '' });
+  selectedResourceType = 'email';
+  selectedTemplateId = newId;
+  isInlineEditing = true;
+  renderTemplates();
 }
 
 function openEditEmailTemplate(id) {
@@ -4646,58 +4898,40 @@ function cancelEmailTemplateInline() {
   renderTemplates();
 }
 
-function saveEmailTemplateInline() {
+function saveWordEmail() {
   const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
   if (!t) return;
-  
-  const nameInput = document.getElementById('editTemplateName');
-  const subjectEl = document.getElementById('previewSubjectText');
-  const bodyEl = document.getElementById('previewBodyContainer');
-  
-  if (!nameInput || !subjectEl || !bodyEl) return;
-  
-  const newName = nameInput.value.trim();
-  const newSubject = htmlToPlainText(subjectEl.innerHTML);
-  const newBody = htmlToPlainText(bodyEl.innerHTML);
-  
+  const nameEl = document.getElementById('wordEditorName');
+  const subjectEl = document.getElementById('wordEditorSubject');
+  const bodyEl = document.getElementById('wordEditorBody');
+  if (!nameEl || !subjectEl || !bodyEl) return;
+  const newName = nameEl.value.trim();
+  const newSubject = subjectEl.value.trim();
+  const newBody = bodyEl.value;
   if (!newName) {
     showToast('❌ Tên mẫu không được để trống!', 'error');
+    nameEl.focus();
     return;
   }
-  
+  if (!newSubject) {
+    showToast('❌ Tiêu đề (Subject) không được để trống!', 'error');
+    subjectEl.focus();
+    return;
+  }
   t.name = newName;
   t.subject = newSubject;
   t.body = newBody;
-  
   saveTemplatesData();
   isInlineEditing = false;
   renderTemplates();
-  showToast('✅ Đã cập nhật mẫu email thành công!', 'success');
+  showToast('✅ Đã lưu mẫu email!', 'success');
 }
+function saveEmailTemplateInline() { saveWordEmail(); }
 
 function saveEmailTemplate(e) {
-  e.preventDefault();
-  const id = document.getElementById('emailTemplateId').value;
-  const tData = {
-    id: id || 'tpl-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-    name: document.getElementById('emailTemplateName').value.trim(),
-    subject: document.getElementById('emailTemplateSubject').value.trim(),
-    body: document.getElementById('emailTemplateBody').value
-  };
-  
-  if (id) {
-    const idx = emailTemplates.findIndex(function(item) { return item.id === id; });
-    if (idx !== -1) emailTemplates[idx] = tData;
-  } else {
-    emailTemplates.push(tData);
-  }
-  
-  saveTemplatesData();
-  closeModal('emailTemplateModal');
-  selectedResourceType = 'email';
-  selectedTemplateId = tData.id;
-  renderTemplates();
-  showToast(id ? '✅ Đã cập nhật mẫu email!' : '🎉 Đã thêm mẫu email mới!', 'success');
+  if (e) e.preventDefault();
+  // Legacy modal save - redirects to inline save
+  saveWordEmail();
 }
 
 function deleteEmailTemplate(id) {
