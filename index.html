@@ -4477,7 +4477,19 @@ function parseEmailBodyToHTML(text) {
       continue;
     }
 
-    result += '<p class="email-paragraph">' + formatInlineFormatting(renderWithVarBadges(trimmedLine)) + '</p>';
+    // Convert leading whitespace to non-breaking spaces for indent preservation
+    const leadingMatch = /^(\s*)/.exec(rawLine);
+    const leadingWhitespace = leadingMatch ? leadingMatch[1] : '';
+    const paragraphContent = rawLine.substring(leadingWhitespace.length);
+    
+    let indentHtml = '';
+    for (let j = 0; j < leadingWhitespace.length; j++) {
+      const char = leadingWhitespace.charAt(j);
+      if (char === '\t') indentHtml += '&nbsp;&nbsp;&nbsp;&nbsp;';
+      else if (char === ' ') indentHtml += '&nbsp;';
+    }
+    
+    result += '<p class="email-paragraph">' + indentHtml + formatInlineFormatting(renderWithVarBadges(paragraphContent)) + '</p>';
   }
 
   while (listStack.length > 0) {
