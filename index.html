@@ -371,6 +371,13 @@
       font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition);
     }
     .btn-danger:hover { background: rgba(234,67,53,0.2); }
+    .btn-success {
+      background: linear-gradient(135deg, var(--success), #2e8b47); color: white; border: none;
+      padding: 10px 24px; border-radius: 10px; font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: var(--transition);
+      box-shadow: 0 4px 12px rgba(52,168,83,0.3);
+    }
+    .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(52,168,83,0.4); }
 
     /* DETAIL */
     .detail-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -4128,6 +4135,7 @@ function deleteCRMSchool(id) {
 
 /* ========== TEMPLATES SYSTEMS ========== */
 let selectedTemplateId = 'tpl-proposal';
+let isInlineEditing = false;
 let selectedResourceType = 'email'; // 'email' or 'resource'
 let editingEmailTemplateId = null;
 let editingResourceLinkId = null;
@@ -4300,6 +4308,7 @@ function renderTemplates() {
 function selectTemplate(type, id) {
   selectedResourceType = type;
   selectedTemplateId = id;
+  isInlineEditing = false;
   renderTemplates();
 }
 
@@ -4361,28 +4370,62 @@ function renderTemplatePreview() {
     previewBody = previewBody.split('[' + vName + ']').join(escVal);
   });
 
-  viewer.innerHTML = '<div class="preview-header-row">' +
-    '<div style="flex:1; min-width: 250px;">' +
-      '<div class="preview-title">📧 ' + escapeHTML(t.name) + '</div>' +
-    '</div>' +
-    '<div class="preview-actions-row">' +
-      '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">📋 Copy Tiêu đề</button>' +
-      '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Nội dung</button>' +
-    '</div>' +
-    '</div>' +
-    '<div class="preview-body-container" style="padding: 0;">' +
-      '<div class="email-preview-card">' +
-        '<div class="email-preview-subject-box">' +
-          '<div class="email-preview-subject-label">Tiêu đề (Subject)</div>' +
-          '<div class="email-preview-subject-text" id="previewSubjectText">' + escapeHTML(previewSubject) + '</div>' +
-        '</div>' +
-        '<div class="email-preview-divider"></div>' +
-        '<div class="email-preview-body-content" id="previewBodyContainer">' +
-          formatEmailBodyToHTML(previewSubject, previewBody) +
-        '</div>' +
+  let headerHtml = '';
+  let cardHtml = '';
+  
+  if (isInlineEditing) {
+    headerHtml = '<div class="preview-header-row">' +
+      '<div style="flex:1; min-width: 250px;">' +
+        '<div style="font-size: 0.72rem; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; font-weight: 700; letter-spacing: 0.05em;">Tên mẫu email (Name)</div>' +
+        '<input type="text" id="editTemplateName" class="form-input" style="font-size: 1rem; font-weight: 700; padding: 6px 12px; border-radius: 6px;" value="' + escapeHTML(t.name) + '"/>' +
       '</div>' +
+      '<div class="preview-actions-row">' +
+        '<button class="btn-success" onclick="saveEmailTemplateInline()" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">💾 Lưu</button>' +
+        '<button class="btn-secondary" onclick="cancelEmailTemplateInline()" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">❌ Hủy</button>' +
+      '</div>' +
+      '</div>';
+      
+    cardHtml = '<div class="email-preview-card">' +
+      '<div class="email-preview-subject-box" style="text-align: left;">' +
+        '<div class="email-preview-subject-label" style="text-align: left;">Tiêu đề (Subject)</div>' +
+        '<input type="text" id="editTemplateSubject" class="form-input" style="width: 100%; font-size: 1.1rem; font-weight: bold; text-align: center; border-color: var(--border-bright);" value="' + escapeHTML(t.subject) + '"/>' +
+      '</div>' +
+      '<div class="email-preview-divider"></div>' +
+      '<div class="email-preview-body-content" style="padding: 20px;">' +
+        '<div class="email-preview-subject-label" style="text-align: left; margin-bottom: 6px;">Nội dung (Body)</div>' +
+        '<div style="font-size: 0.72rem; color: var(--warning); margin-bottom: 10px; line-height: 1.4;">💡 Lưu ý: Các thẻ như [Tên sinh viên], [Tên Trường Đại học]... là các biến động. Hãy giữ đúng định dạng ngoặc vuông để hệ thống tự điền thông tin khi xem.</div>' +
+        '<textarea id="editTemplateBody" class="form-input" style="width: 100%; height: 380px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; padding: 12px; border-radius: 6px; border-color: var(--border-bright); resize: vertical; display: block; background: var(--bg-dark); color: var(--text);">' + escapeHTML(t.body) + '</textarea>' +
+      '</div>' +
+    '</div>';
+  } else {
+    headerHtml = '<div class="preview-header-row">' +
+      '<div style="flex:1; min-width: 250px;">' +
+        '<div class="preview-title">📧 ' + escapeHTML(t.name) + '</div>' +
+      '</div>' +
+      '<div class="preview-actions-row">' +
+        '<button class="btn-primary" onclick="startEmailTemplateInline()" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">✏️ Chỉnh sửa</button>' +
+        '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Tiêu đề</button>' +
+        '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Nội dung</button>' +
+      '</div>' +
+      '</div>';
+      
+    cardHtml = '<div class="email-preview-card">' +
+      '<div class="email-preview-subject-box">' +
+        '<div class="email-preview-subject-label">Tiêu đề (Subject)</div>' +
+        '<div class="email-preview-subject-text" id="previewSubjectText">' + escapeHTML(previewSubject) + '</div>' +
+      '</div>' +
+      '<div class="email-preview-divider"></div>' +
+      '<div class="email-preview-body-content" id="previewBodyContainer">' +
+        formatEmailBodyToHTML(previewSubject, previewBody) +
+      '</div>' +
+    '</div>';
+  }
+
+  viewer.innerHTML = headerHtml +
+    '<div class="preview-body-container" style="padding: 0;">' +
+      cardHtml +
     '</div>' +
-    varsHtml;
+    (isInlineEditing ? '' : varsHtml);
 }
 
 function updatePreviewVar(name, val) {
@@ -4450,15 +4493,49 @@ function openAddEmailTemplate() {
 }
 
 function openEditEmailTemplate(id) {
-  const t = emailTemplates.find(function(item) { return item.id === id; });
+  selectedResourceType = 'email';
+  selectedTemplateId = id;
+  isInlineEditing = true;
+  renderTemplates();
+}
+
+function startEmailTemplateInline() {
+  isInlineEditing = true;
+  renderTemplates();
+}
+
+function cancelEmailTemplateInline() {
+  isInlineEditing = false;
+  renderTemplates();
+}
+
+function saveEmailTemplateInline() {
+  const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
   if (!t) return;
-  editingEmailTemplateId = id;
-  document.getElementById('emailTemplateModalTitle').textContent = 'Chỉnh sửa Mẫu Email';
-  document.getElementById('emailTemplateId').value = t.id;
-  document.getElementById('emailTemplateName').value = t.name || '';
-  document.getElementById('emailTemplateSubject').value = t.subject || '';
-  document.getElementById('emailTemplateBody').value = t.body || '';
-  openModal('emailTemplateModal');
+  
+  const nameInput = document.getElementById('editTemplateName');
+  const subjectInput = document.getElementById('editTemplateSubject');
+  const bodyTextarea = document.getElementById('editTemplateBody');
+  
+  if (!nameInput || !subjectInput || !bodyTextarea) return;
+  
+  const newName = nameInput.value.trim();
+  const newSubject = subjectInput.value.trim();
+  const newBody = bodyTextarea.value;
+  
+  if (!newName) {
+    showToast('❌ Tên mẫu không được để trống!', 'error');
+    return;
+  }
+  
+  t.name = newName;
+  t.subject = newSubject;
+  t.body = newBody;
+  
+  saveTemplatesData();
+  isInlineEditing = false;
+  renderTemplates();
+  showToast('✅ Đã cập nhật mẫu email thành công!', 'success');
 }
 
 function saveEmailTemplate(e) {
