@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
   <title>GSA Workshop Manager | Google Student Ambassador</title>
   <meta name="description" content="Hệ thống quản lý workshop cho đội ngũ Google Student Ambassador - theo dõi, phân công và kiểm soát quy trình tổ chức workshop tại các trường đại học." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4559,23 +4560,35 @@ const DEFAULT_EMAIL_TEMPLATES = [
     id: 'tpl-proposal',
     name: 'Đề xuất hợp tác với các trường',
     subject: '[Đề xuất Hợp tác] Workshop MIỄN PHÍ "Gemini Academy" – Dự án Giáo dục AI bảo trợ bởi Google',
-    body: `[Đề xuất Hợp tác] Workshop MIỄN PHÍ "Gemini Academy" – Dự án Giáo dục AI bảo trợ bởi Google
-Kính gửi Thầy/Cô {{Tên/Chức vụ}},
+    body: `Kính gửi Thầy/Cô {{Tên/Chức vụ}},
+
 Em là {{Tên của bạn}} – Đại diện đội ngũ GSA Trainer (Đại sứ Sinh viên Google) của chiến dịch "Gemini Academy for Students". Đây là dự án giáo dục cộng đồng quy mô lớn được khởi xướng và bảo trợ trực tiếp bởi Google, cùng sứ mệnh phổ cập bộ kỹ năng công nghệ AI tiên tiến đến sinh viên toàn quốc.
+
 Với kinh nghiệm điều phối thành công các không gian chia sẻ học thuật, hôm nay, em đại diện dự án liên hệ với mong muốn được hợp tác cùng {{Tên Trường}} tổ chức một buổi workshop HOÀN TOÀN MIỄN PHÍ dành cho sinh viên của trường.
+
 🌟 GIÁ TRỊ VÀ ĐẶC QUYỀN TỪ DỰ ÁN:
+
 Dành cho Sinh viên:
-Tiếp cận chuẩn mực toàn cầu: Học hỏi kiến thức AI thực chiến từ bộ giáo trình được chuẩn hóa bởi các chuyên gia Google.
-Quyền lợi độc quyền: Có cơ hội nhận Chứng nhận chính thức từ Google, Ebook Prompting và gói Google AI Pro 3 tháng thông qua khóa học của Google trên Coursera hoàn toàn miễn phí chỉ trong 7 ngày, cũng như các phần quà khác.
-Dành cho Nhà trường & Quý Thầy Cô: Dự án chuẩn bị sẵn một hệ thống Quà tặng tri ân đặc biệt và độc quyền dành riêng cho các Thầy Cô đã hỗ trợ điều phối chương trình.
+- Tiếp cận chuẩn mực toàn cầu: Học hỏi kiến thức AI thực chiến từ bộ giáo trình được chuẩn hóa bởi các chuyên gia Google.
+- Quyền lợi độc quyền: Có cơ hội nhận Chứng nhận chính thức từ Google, Ebook Prompting và gói Google AI Pro 3 tháng thông qua khóa học của Google trên Coursera hoàn toàn miễn phí chỉ trong 7 ngày, cùng nhiều phần quà hấp dẫn khác.
+
+Dành cho Nhà trường & Quý Thầy Cô:
+- Dự án chuẩn bị sẵn một hệ thống Quà tặng tri ân đặc biệt và độc quyền dành riêng cho các Thầy Cô đã hỗ trợ điều phối chương trình.
+
 📋 ĐỀ XUẤT PHỐI HỢP TỪ PHÍA NHÀ TRƯỜNG:
+
 Để đảm bảo quy mô tối thiểu 250 người tham dự và tạo ra một không gian công nghệ bùng nổ, chúng em kính mong nhà trường hỗ trợ:
-Truyền thông & In ấn Poster: Hỗ trợ in ấn và treo các poster dọc khuôn viên trường, bảng tin và sảnh chung nhằm thu hút sinh viên. Đội ngũ GSA Trainer sẽ cung cấp sẵn file thiết kế chuẩn hóa theo 3 tỷ lệ (dọc, ngang, vuông) để trường tiện sử dụng.
-Cơ sở vật chất: 01 Hội trường sức chứa 250+ chỗ ngồi, trang bị máy chiếu, hệ thống âm thanh và ánh sáng tiêu chuẩn.
-Hình ảnh & Mạng xã hội: Cử Ban Truyền thông/Nhiếp ảnh của trường hỗ trợ chụp hình workshop (phục vụ báo cáo trực tiếp cho dự án). Đặc biệt, nếu sự kiện diễn ra thành công, những hình ảnh đẹp của {{Tên Trường}} có khả năng cao sẽ được chọn để vinh danh trên kênh TikTok chính thức có tích xanh của Google Việt Nam.
+
+- Truyền thông & In ấn Poster: Hỗ trợ in ấn và treo các poster dọc khuôn viên trường, bảng tin và sảnh chung nhằm thu hút sinh viên. Đội ngũ GSA Trainer sẽ cung cấp sẵn file thiết kế chuẩn hóa theo 3 tỷ lệ (dọc, ngang, vuông) để trường tiện sử dụng.
+- Cơ sở vật chất: 01 Hội trường sức chứa 250+ chỗ ngồi, trang bị máy chiếu, hệ thống âm thanh và ánh sáng tiêu chuẩn.
+- Hình ảnh & Mạng xã hội: Cử Ban Truyền thông/Nhiếp ảnh của trường hỗ trợ chụp hình workshop (phục vụ báo cáo trực tiếp cho dự án). Đặc biệt, nếu sự kiện diễn ra thành công, những hình ảnh đẹp của {{Tên Trường}} có khả năng cao sẽ được chọn để vinh danh trên kênh TikTok chính thức có tích xanh của Google Việt Nam.
+
 Do toàn bộ giáo trình giảng dạy đều là tài liệu chuẩn hóa nội bộ từ Google và không thể chia sẻ công khai, Thầy/Cô vui lòng phản hồi trực tiếp qua email này để chúng em có thể gửi lịch trình tổng quan của sự kiện và thống nhất các bước tiếp theo.
+
 Trong trường hợp Thầy/Cô cần trao đổi thông tin gấp, Thầy/Cô có thể kết nối với em qua Zalo: {{Số điện thoại của bạn}}.
+
 Em rất mong nhận được phản hồi từ Thầy/Cô để hai bên có thể trao đổi chi tiết hơn về lịch trình ạ.
+
 Trân trọng,
 Đội ngũ GSA Trainer - Gemini Academy`
   },
