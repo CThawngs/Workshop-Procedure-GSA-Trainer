@@ -994,7 +994,7 @@
     }
     .preview-subject {
       font-size: 0.85rem;
-      color: var(--warning);
+      color: var(--text-muted);
       margin-top: 4px;
       font-weight: 600;
     }
@@ -1035,7 +1035,7 @@
     .email-preview-subject-text {
       font-size: 1.1rem;
       font-weight: 800;
-      color: var(--warning);
+      color: var(--text);
       line-height: 1.4;
       display: block;
       width: 100%;
@@ -1048,17 +1048,17 @@
       background: transparent;
       border: none;
       outline: none;
-      color: var(--warning);
+      color: var(--text);
       font-size: 1.1rem;
       font-weight: 800;
       font-family: inherit;
       text-align: center;
       padding: 4px 0;
-      caret-color: var(--warning);
+      caret-color: var(--text);
       word-break: break-word;
     }
     .email-word-subject-input::placeholder {
-      color: rgba(251,188,5,0.35);
+      color: rgba(255,255,255,0.25);
     }
     .email-preview-divider {
       height: 1px;
@@ -1086,10 +1086,10 @@
     .email-section-header {
       font-size: 0.95rem;
       font-weight: 750;
-      color: var(--warning);
+      color: var(--text);
       margin-top: 24px;
       margin-bottom: 12px;
-      border-left: 3px solid var(--warning);
+      border-left: 3px solid var(--primary);
       padding-left: 10px;
       line-height: 1.4;
     }
@@ -1197,17 +1197,17 @@
       background: transparent;
       border: none;
       outline: none;
-      color: var(--warning);
+      color: var(--text);
       font-size: 1.1rem;
       font-weight: 800;
       font-family: inherit;
       text-align: center;
       padding: 6px 12px;
-      caret-color: var(--warning);
+      caret-color: var(--text);
       resize: none;
       overflow: hidden;
     }
-    .word-subject-area::placeholder { color: rgba(251,188,5,0.35); }
+    .word-subject-area::placeholder { color: rgba(255,255,255,0.25); }
     .word-name-area {
       width: 100%;
       background: transparent;
@@ -4162,6 +4162,158 @@ function insertVarAtCursor(varName) {
   activeEl.focus();
 }
 
+function formatSelectedText(type) {
+  let activeElement = document.activeElement;
+  const bodyEl = document.getElementById('wordEditorBody');
+  const subjectEl = document.getElementById('wordEditorSubject');
+  
+  if (activeElement !== bodyEl && activeElement !== subjectEl) {
+    activeElement = bodyEl; // default to body
+  }
+  if (!activeElement) return;
+
+  const start = activeElement.selectionStart;
+  const end = activeElement.selectionEnd;
+  const text = activeElement.value;
+  const selectedText = text.substring(start, end);
+
+  let prefix = '';
+  let suffix = '';
+
+  if (type === 'bold') {
+    prefix = '**';
+    suffix = '**';
+  } else if (type === 'italic') {
+    prefix = '*';
+    suffix = '*';
+  } else if (type === 'underline') {
+    prefix = '__';
+    suffix = '__';
+  } else if (type === 'link') {
+    const url = prompt('Nhập URL liên kết:', 'https://');
+    if (url === null) return; // User cancelled
+    const linkText = selectedText || 'Liên kết';
+    
+    if (!selectedText) {
+      activeElement.value = text.substring(0, start) + '[' + linkText + '](' + url + ')' + text.substring(end);
+      const newCursorPos = start + 1 + linkText.length + 2 + url.length + 1;
+      activeElement.setSelectionRange(newCursorPos, newCursorPos);
+      activeElement.focus();
+      return;
+    }
+    
+    activeElement.value = text.substring(0, start) + '[' + selectedText + '](' + url + ')' + text.substring(end);
+    activeElement.setSelectionRange(start + 1, start + 1 + selectedText.length);
+    activeElement.focus();
+    return;
+  }
+
+  activeElement.value = text.substring(0, start) + prefix + selectedText + suffix + text.substring(end);
+  activeElement.selectionStart = start;
+  activeElement.selectionEnd = end + prefix.length + suffix.length;
+  activeElement.focus();
+  
+  // Trigger input event
+  const event = new Event('input', { bubbles: true });
+  activeElement.dispatchEvent(event);
+}
+
+function handleEditorKeydown(e) {
+  if (e.ctrlKey || e.metaKey) {
+    const key = e.key.toLowerCase();
+    if (key === 'b') {
+      e.preventDefault();
+      formatSelectedText('bold');
+    } else if (key === 'i') {
+      e.preventDefault();
+      formatSelectedText('italic');
+    } else if (key === 'u') {
+      e.preventDefault();
+      formatSelectedText('underline');
+    } else if (key === 'k') {
+      e.preventDefault();
+      formatSelectedText('link');
+    }
+  }
+}
+
+function handleBodyTab(e) {
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const text = ta.value;
+
+    const lastNewline = text.lastIndexOf('\n', start - 1);
+    const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+    const nextNewline = text.indexOf('\n', start);
+    const lineEnd = nextNewline === -1 ? text.length : nextNewline;
+    const lineText = text.substring(lineStart, lineEnd);
+
+    const bulletMatch = /^(\s*)(?:-|•|\*)\s+/.exec(lineText);
+
+    if (bulletMatch) {
+      if (e.shiftKey) {
+        const leadingSpaces = bulletMatch[1];
+        let diff = 0;
+        let newLeadingSpaces = leadingSpaces;
+        
+        if (leadingSpaces.startsWith('\t')) {
+          newLeadingSpaces = leadingSpaces.substring(1);
+          diff = 1;
+        } else if (leadingSpaces.startsWith('    ')) {
+          newLeadingSpaces = leadingSpaces.substring(4);
+          diff = 4;
+        } else if (leadingSpaces.startsWith('  ')) {
+          newLeadingSpaces = leadingSpaces.substring(2);
+          diff = 2;
+        } else if (leadingSpaces.startsWith(' ')) {
+          newLeadingSpaces = leadingSpaces.substring(1);
+          diff = 1;
+        }
+        
+        if (diff > 0) {
+          const newLineText = newLeadingSpaces + lineText.substring(leadingSpaces.length);
+          ta.value = text.substring(0, lineStart) + newLineText + text.substring(lineEnd);
+          ta.selectionStart = Math.max(lineStart, start - diff);
+          ta.selectionEnd = Math.max(lineStart, end - diff);
+        }
+      } else {
+        const indent = '    ';
+        const newLineText = indent + lineText;
+        ta.value = text.substring(0, lineStart) + newLineText + text.substring(lineEnd);
+        ta.selectionStart = start + indent.length;
+        ta.selectionEnd = end + indent.length;
+      }
+    } else {
+      if (!e.shiftKey) {
+        const indent = '    ';
+        ta.value = text.substring(0, start) + indent + text.substring(end);
+        ta.selectionStart = ta.selectionEnd = start + indent.length;
+      }
+    }
+
+    const event = new Event('input', { bubbles: true });
+    ta.dispatchEvent(event);
+  }
+}
+
+function bindEditorEvents() {
+  const subj = document.getElementById('wordEditorSubject');
+  const body = document.getElementById('wordEditorBody');
+  
+  if (subj) {
+    subj.addEventListener('keydown', handleEditorKeydown);
+  }
+  if (body) {
+    body.addEventListener('keydown', function(e) {
+      handleEditorKeydown(e);
+      handleBodyTab(e);
+    });
+  }
+}
+
 function htmlToPlainText(html) {
   const temp = document.createElement('div');
   temp.innerHTML = html;
@@ -4257,60 +4409,98 @@ function renderWithVarBadges(text) {
 }
 
 function parseEmailBodyToHTML(text) {
-  // First escape HTML, then restore {{var}} badges
   const lines = text.split('\n');
   let result = '';
-  let inList = false;
+  let listStack = [];
 
   for (let i = 0; i < lines.length; i++) {
-    let line = lines[i].trim();
+    const rawLine = lines[i];
+    const trimmedLine = rawLine.trim();
 
-    if (line === '') {
-      if (inList) { result += '</ul>'; inList = false; }
+    if (trimmedLine === '') {
+      while (listStack.length > 0) {
+        listStack.pop();
+        result += '</li></ul>';
+      }
       result += '<div class="email-paragraph-spacer"></div>';
       continue;
     }
 
-    // Escape HTML first, then re-render {{var}} as badge
-    const escapedLine = escapeHTML(line);
-    const lineWithBadges = escapedLine.replace(/\{\{([^}]+)\}\}/g, function(m, vName) {
-      return '<span class="word-var-chip">{{' + vName + '}}</span>';
-    });
+    // Check if it's a bullet list item
+    const bulletMatch = /^(\s*)(?:-|•|\*)\s+(.*)/.exec(rawLine);
+    if (bulletMatch) {
+      const indentStr = bulletMatch[1];
+      const currentIndent = indentStr.replace(/\t/g, '    ').length;
+      const bulletContent = bulletMatch[2];
+
+      const contentProcessed = formatInlineFormatting(renderWithVarBadges(bulletContent));
+
+      if (listStack.length === 0) {
+        listStack.push(currentIndent);
+        result += '<ul class="email-bullet-list"><li>' + contentProcessed;
+      } else {
+        const lastIndent = listStack[listStack.length - 1];
+        if (currentIndent > lastIndent) {
+          listStack.push(currentIndent);
+          result += '<ul class="email-bullet-list"><li>' + contentProcessed;
+        } else if (currentIndent === lastIndent) {
+          result += '</li><li>' + contentProcessed;
+        } else {
+          // currentIndent < lastIndent
+          while (listStack.length > 0 && currentIndent < listStack[listStack.length - 1]) {
+            listStack.pop();
+            result += '</li></ul>';
+          }
+          if (listStack.length > 0 && currentIndent === listStack[listStack.length - 1]) {
+            result += '</li><li>' + contentProcessed;
+          } else {
+            listStack.push(currentIndent);
+            result += '<ul class="email-bullet-list"><li>' + contentProcessed;
+          }
+        }
+      }
+      continue;
+    }
+
+    // If not a bullet, close list
+    while (listStack.length > 0) {
+      listStack.pop();
+      result += '</li></ul>';
+    }
 
     // Section header: starts with emoji/symbol and ends with :
-    const isSectionHeader = /^[^\w\s\d]/.test(line) && line.endsWith(':');
-    const isAllCapsHeader = line.endsWith(':') && line === line.toUpperCase() && line.length > 5;
+    const isSectionHeader = /^[^\w\s\d]/.test(trimmedLine) && trimmedLine.endsWith(':');
+    const isAllCapsHeader = trimmedLine.endsWith(':') && trimmedLine === trimmedLine.toUpperCase() && trimmedLine.length > 5;
 
     if (isSectionHeader || isAllCapsHeader) {
-      if (inList) { result += '</ul>'; inList = false; }
-      result += '<h4 class="email-section-header">' + lineWithBadges + '</h4>';
+      result += '<h4 class="email-section-header">' + renderWithVarBadges(trimmedLine) + '</h4>';
       continue;
     }
 
-    // List item: starts with - * •
-    const bulletMatch = /^(?:-|•|\*)\s+(.*)/.exec(line);
-    if (bulletMatch) {
-      if (!inList) { result += '<ul class="email-bullet-list">'; inList = true; }
-      const bulletContent = escapeHTML(bulletMatch[1]).replace(/\{\{([^}]+)\}\}/g, function(m, vName) {
-        return '<span class="word-var-chip">{{' + vName + '}}</span>';
-      });
-      result += '<li>' + formatInlineFormatting(bulletContent) + '</li>';
-      continue;
-    }
-
-    if (inList) { result += '</ul>'; inList = false; }
-    result += '<p class="email-paragraph">' + formatInlineFormatting(lineWithBadges) + '</p>';
+    result += '<p class="email-paragraph">' + formatInlineFormatting(renderWithVarBadges(trimmedLine)) + '</p>';
   }
 
-  if (inList) { result += '</ul>'; }
+  while (listStack.length > 0) {
+    listStack.pop();
+    result += '</li></ul>';
+  }
   return result;
 }
 
 function formatInlineFormatting(text) {
   let formatted = text;
   
-  // Format URLs
-  const urlRegex = /(https?:\/\/[^\s\<\>\&]+)/g;
+  // 1. Extract markdown links [text](url)
+  const markdownLinks = [];
+  const mdLinkRegex = /\[([^\]]+)\]\(((?:https?:\/\/|mailto:)[^\s\)]+)\)/g;
+  formatted = formatted.replace(mdLinkRegex, function(match, label, url) {
+    const placeholder = '___MD_LINK_' + markdownLinks.length + '___';
+    markdownLinks.push({ label: label, url: url });
+    return placeholder;
+  });
+
+  // 2. Format raw URLs (excluding ones with quotes or inside tags)
+  const urlRegex = /(https?:\/\/[^\s\<\>\&\"\'\)]+)/g;
   formatted = formatted.replace(urlRegex, function(url) {
     let cleanUrl = url;
     let trailing = '';
@@ -4320,6 +4510,13 @@ function formatInlineFormatting(text) {
     }
     return '<a class="email-link" href="' + cleanUrl + '" target="_blank">' + cleanUrl + '</a>' + trailing;
   });
+
+  // 3. Restore markdown links
+  for (let i = 0; i < markdownLinks.length; i++) {
+    const link = markdownLinks[i];
+    const htmlLink = '<a class="email-link" href="' + link.url + '" target="_blank">' + link.label + '</a>';
+    formatted = formatted.replace('___MD_LINK_' + i + '___', htmlLink);
+  }
   
   // Format specific inline parts with colons (bold the label before the colon)
   const colonRegex = /^([^:<>\s]+(?:[^:<>\n]*[^:<>\s])?):(\s*.*)$/;
@@ -4328,9 +4525,11 @@ function formatInlineFormatting(text) {
     formatted = '<strong class="email-label">' + match[1] + ':</strong>' + match[2];
   }
   
-  // Bold: **text** or __text__
+  // Bold: **text**
   formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  formatted = formatted.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+  
+  // Underline: __text__
+  formatted = formatted.replace(/__([^_]+)__/g, '<u>$1</u>');
   
   // Italics: *text* or _text_
   formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
@@ -4775,6 +4974,21 @@ function renderTemplatePreview() {
         '</div>' +
       '</div>' +
 
+      // Word formatting toolbar
+      '<div class="word-editor-toolbar">' +
+        '<div class="word-editor-toolbar-group">' +
+          '<button class="word-toolbar-btn" onclick="formatSelectedText(\'bold\')" title="In đậm (Ctrl+B)"><b>B</b></button>' +
+          '<button class="word-toolbar-btn" onclick="formatSelectedText(\'italic\')" title="In nghiêng (Ctrl+I)"><i>I</i></button>' +
+          '<button class="word-toolbar-btn" onclick="formatSelectedText(\'underline\')" title="Gạch chân (Ctrl+U)"><u>U</u></button>' +
+        '</div>' +
+        '<div class="word-editor-toolbar-group">' +
+          '<button class="word-toolbar-btn" onclick="formatSelectedText(\'link\')" title="Chèn liên kết (Ctrl+K)">🔗 Liên kết</button>' +
+        '</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);margin-left:auto;padding-right:8px;user-select:none;">' +
+          'Nhấn Tab để thụt lề bullet point' +
+        '</div>' +
+      '</div>' +
+
       // Subject area
       '<div class="email-preview-subject-box" style="padding:14px 20px;">' +
         '<div class="word-editor-label" style="text-align:center;margin-bottom:6px;">Tiêu đề (Subject)</div>' +
@@ -4789,10 +5003,11 @@ function renderTemplatePreview() {
       // Body textarea - plain text like Word
       '<textarea id="wordEditorBody" class="word-body-area" placeholder="Nhập nội dung email... (Enter để xuống dòng, dùng {{Tên biến}} để tự động hóa với n8n)">' + escapeHTMLPreserveNewlines(t.body) + '</textarea>';
 
-    // Focus subject after render
+    // Focus subject and bind event listeners after render
     setTimeout(function() {
       var subj = document.getElementById('wordEditorSubject');
       if (subj) { subj.focus(); subj.select(); autoResizeTextarea(subj); }
+      bindEditorEvents();
     }, 50);
 
   } else {
