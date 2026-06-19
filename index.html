@@ -2308,8 +2308,7 @@
 const CHARACTERS = [
   { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', canDelete: true },
   { id: 'xuan-thi',    name: 'Xuân Thi',     emoji: '👨‍🎨', color: '#EA4335', canDelete: false },
-  { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: false },
-  { id: 'phuong-linh', name: 'Phương Linh',  emoji: '👩',    color: '#FBBC05', canDelete: false }
+  { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: false }
 ];
 
 const TODO_STEPS = [
@@ -2330,8 +2329,7 @@ const TODO_STEPS = [
       'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).',
       'Điền form đăng ký workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
       'Điền form đăng ký workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Phương Linh) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)'
+      'Điền form đăng ký workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)'
     ]
   },
   {
@@ -2405,7 +2403,6 @@ const TODO_STEPS = [
       'Điền form báo cáo Workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
       'Điền form báo cáo Workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
       'Điền form báo cáo Workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Phương Linh) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
       'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
     ]
   },
@@ -2415,8 +2412,7 @@ const TODO_STEPS = [
     subs: [
       'Chí Thắng - Nộp báo cáo cải tiến',
       'Xuân Thi - Nộp báo cáo cải tiến',
-      'Thảo - Nộp báo cáo cải tiến',
-      'Phương Linh - Nộp báo cáo cải tiến'
+      'Thảo - Nộp báo cáo cải tiến'
     ]
   },
   {
@@ -2768,7 +2764,6 @@ function upgradeWorkshops(arr) {
           if (subText.indexOf('Chí Thắng') !== -1) doneState = getOldDone(subText, 'Chí Thắng');
           else if (subText.indexOf('Xuân Thi') !== -1) doneState = getOldDone(subText, 'Xuân Thi');
           else if (subText.indexOf('Thảo') !== -1) doneState = getOldDone(subText, 'Thảo');
-          else if (subText.indexOf('Phương Linh') !== -1) doneState = getOldDone(subText, 'Phương Linh');
         } else if (stepTmpl.id === 'step11') {
           doneState = getOldDone(subText, 'Tìm trường mới');
         } else {
@@ -3615,7 +3610,7 @@ function toggleSub(wsId, stepId, subId) {
     if (step10) {
       var allDone = step10.subs.every(function(s) { return s.done; });
       if (!allDone) {
-        showToast('⚠️ Cần nộp đủ 4 báo cáo Bài học & Cải tiến (Bước 10) trước khi tìm trường mới!', 'warning');
+        showToast('⚠️ Cần nộp đủ 3 báo cáo Bài học & Cải tiến (Bước 10) trước khi tìm trường mới!', 'warning');
         return;
       }
     }
