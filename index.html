@@ -909,14 +909,101 @@
       background: var(--bg-dark);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 16px;
+      padding: 0;
       font-family: 'Inter', system-ui, sans-serif;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      color: var(--text);
       min-height: 250px;
       flex: 1;
+      overflow: hidden;
+    }
+    /* Beautiful Email Preview Card */
+    .email-preview-card {
+      background: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .email-preview-subject-box {
+      background: var(--bg-card2);
+      padding: 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .email-preview-subject-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .email-preview-subject-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.4;
+      display: inline-block;
+      max-width: 100%;
+      word-wrap: break-word;
+      /* Gradient style */
+      background: linear-gradient(135deg, var(--warning) 0%, #ffc107 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .email-preview-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+      border: none;
+    }
+    .email-preview-body-content {
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.75;
+      overflow-y: auto;
+      max-height: 600px;
+    }
+    .email-paragraph {
+      margin-bottom: 14px;
+      color: var(--text-muted);
+    }
+    .email-paragraph-spacer {
+      height: 14px;
+    }
+    .email-section-header {
+      font-size: 0.95rem;
+      font-weight: 750;
+      color: var(--warning);
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-left: 3px solid var(--warning);
+      padding-left: 10px;
+      line-height: 1.4;
+    }
+    .email-label {
+      color: var(--text);
+      font-weight: 700;
+    }
+    .email-bullet-list {
+      margin-left: 20px;
+      margin-bottom: 14px;
+      list-style-type: disc;
+    }
+    .email-bullet-list li {
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+    .email-link {
+      color: var(--primary);
+      text-decoration: underline;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      word-break: break-all;
+    }
+    .email-link:hover {
+      color: var(--primary-bright);
     }
     .variables-panel {
       background: var(--bg-card2);
@@ -3741,6 +3828,110 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
+/* ========== EMAIL PARSER HELPERS ========== */
+function formatEmailBodyToHTML(subject, body) {
+  let lines = body.split('\n');
+  if (lines.length > 0) {
+    const firstLineClean = lines[0].trim().replace(/\s+/g, ' ');
+    const subjectClean = subject.trim().replace(/\s+/g, ' ');
+    if (firstLineClean === subjectClean || firstLineClean.toLowerCase() === subjectClean.toLowerCase()) {
+      lines.shift();
+    }
+  }
+  const cleanBody = lines.join('\n').trim();
+  return parseEmailBodyToHTML(cleanBody);
+}
+
+function parseEmailBodyToHTML(text) {
+  let html = escapeHTML(text);
+  const lines = html.split('\n');
+  let result = '';
+  let inList = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+    
+    if (line === '') {
+      if (inList) {
+        result += '</ul>';
+        inList = false;
+      }
+      result += '<div class="email-paragraph-spacer"></div>';
+      continue;
+    }
+    
+    // Check for section header (starts with non-alphanumeric and ends with colon) or all caps header
+    const isSectionHeader = /^[^\w\s\d]/.test(line) && line.endsWith(':');
+    const isAllCapsHeader = line.endsWith(':') && line === line.toUpperCase() && line.length > 5;
+    
+    if (isSectionHeader || isAllCapsHeader) {
+      if (inList) {
+        result += '</ul>';
+        inList = false;
+      }
+      result += '<h4 class="email-section-header">' + line + '</h4>';
+      continue;
+    }
+    
+    // Check for explicit list item starting with dash or bullet
+    const startsWithBullet = /^(?:-|•|\*)\s+(.*)/.exec(line);
+    if (startsWithBullet) {
+      if (!inList) {
+        result += '<ul class="email-bullet-list">';
+        inList = true;
+      }
+      result += '<li>' + formatInlineFormatting(startsWithBullet[1]) + '</li>';
+      continue;
+    }
+    
+    if (inList) {
+      result += '</ul>';
+      inList = false;
+    }
+    
+    result += '<p class="email-paragraph">' + formatInlineFormatting(line) + '</p>';
+  }
+  
+  if (inList) {
+    result += '</ul>';
+  }
+  
+  return result;
+}
+
+function formatInlineFormatting(text) {
+  let formatted = text;
+  
+  // Format URLs
+  const urlRegex = /(https?:\/\/[^\s\<\>\&]+)/g;
+  formatted = formatted.replace(urlRegex, function(url) {
+    let cleanUrl = url;
+    let trailing = '';
+    if (/[.,;:?]$/.test(url)) {
+      cleanUrl = url.substring(0, url.length - 1);
+      trailing = url.charAt(url.length - 1);
+    }
+    return '<a class="email-link" href="' + cleanUrl + '" target="_blank">' + cleanUrl + '</a>' + trailing;
+  });
+  
+  // Format specific inline parts with colons (bold the label before the colon)
+  const colonRegex = /^([^:<>\s]+(?:[^:<>\n]*[^:<>\s])?):(\s*.*)$/;
+  const match = colonRegex.exec(formatted);
+  if (match && !match[1].includes('http') && !match[1].includes('<a')) {
+    formatted = '<strong class="email-label">' + match[1] + ':</strong>' + match[2];
+  }
+  
+  // Bold: **text** or __text__
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  formatted = formatted.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+  
+  // Italics: *text* or _text_
+  formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  formatted = formatted.replace(/_([^_]+)_/g, '<em>$1</em>');
+  
+  return formatted;
+}
+
 /* ========== CRM SYSTEMS ========== */
 let crmPage = 1;
 const CRM_PER_PAGE = 10;
@@ -4173,14 +4364,24 @@ function renderTemplatePreview() {
   viewer.innerHTML = '<div class="preview-header-row">' +
     '<div style="flex:1; min-width: 250px;">' +
       '<div class="preview-title">📧 ' + escapeHTML(t.name) + '</div>' +
-      '<div class="preview-subject"><strong>Tiêu đề:</strong> ' + escapeHTML(previewSubject) + '</div>' +
     '</div>' +
     '<div class="preview-actions-row">' +
       '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">📋 Copy Tiêu đề</button>' +
       '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px; margin-left: 6px;">📋 Copy Nội dung</button>' +
     '</div>' +
     '</div>' +
-    '<div class="preview-body-container" id="previewBodyContainer">' + escapeHTML(previewBody) + '</div>' +
+    '<div class="preview-body-container" style="padding: 0;">' +
+      '<div class="email-preview-card">' +
+        '<div class="email-preview-subject-box">' +
+          '<div class="email-preview-subject-label">Tiêu đề (Subject)</div>' +
+          '<div class="email-preview-subject-text" id="previewSubjectText">' + escapeHTML(previewSubject) + '</div>' +
+        '</div>' +
+        '<div class="email-preview-divider"></div>' +
+        '<div class="email-preview-body-content" id="previewBodyContainer">' +
+          formatEmailBodyToHTML(previewSubject, previewBody) +
+        '</div>' +
+      '</div>' +
+    '</div>' +
     varsHtml;
 }
 
@@ -4197,15 +4398,20 @@ function updatePreviewVar(name, val) {
     uniqueVars.add(match[1]);
   }
   
+  let previewSubject = t.subject || '';
   let previewBody = t.body || '';
   uniqueVars.forEach(function(vName) {
     const vVal = previewVars[vName] !== undefined ? previewVars[vName] : ('[' + vName + ']');
     const escVal = vVal === '' ? ('[' + vName + ']') : vVal;
+    previewSubject = previewSubject.split('[' + vName + ']').join(escVal);
     previewBody = previewBody.split('[' + vName + ']').join(escVal);
   });
   
-  const container = document.getElementById('previewBodyContainer');
-  if (container) container.textContent = previewBody;
+  const subjectEl = document.getElementById('previewSubjectText');
+  if (subjectEl) subjectEl.innerHTML = escapeHTML(previewSubject);
+  
+  const bodyEl = document.getElementById('previewBodyContainer');
+  if (bodyEl) bodyEl.innerHTML = formatEmailBodyToHTML(previewSubject, previewBody);
 }
 
 function copyTemplateText(field, id) {
