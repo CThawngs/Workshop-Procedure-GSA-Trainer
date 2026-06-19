@@ -2318,10 +2318,15 @@ const TODO_STEPS = [
     label: 'Bước 1: Tìm trường & Quét thông tin',
     subs: [
       'Rà soát danh sách trường tiềm năng từ CRM School. Nếu chưa có trường: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền... và điền các thông tin đó vào CRM trước khi tạo dự án và bắt đầu.',
-      'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC)',
-      'Pitch proposal và chốt lịch workshop chính thức',
-      'Xác nhận số lượng sinh viên mục tiêu (+250 SV)',
-      'Lấy thông tin hội trường và cơ sở vật chất',
+      'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC) để trao đổi hợp tác sơ bộ và pitch proposal.',
+      'Thảo luận để đạt được sự đồng ý hợp tác từ phía nhà trường, chốt lịch chính thức với thông tin rõ ràng về thời gian, địa điểm/hội trường, ngày tổ chức.'
+    ]
+  },
+  {
+    id: 'step2', day: 'Ngày 2',
+    label: 'Bước 2: Thủ tục Google & Gửi Email Đề xuất',
+    subs: [
+      'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).',
       'Điền form đăng ký workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
       'Điền form đăng ký workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
       'Điền form đăng ký workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
@@ -2329,36 +2334,26 @@ const TODO_STEPS = [
     ]
   },
   {
-    id: 'step2', day: 'Ngày 2',
-    label: 'Bước 2: Gửi Email Đề xuất Phối hợp',
-    subs: [
-      'Gửi email booking hội trường chính thức',
-      'Tạo key visual và bộ ấn phẩm (poster, banner)',
-      'Lên kế hoạch nội dung post truyền thông (Fanpage, TikTok)',
-      'Gửi bộ kit truyền thông cho phòng truyền thông trường',
-      'Đăng bài truyền thông đợt 1 mở đăng ký'
-    ]
-  },
-  {
     id: 'step3', day: 'Ngày 3',
-    label: 'Bước 3: Thủ tục Google & Thiết kế Asset',
+    label: 'Bước 3: Thiết kế Asset Poster/Banner & QR Code',
     subs: [
-      'Hoàn thiện thiết kế Banner 4m x 2.5m (Bạt Hiflex)',
-      'Thiết kế 2 tấm Standee 0.6m x 1.6m',
-      'Gửi file đi in ấn (Banner + Standee)',
-      'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k)',
-      'Thiết kế QR Code check-in/check-out'
+      'Truy cập link Google Drive (bổ sung sau), nhân bản và đổi tên form "Check-in for Students" theo tên trường mục tiêu.',
+      'Copy link Google Form đó, truy cập https://me-qr.com/vi/qr-code-generator/google-form để tạo QR Code, đặt tên QR Code theo tên trường và tải ảnh QR Code về.',
+      'Vào Gemini tạo poster/banner theo 3 tỷ lệ: Dọc, Vuông, Ngang; kích hoạt tính năng Canva và dùng câu lệnh "Make it editable" để có thể tùy chỉnh các phần tử trên Canva.',
+      'Trên Canva: Thay đổi tên trường, chèn Logo của trường và dán hình ảnh QR Code vừa tải về.',
+      'Tải ảnh banner/poster hoàn thiện lên folder (Tên trường đó) trong Google Drive (để đính kèm cho nhà trường).',
+      'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k)'
     ]
   },
   {
     id: 'step4', day: 'Ngày 4',
     label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
     subs: [
-      'Tạo Google Form đăng ký (check-in) với đầy đủ trường thông tin',
-      'Cấu hình n8n workflow gửi email xác nhận tự động',
-      'Test luồng automation: Form → n8n → Gmail',
-      'Đăng Form đăng ký lên tất cả kênh truyền thông',
-      'Monitor số lượng đăng ký, push thêm nếu chưa đạt 250 SV'
+      'Setup một project/workflow n8n riêng theo tên trường dựa trên Google Form Check-in đã tạo.',
+      'Cấu hình luồng n8n gửi email xác nhận check-in tự động (kèm tên trường tương ứng) ngay khi sinh viên nộp form check-in thành công.',
+      'Setup và hẹn giờ trên n8n để tự động gửi email Check-out & Quà tặng đến các sinh viên đã check-in vào lúc 23h55 cùng ngày tổ chức workshop.',
+      'Test luồng automation hoàn chỉnh: Google Form → n8n → Gmail xác nhận.',
+      'Đăng link form đăng ký lên các kênh truyền thông và kêu gọi đăng ký (+250 SV)'
     ]
   },
   {
@@ -2387,8 +2382,8 @@ const TODO_STEPS = [
     id: 'step7', day: 'Ngày 6',
     label: 'Bước 7: Automation Check-out & Tặng quà',
     subs: [
-      'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform)',
-      'Kích hoạt n8n luồng tự động gửi email cảm ơn + tặng quà số'
+      'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform) để sinh viên điền khảo sát.',
+      'Kiểm tra tiến độ hàng chờ n8n để email Check-out & Quà tặng tự động gửi đi vào lúc 23h55 cùng ngày.'
     ]
   },
   {
