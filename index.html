@@ -378,6 +378,47 @@
       box-shadow: 0 4px 12px rgba(52,168,83,0.3);
     }
     .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(52,168,83,0.4); }
+    /* Email Editor Toolbar */
+    .email-editor-toolbar {
+      display: flex;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--bg-card2);
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .toolbar-btn {
+      background: var(--bg-dark);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .toolbar-btn:hover {
+      background: var(--bg-card);
+      color: var(--text);
+      border-color: var(--border-bright);
+    }
+    /* Variable badge style */
+    .email-var-badge {
+      background: rgba(66, 133, 244, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(66, 133, 244, 0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      user-select: none;
+      display: inline-block;
+      margin: 0 2px;
+    }
 
     /* DETAIL */
     .detail-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -3836,6 +3877,81 @@ function escapeHTML(str) {
 }
 
 /* ========== EMAIL PARSER HELPERS ========== */
+function formatDoc(cmd, value) {
+  document.execCommand(cmd, false, value);
+}
+
+function createLink() {
+  const url = prompt("Nhập URL liên kết:");
+  if (url) {
+    document.execCommand('createLink', false, url);
+  }
+}
+
+function htmlToPlainText(html) {
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  
+  function processNode(node) {
+    if (node.nodeType === 3) { // Text Node
+      return node.nodeValue;
+    }
+    if (node.nodeType === 1) { // Element Node
+      const tag = node.tagName.toUpperCase();
+      
+      if (node.classList.contains('email-var-badge')) {
+        return '[' + node.getAttribute('data-var-name') + ']';
+      }
+      
+      if (tag === 'BR') {
+        return '\n';
+      }
+      
+      let childrenVal = '';
+      for (let i = 0; i < node.childNodes.length; i++) {
+        childrenVal += processNode(node.childNodes[i]);
+      }
+      
+      if (tag === 'P' || tag === 'DIV' || tag === 'H1' || tag === 'H2' || tag === 'H3' || tag === 'H4' || tag === 'H5' || tag === 'H6') {
+        return childrenVal + '\n';
+      }
+      
+      if (tag === 'LI') {
+        return '- ' + childrenVal + '\n';
+      }
+      
+      if (tag === 'UL' || tag === 'OL') {
+        return childrenVal + '\n';
+      }
+      
+      if (tag === 'STRONG' || tag === 'B') {
+        if (childrenVal.startsWith('**') && childrenVal.endsWith('**')) return childrenVal;
+        return '**' + childrenVal + '**';
+      }
+      
+      if (tag === 'EM' || tag === 'I') {
+        if (childrenVal.startsWith('*') && childrenVal.endsWith('*')) return childrenVal;
+        return '*' + childrenVal + '*';
+      }
+      
+      if (tag === 'A') {
+        const href = node.getAttribute('href') || '';
+        if (childrenVal.trim() === href.trim() || childrenVal.includes('http')) {
+          return href;
+        }
+        return childrenVal + ' (' + href + ')';
+      }
+      
+      return childrenVal;
+    }
+    return '';
+  }
+  
+  let text = processNode(temp);
+  text = text.replace(/\n{3,}/g, '\n\n');
+  return text.trim();
+}
+
 function formatEmailBodyToHTML(subject, body) {
   let lines = body.split('\n');
   if (lines.length > 0) {
@@ -4385,18 +4501,34 @@ function renderTemplatePreview() {
       '</div>' +
       '</div>';
       
-    cardHtml = '<div class="email-preview-card">' +
-      '<div class="email-preview-subject-box" style="text-align: left;">' +
-        '<div class="email-preview-subject-label" style="text-align: left;">Tiêu đề (Subject)</div>' +
-        '<input type="text" id="editTemplateSubject" class="form-input" style="width: 100%; font-size: 1.1rem; font-weight: bold; text-align: center; border-color: var(--border-bright);" value="' + escapeHTML(t.subject) + '"/>' +
+    let editSubject = t.subject || '';
+    let editBody = t.body || '';
+    uniqueVars.forEach(function(vName) {
+      const badgeHtml = '<span class="email-var-badge" contenteditable="false" data-var-name="' + escapeHTML(vName) + '">[' + escapeHTML(vName) + ']</span>';
+      editSubject = editSubject.split('[' + vName + ']').join(badgeHtml);
+      editBody = editBody.split('[' + vName + ']').join(badgeHtml);
+    });
+
+    cardHtml = '<div class="email-editor-toolbar">' +
+      '<button type="button" class="toolbar-btn" onclick="formatDoc(\'bold\')" title="In đậm (Ctrl+B)"><strong>B</strong></button>' +
+      '<button type="button" class="toolbar-btn" onclick="formatDoc(\'italic\')" title="In nghiêng (Ctrl+I)"><em>I</em></button>' +
+      '<button type="button" class="toolbar-btn" onclick="formatDoc(\'insertUnorderedList\')" title="Danh sách">• List</button>' +
+      '<button type="button" class="toolbar-btn" onclick="createLink()" title="Thêm liên kết">🔗 Link</button>' +
+      '<div style="margin-left: auto; font-size: 0.72rem; color: var(--warning);">💡 Nhấn Shift+Enter để xuống dòng đơn. Enter để xuống dòng đoạn văn.</div>' +
       '</div>' +
-      '<div class="email-preview-divider"></div>' +
-      '<div class="email-preview-body-content" style="padding: 20px;">' +
-        '<div class="email-preview-subject-label" style="text-align: left; margin-bottom: 6px;">Nội dung (Body)</div>' +
-        '<div style="font-size: 0.72rem; color: var(--warning); margin-bottom: 10px; line-height: 1.4;">💡 Lưu ý: Các thẻ như [Tên sinh viên], [Tên Trường Đại học]... là các biến động. Hãy giữ đúng định dạng ngoặc vuông để hệ thống tự điền thông tin khi xem.</div>' +
-        '<textarea id="editTemplateBody" class="form-input" style="width: 100%; height: 380px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; padding: 12px; border-radius: 6px; border-color: var(--border-bright); resize: vertical; display: block; background: var(--bg-dark); color: var(--text);">' + escapeHTML(t.body) + '</textarea>' +
-      '</div>' +
-    '</div>';
+      '<div class="email-preview-card">' +
+        '<div class="email-preview-subject-box">' +
+          '<div class="email-preview-subject-label">Tiêu đề (Subject) - Nhấp trực tiếp để sửa</div>' +
+          '<div class="email-preview-subject-text" contenteditable="true" id="previewSubjectText" style="outline: none; border: 1px dashed var(--border-bright); background: var(--bg-dark); border-radius: 6px; padding: 10px 20px; cursor: text; display: block; width: 100%;">' + editSubject + '</div>' +
+        '</div>' +
+        '<div class="email-preview-divider"></div>' +
+        '<div class="email-preview-body-content" style="padding: 20px;">' +
+          '<div class="email-preview-subject-label" style="text-align: left; margin-bottom: 6px;">Nội dung (Body) - Nhấp trực tiếp để sửa</div>' +
+          '<div contenteditable="true" id="previewBodyContainer" style="outline: none; border: 1px dashed var(--border-bright); background: var(--bg-dark); border-radius: 6px; padding: 20px; cursor: text; min-height: 350px;">' +
+            parseEmailBodyToHTML(editBody) +
+          '</div>' +
+        '</div>' +
+      '</div>';
   } else {
     headerHtml = '<div class="preview-header-row">' +
       '<div style="flex:1; min-width: 250px;">' +
@@ -4514,14 +4646,14 @@ function saveEmailTemplateInline() {
   if (!t) return;
   
   const nameInput = document.getElementById('editTemplateName');
-  const subjectInput = document.getElementById('editTemplateSubject');
-  const bodyTextarea = document.getElementById('editTemplateBody');
+  const subjectEl = document.getElementById('previewSubjectText');
+  const bodyEl = document.getElementById('previewBodyContainer');
   
-  if (!nameInput || !subjectInput || !bodyTextarea) return;
+  if (!nameInput || !subjectEl || !bodyEl) return;
   
   const newName = nameInput.value.trim();
-  const newSubject = subjectInput.value.trim();
-  const newBody = bodyTextarea.value;
+  const newSubject = htmlToPlainText(subjectEl.innerHTML);
+  const newBody = htmlToPlainText(bodyEl.innerHTML);
   
   if (!newName) {
     showToast('❌ Tên mẫu không được để trống!', 'error');
