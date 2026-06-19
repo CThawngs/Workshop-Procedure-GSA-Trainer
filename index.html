@@ -4238,60 +4238,70 @@ function formatEmailBodyToHTML(subject, body) {
   return parseEmailBodyToHTML(cleanBody);
 }
 
+// Render plain text with {{var}} shown as blue badges (no substitution)
+function renderWithVarBadges(text) {
+  if (!text) return '';
+  // Split by {{...}} tokens
+  const parts = text.split(/(\{\{[^}]+\}\})/g);
+  let html = '';
+  parts.forEach(function(part) {
+    const varMatch = /^\{\{([^}]+)\}\}$/.exec(part);
+    if (varMatch) {
+      html += '<span class="word-var-chip">{{' + escapeHTML(varMatch[1]) + '}}</span>';
+    } else {
+      html += escapeHTML(part);
+    }
+  });
+  return html;
+}
+
 function parseEmailBodyToHTML(text) {
-  let html = escapeHTML(text);
-  const lines = html.split('\n');
+  // First escape HTML, then restore {{var}} badges
+  const lines = text.split('\n');
   let result = '';
   let inList = false;
-  
+
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
-    
+
     if (line === '') {
-      if (inList) {
-        result += '</ul>';
-        inList = false;
-      }
+      if (inList) { result += '</ul>'; inList = false; }
       result += '<div class="email-paragraph-spacer"></div>';
       continue;
     }
-    
-    // Check for section header (starts with non-alphanumeric and ends with colon) or all caps header
+
+    // Escape HTML first, then re-render {{var}} as badge
+    const escapedLine = escapeHTML(line);
+    const lineWithBadges = escapedLine.replace(/\{\{([^}]+)\}\}/g, function(m, vName) {
+      return '<span class="word-var-chip">{{' + vName + '}}</span>';
+    });
+
+    // Section header: starts with emoji/symbol and ends with :
     const isSectionHeader = /^[^\w\s\d]/.test(line) && line.endsWith(':');
     const isAllCapsHeader = line.endsWith(':') && line === line.toUpperCase() && line.length > 5;
-    
+
     if (isSectionHeader || isAllCapsHeader) {
-      if (inList) {
-        result += '</ul>';
-        inList = false;
-      }
-      result += '<h4 class="email-section-header">' + line + '</h4>';
+      if (inList) { result += '</ul>'; inList = false; }
+      result += '<h4 class="email-section-header">' + lineWithBadges + '</h4>';
       continue;
     }
-    
-    // Check for explicit list item starting with dash or bullet
-    const startsWithBullet = /^(?:-|•|\*)\s+(.*)/.exec(line);
-    if (startsWithBullet) {
-      if (!inList) {
-        result += '<ul class="email-bullet-list">';
-        inList = true;
-      }
-      result += '<li>' + formatInlineFormatting(startsWithBullet[1]) + '</li>';
+
+    // List item: starts with - * •
+    const bulletMatch = /^(?:-|•|\*)\s+(.*)/.exec(line);
+    if (bulletMatch) {
+      if (!inList) { result += '<ul class="email-bullet-list">'; inList = true; }
+      const bulletContent = escapeHTML(bulletMatch[1]).replace(/\{\{([^}]+)\}\}/g, function(m, vName) {
+        return '<span class="word-var-chip">{{' + vName + '}}</span>';
+      });
+      result += '<li>' + formatInlineFormatting(bulletContent) + '</li>';
       continue;
     }
-    
-    if (inList) {
-      result += '</ul>';
-      inList = false;
-    }
-    
-    result += '<p class="email-paragraph">' + formatInlineFormatting(line) + '</p>';
+
+    if (inList) { result += '</ul>'; inList = false; }
+    result += '<p class="email-paragraph">' + formatInlineFormatting(lineWithBadges) + '</p>';
   }
-  
-  if (inList) {
-    result += '</ul>';
-  }
-  
+
+  if (inList) { result += '</ul>'; }
   return result;
 }
 
@@ -4774,31 +4784,10 @@ function renderTemplatePreview() {
 
   } else {
     // =====================================================
-    // VIEW MODE: Beautiful email preview
+    // VIEW MODE: Show raw variables as colored badges (no substitution)
     // =====================================================
-    let previewSubject = t.subject || '';
-    let previewBody = t.body || '';
-    uniqueVars.forEach(function(vName) {
-      const val = previewVars[vName] !== undefined ? previewVars[vName] : '';
-      const escVal = val === '' ? ('{{' + vName + '}}') : val;
-      previewSubject = previewSubject.split('{{' + vName + '}}').join(escVal);
-      previewSubject = previewSubject.split('[' + vName + ']').join(escVal);
-      previewBody = previewBody.split('{{' + vName + '}}').join(escVal);
-      previewBody = previewBody.split('[' + vName + ']').join(escVal);
-    });
-
-    let varsHtml = '';
-    if (uniqueVars.size > 0) {
-      varsHtml = '<div class="variables-panel"><div class="variables-title">📝 Thử điền biến (Test variables)</div><div class="variables-grid">';
-      uniqueVars.forEach(function(vName) {
-        const currentVal = previewVars[vName] !== undefined ? previewVars[vName] : '';
-        varsHtml += '<div class="form-group" style="margin-bottom:0;">' +
-          '<label class="form-label" style="font-size:0.7rem;margin-bottom:2px;">' + escapeHTML(vName) + '</label>' +
-          '<input type="text" class="sort-select" style="width:100%;padding:4px 8px;font-size:0.75rem;border-radius:4px;" value="' + escapeHTML(currentVal) + '" oninput="updatePreviewVar(\'' + escapeHTML(vName) + '\', this.value)"/>' +
-          '</div>';
-      });
-      varsHtml += '</div></div>';
-    }
+    const rawSubject = t.subject || '';
+    const rawBody = t.body || '';
 
     viewer.innerHTML =
       '<div class="word-editor-header">' +
@@ -4808,22 +4797,21 @@ function renderTemplatePreview() {
         '</div>' +
         '<div class="word-editor-actions">' +
           '<button class="btn-primary" onclick="startEmailTemplateInline()" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">✏️ Chỉnh sửa</button>' +
-          '<button class="btn-primary" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">📋 Subject</button>' +
-          '<button class="btn-primary" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">📋 Body</button>' +
+          '<button class="btn-success" onclick="copyTemplateText(\'subject\', \'' + t.id + '\')" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">📋 Copy Subject</button>' +
+          '<button class="btn-success" onclick="copyTemplateText(\'body\', \'' + t.id + '\')" style="padding:5px 10px;font-size:0.8rem;border-radius:6px;">📋 Copy Body</button>' +
         '</div>' +
       '</div>' +
 
-      // Email card view
+      // Email card view - variables shown as badges
       '<div class="view-mode-body">' +
         '<div class="email-preview-subject-box">' +
           '<div class="email-preview-subject-label">Tiêu đề (Subject)</div>' +
-          '<div class="email-preview-subject-text" id="previewSubjectText">' + escapeHTML(previewSubject) + '</div>' +
+          '<div class="email-preview-subject-text" id="previewSubjectText">' + renderWithVarBadges(rawSubject) + '</div>' +
         '</div>' +
         '<div class="word-divider"></div>' +
         '<div class="email-preview-body-content" id="previewBodyContainer">' +
-          formatEmailBodyToHTML(previewSubject, previewBody) +
+          formatEmailBodyToHTML(rawSubject, rawBody) +
         '</div>' +
-        (varsHtml ? '<div style="padding:0 20px 20px;">' + varsHtml + '</div>' : '') +
       '</div>';
   }
 }
@@ -4853,20 +4841,11 @@ function updatePreviewVar(name, val) {
 function copyTemplateText(field, id) {
   const t = emailTemplates.find(function(item) { return item.id === id; });
   if (!t) return;
-  
-  let text = field === 'subject' ? t.subject : t.body;
-  const uniqueVars = detectTemplateVariables(t.subject, t.body);
-  
-  uniqueVars.forEach(function(vName) {
-    const val = previewVars[vName] !== undefined ? previewVars[vName] : '';
-    const escVal = val === '' ? ('{{' + vName + '}}') : val;
-    text = text.split('{{' + vName + '}}').join(escVal);
-    text = text.split('[' + vName + ']').join(escVal);
-  });
-  
+  // Copy raw template text with {{var}} placeholders - no substitution
+  const text = (field === 'subject' ? t.subject : t.body) || '';
   navigator.clipboard.writeText(text).then(function() {
-    showToast('📋 Đã sao chép nội dung vào Clipboard!', 'success');
-  }).catch(function(err) {
+    showToast('📋 Đã sao chép ' + (field === 'subject' ? 'Tiêu đề' : 'Nội dung') + ' vào Clipboard!', 'success');
+  }).catch(function() {
     showToast('❌ Sao chép thất bại!', 'error');
   });
 }
