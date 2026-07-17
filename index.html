@@ -3433,7 +3433,7 @@ function buildCard(ws, c) {
   }
   var badgeCls = ws.status === 'upcoming' ? 'badge-upcoming' : 'badge-completed';
   var badgeTxt = ws.status === 'upcoming' ? '🗓️ Sắp diễn ra' : '✅ Hoàn thành';
-  var delBtn = (c && c.id === 'chi-thang') ?
+  var delBtn = c ?
     '<button class="card-action-btn delete" onclick="confirmDelete(\'' + ws.id + '\',event)" title="Xóa">🗑️</button>' : '';
   var chips = assignees.length ?
     '<div class="card-assignees">' + assignees.map(function(a) {
@@ -3590,7 +3590,7 @@ function executeDelete() {
 function confirmDelete(id, event) {
   if (event) event.stopPropagation();
   var c = getChar(currentUser && currentUser.id);
-  if (!c || c.id !== 'chi-thang') { showToast('❌ Chỉ Chí Thắng (Admin) mới có quyền xóa workshop!', 'error'); return; }
+  if (!c) { showToast('❌ Vui lòng đăng nhập để xóa workshop!', 'error'); return; }
   var ws = workshops.find(function(w) { return w.id === id; });
   if (!ws) return;
   showDeleteConfirm(
@@ -3629,7 +3629,7 @@ function renderDetail(ws) {
 
   document.getElementById('detailModalTitle').textContent = ws.name;
 
-  var delBtn = (c && c.id === 'chi-thang')
+  var delBtn = c
     ? '<button class="btn-danger" style="margin-right:auto" onclick="confirmDelete(\'' + ws.id + '\',null);closeModal(\'workshopDetailModal\')">🗑️ Xóa Workshop</button>'
     : '';
 
