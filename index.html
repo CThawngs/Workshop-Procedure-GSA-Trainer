@@ -84,6 +84,11 @@
       align-items: center; justify-content: center;
       min-height: 100vh; padding: 40px 20px;
       position: relative;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #characterScreen.active {
+      display: flex !important;
     }
 
     .char-header { text-align: center; margin-bottom: 48px; z-index: 1; }
@@ -103,12 +108,24 @@
     .char-header p { color: var(--text-muted); font-size: 1rem; font-weight: 400; }
     .char-subtitle { font-size: 1.1rem; font-weight: 500; color: var(--text-muted); margin-bottom: 40px; text-align: center; z-index: 1; }
 
-    .char-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 900px; width: 100%; z-index: 1; }
+    .char-grid {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      z-index: 1;
+      box-sizing: border-box;
+    }
 
     .char-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
       padding: 32px 24px; cursor: pointer; text-align: center; transition: var(--transition);
       position: relative; overflow: hidden;
+      width: 210px; flex-shrink: 0;
     }
     .char-card::before {
       content: ''; position: absolute; inset: 0; background: var(--char-color, #4285F4);
@@ -492,7 +509,7 @@
     @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
     .toast.hiding { animation: toastOut 0.3s ease forwards; }
 
-    @media (max-width: 900px) { .char-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 900px) {}
     @media (max-width: 768px) {
       .form-row { grid-template-columns: 1fr; }
       .workshop-grid { grid-template-columns: 1fr; }
@@ -526,8 +543,19 @@
       .preview-header-row { flex-wrap: wrap; }
     }
     @media (max-width: 480px) {
-      .char-grid { grid-template-columns: 1fr 1fr; }
-      .char-card { padding: 20px 12px; }
+      .char-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(130px, 1fr)) !important;
+        justify-content: center !important;
+        justify-items: center !important;
+        gap: 12px !important;
+        padding: 0 10px !important;
+      }
+      .char-card {
+        width: 100% !important;
+        max-width: 160px !important;
+        padding: 20px 12px !important;
+      }
       .char-avatar { width: 60px; height: 60px; font-size: 1.5rem; }
       .main-content { padding: 12px 10px; }
       .header { padding: 0 10px; height: 52px; }
@@ -1705,6 +1733,7 @@
       <button class="tab-btn active" id="mainTabWorkshops" onclick="switchMainTab('workshops')">📋 Quản lý Workshop</button>
       <button class="tab-btn" id="mainTabCRM" onclick="switchMainTab('crm')">📊 CRM Trường học</button>
       <button class="tab-btn" id="mainTabTemplates" onclick="switchMainTab('templates')">📂 Tài liệu & Mẫu</button>
+      <button class="tab-btn" id="mainTabMembers" onclick="switchMainTab('members')" style="display: none;">👥 Quản lý Thành viên GSA</button>
     </div>
 
     <!-- ===== SECTION: WORKSHOPS ===== -->
@@ -1811,6 +1840,32 @@
         <div class="templates-viewer" id="templatesViewer">
           <!-- Rendered dynamically -->
         </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: MEMBERS ===== -->
+    <div id="sectionMembers" class="main-section" style="display: none;">
+      <div class="dashboard-title-row">
+        <div class="dashboard-title">👥 Quản lý Thành viên GSA</div>
+        <button class="btn-primary" onclick="openAddMemberModal()">➕ Thêm thành viên</button>
+      </div>
+      
+      <div class="table-container">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Avatar</th>
+              <th>Họ và Tên</th>
+              <th>Màu đại diện</th>
+              <th>ID hệ thống</th>
+              <th>Mật khẩu</th>
+              <th style="text-align: right; width: 120px;">Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="membersTableBody">
+            <!-- Rendered via JS -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -2149,8 +2204,8 @@
       <div id="pwViewLogin">
         <form id="passwordForm" onsubmit="verifyPassword(event)">
           <div class="form-group" style="text-align: center; margin-bottom: 20px;">
-            <div style="font-size: 3rem; margin-bottom: 12px;">👨‍💼</div>
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Chí Thắng</div>
+            <div id="passwordCharEmoji" style="font-size: 3rem; margin-bottom: 12px;">👨‍💼</div>
+            <div id="passwordCharName" style="font-weight: 700; font-size: 1.1rem; margin-bottom: 4px;">Chí Thắng</div>
             <div style="font-size: 0.85rem; color: var(--text-muted);">Vui lòng nhập mật khẩu để truy cập</div>
           </div>
           <div class="form-group">
@@ -2300,131 +2355,177 @@
     </div>
   </div>
 </div>
+<!-- ===== MODAL: ADD/EDIT MEMBER ===== -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2 class="modal-title" id="memberModalTitle">Thêm thành viên mới</h2>
+      <button class="modal-close" onclick="closeModal('memberModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="memberForm" onsubmit="saveMember(event)">
+        <input type="hidden" id="memberId" />
+        
+        <div class="form-group">
+          <label class="form-label" for="memberName">Họ và Tên *</label>
+          <input class="form-input" id="memberName" type="text" placeholder="VD: Chí Thắng" required/>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="memberPassword">Mật khẩu đăng nhập (bỏ trống nếu không cần)</label>
+          <input class="form-input" id="memberPassword" type="password" placeholder="VD: 123456"/>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group" style="flex: 1;">
+            <label class="form-label" for="memberEmoji">Emoji đại diện *</label>
+            <input class="form-input" id="memberEmoji" type="text" placeholder="VD: 👨‍💼" required style="text-align: center; font-size: 1.3rem;"/>
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label class="form-label" for="memberColor">Màu sắc đại diện *</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input class="form-input" id="memberColor" type="color" value="#4285F4" style="width: 48px; height: 38px; padding: 2px; cursor: pointer; border: 1px solid var(--border); border-radius: 6px; background: transparent;" oninput="document.getElementById('memberColorHex').value = this.value;"/>
+              <input class="form-input" id="memberColorHex" type="text" value="#4285F4" placeholder="#4285F4" required style="font-family: monospace; text-transform: uppercase;" oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('memberColor').value = this.value;"/>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin: 12px 0; font-size: 0.78rem; color: var(--text-muted);">
+          Gợi ý Emoji: 👨‍💼 👨‍🎨 👩‍💻 👩‍💼 👨‍💻 🦁 🦊 🐼 🐯 🦄 🚀 🎨
+        </div>
+        
+        <div class="form-actions" style="margin-top: 20px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('memberModal')">Hủy</button>
+          <button type="submit" class="btn-primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
 /* ========== DATA ========== */
-const CHARACTERS = [
-  { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', canDelete: true },
-  { id: 'xuan-thi',    name: 'Xuân Thi',     emoji: '👨‍🎨', color: '#EA4335', canDelete: false },
-  { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: false }
+let CHARACTERS = [
+  { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', canDelete: false },
+  { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: true }
 ];
 
-const TODO_STEPS = [
-  {
-    id: 'step1', day: 'Ngày 1',
-    label: 'Bước 1: Tìm trường & Quét thông tin',
-    subs: [
-      'Rà soát danh sách trường tiềm năng từ CRM School. Nếu chưa có trường: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền... và điền các thông tin đó vào CRM trước khi tạo dự án và bắt đầu.',
-      'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC) để trao đổi hợp tác sơ bộ và pitch proposal.',
-      'Thảo luận để đạt được sự đồng ý hợp tác từ phía nhà trường, chốt lịch chính thức với thông tin rõ ràng về thời gian, địa điểm/hội trường, ngày tổ chức.'
-    ]
-  },
-  {
-    id: 'step2', day: 'Ngày 2',
-    label: 'Bước 2: Thủ tục Google & Gửi Email Đề xuất',
-    subs: [
-      'Vào Google Drive tạo thư mục (folder) có tên trường dựa theo thư mục ví dụ hoặc thư mục của trường khác đã tổ chức trước đó để lưu trữ toàn bộ tài liệu và ấn phẩm của trường này.',
-      'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)',
-      'Điền form đăng ký workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)'
-    ]
-  },
-  {
-    id: 'step3', day: 'Ngày 3',
-    label: 'Bước 3: Thiết kế Asset Poster/Banner & QR Code',
-    subs: [
-      'Truy cập link Google Drive (bổ sung sau), nhân bản và đổi tên form "Check-in for Students" theo tên trường mục tiêu.',
-      'Copy link Google Form đó, truy cập https://me-qr.com/vi/qr-code-generator/google-form để tạo QR Code, đặt tên QR Code theo tên trường và tải ảnh QR Code về.',
-      'Vào Gemini tạo poster/banner theo 3 tỷ lệ: Dọc, Vuông, Ngang; kích hoạt tính năng Canva và dùng câu lệnh "Make it editable" để có thể tùy chỉnh các phần tử trên Canva.',
-      'Trên Canva: Thay đổi tên trường, chèn Logo của trường và dán hình ảnh QR Code vừa tải về.',
-      'Tải ảnh banner/poster hoàn thiện lên folder (Tên trường đó) trong Google Drive (để đính kèm cho nhà trường).',
-      'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k)'
-    ]
-  },
-  {
-    id: 'step4', day: 'Ngày 4',
-    label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
-    subs: [
-      'Setup một project/workflow n8n riêng theo tên trường dựa trên Google Form Check-in đã tạo.',
-      'Cấu hình luồng n8n gửi email xác nhận check-in tự động (kèm tên trường tương ứng) ngay khi sinh viên nộp form check-in thành công.',
-      'Setup và hẹn giờ trên n8n để tự động gửi email Check-out & Quà tặng đến các sinh viên đã check-in vào lúc 23h55 cùng ngày tổ chức workshop.',
-      'Test luồng automation hoàn chỉnh: Google Form → n8n → Gmail xác nhận.',
-      'Đăng link form đăng ký lên các kênh truyền thông và kêu gọi đăng ký (+250 SV)'
-    ]
-  },
-  {
-    id: 'step5', day: 'Ngày 5',
-    label: 'Bước 5: Duyệt & Chụp hình Truyền thông',
-    subs: [
-      'Đến trường duyệt lại hội trường và banner đã treo tại campus',
-      'Chụp hình truyền thông thực tế: không gian hội trường, banner',
-      'Đăng bài nhắc hẹn kèm hình thực tế (hâm nóng không khí)',
-      'Kiểm tra đường truyền mạng và room họp trực tuyến (nâng cấp 250+ người)',
-      'Thúc đẩy trường/khoa/CLB chia sẻ link phòng vào group lớp'
-    ]
-  },
-  {
-    id: 'step6', day: 'Ngày 6',
-    label: 'Bước 6: Vận hành & Diễn thuyết',
-    subs: [
-      'Có mặt trước 2 tiếng setup âm thanh, máy chiếu, micro (Sound-check)',
-      'Mở phòng họp trực tuyến trước 1 tiếng, setup quyền Host/Co-host',
-      'Bật tính năng Record cuộc họp, bật nhạc nền chờ sinh viên',
-      'Đội media quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người',
-      'Chụp ảnh toàn cảnh khoảnh khắc "giơ điện thoại Gemini" đặc sắc'
-    ]
-  },
-  {
-    id: 'step7', day: 'Ngày 6',
-    label: 'Bước 7: Automation Check-out & Tặng quà',
-    subs: [
-      'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform) để sinh viên điền khảo sát.',
-      'Kiểm tra tiến độ hàng chờ n8n để email Check-out & Quà tặng tự động gửi đi vào lúc 23h55 cùng ngày.'
-    ]
-  },
-  {
-    id: 'step8', day: 'Ngày 7',
-    label: 'Bước 8: Hậu kỳ & Truyền thông Nghiệm thu',
-    subs: [
-      'Upload source hình ảnh/video gốc lên folder "Source Media (Gốc trong Google Drive)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
-      'Edit hình ảnh thực tế (Lightroom) và dựng video Recap ngắn (CapCut)',
-      'Upload các hình/video đã edit vào trong folder "Source Media (Đã Edit)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
-      'Thêm hình ảnh đã edit vào trong link URL (Cung cấp sau bằng việc edit to-do)',
-      'Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok'
-    ]
-  },
-  {
-    id: 'step9', day: 'Ngày 7',
-    label: 'Bước 9: Báo cáo Google',
-    subs: [
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Chí Thắng) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Xuân Thi) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
-      'Điền form báo cáo Workshop cho Google (Cá nhân - Thảo) (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)',
-      'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
-    ]
-  },
-  {
-    id: 'step10', day: 'Ngày 8',
-    label: 'Bước 10: Bài học & Cải tiến cho workshop',
-    subs: [
-      'Chí Thắng - Nộp báo cáo cải tiến',
-      'Xuân Thi - Nộp báo cáo cải tiến',
-      'Thảo - Nộp báo cáo cải tiến'
-    ]
-  },
-  {
-    id: 'step11', day: 'Ngày 9',
-    label: 'Bước 11: Tìm trường mới',
-    subs: [
-      'Tìm trường mới (quay lại Bước 1, dùng video Recap làm vũ khí tiếp cận)',
-      'Nếu trường mới chưa có trong CRM: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền.',
-      'Điền đầy đủ thông tin trường mới vào CRM School trước khi tạo dự án workshop mới.'
-    ]
-  }
-];
+let TODO_STEPS = [];
+
+function getDynamicTodoSteps() {
+  return [
+    {
+      id: 'step1', day: 'Ngày 1',
+      label: 'Bước 1: Tìm trường & Quét thông tin',
+      subs: [
+        'Rà soát danh sách trường tiềm năng từ CRM School. Nếu chưa có trường: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền... và điền các thông tin đó vào CRM trước khi tạo dự án và bắt đầu.',
+        'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC) để trao đổi hợp tác sơ bộ và pitch proposal.',
+        'Thảo luận để đạt được sự đồng ý hợp tác từ phía nhà trường, chốt lịch chính thức với thông tin rõ ràng về thời gian, địa điểm/hội trường, ngày tổ chức.'
+      ]
+    },
+    {
+      id: 'step2', day: 'Ngày 2',
+      label: 'Bước 2: Thủ tục Google & Gửi Email Đề xuất',
+      subs: [
+        'Vào Google Drive tạo thư mục (folder) có tên trường dựa theo thư mục ví dụ hoặc thư mục của trường khác đã tổ chức trước đó để lưu trữ toàn bộ tài liệu và ấn phẩm của trường này.',
+        'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).'
+      ].concat(CHARACTERS.map(function(c) {
+        return 'Điền form đăng ký workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)';
+      }))
+    },
+    {
+      id: 'step3', day: 'Ngày 3',
+      label: 'Bước 3: Thiết kế Asset Poster/Banner & QR Code',
+      subs: [
+        'Truy cập link Google Drive (bổ sung sau), nhân bản và đổi tên form "Check-in for Students" theo tên trường mục tiêu.',
+        'Copy link Google Form đó, truy cập https://me-qr.com/vi/qr-code-generator/google-form để tạo QR Code, đặt tên QR Code theo tên trường và tải ảnh QR Code về.',
+        'Vào Gemini tạo poster/banner theo 3 tỷ lệ: Dọc, Vuông, Ngang; kích hoạt tính năng Canva và dùng câu lệnh "Make it editable" để có thể tùy chỉnh các phần tử trên Canva.',
+        'Trên Canva: Thay đổi tên trường, chèn Logo của trường và dán hình ảnh QR Code vừa tải về.',
+        'Tải ảnh banner/poster hoàn thiện lên folder (Tên trường đó) trong Google Drive (để đính kèm cho nhà trường).',
+        'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link)'
+      ]
+    },
+    {
+      id: 'step4', day: 'Ngày 4',
+      label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
+      subs: [
+        'Setup một project/workflow n8n riêng theo tên trường dựa trên Google Form Check-in đã tạo.',
+        'Cấu hình luồng n8n gửi email xác nhận check-in tự động (kèm tên trường tương ứng) ngay khi sinh viên nộp form check-in thành công.',
+        'Setup và hẹn giờ trên n8n để tự động gửi email Check-out & Quà tặng đến các sinh viên đã check-in vào lúc 23h55 cùng ngày tổ chức workshop.',
+        'Test luồng automation hoàn chỉnh: Google Form → n8n → Gmail xác nhận.',
+        'Đăng link form đăng ký lên các kênh truyền thông và kêu gọi đăng ký (+250 SV)'
+      ]
+    },
+    {
+      id: 'step5', day: 'Ngày 5',
+      label: 'Bước 5: Duyệt & Chụp hình Truyền thông',
+      subs: [
+        'Đến trường duyệt lại hội trường và banner đã treo tại campus',
+        'Chụp hình truyền thông thực tế: không gian hội trường, banner',
+        'Đăng bài nhắc hẹn kèm hình thực tế (hâm nóng không khí)',
+        'Kiểm tra đường truyền mạng và room họp trực tuyến (nâng cấp 250+ người)',
+        'Thúc đẩy trường/khoa/CLB chia sẻ link phòng vào group lớp'
+      ]
+    },
+    {
+      id: 'step6', day: 'Ngày 6',
+      label: 'Bước 6: Vận hành & Diễn thuyết',
+      subs: [
+        'Có mặt trước 2 tiếng setup âm thanh, máy chiếu, micro (Sound-check)',
+        'Mở phòng họp trực tuyến trước 1 tiếng, setup quyền Host/Co-host',
+        'Bật tính năng Record cuộc họp, bật nhạc nền chờ sinh viên',
+        'Đội media quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người',
+        'Chụp ảnh toàn cảnh khoảnh khắc "giơ điện thoại Gemini" đặc sắc'
+      ]
+    },
+    {
+      id: 'step7', day: 'Ngày 6',
+      label: 'Bước 7: Automation Check-out & Tặng quà',
+      subs: [
+        'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform) để sinh viên điền khảo sát.',
+        'Kiểm tra tiến độ hàng chờ n8n để email Check-out & Quà tặng tự động gửi đi vào lúc 23h55 cùng ngày.'
+      ]
+    },
+    {
+      id: 'step8', day: 'Ngày 7',
+      label: 'Bước 8: Hậu kỳ & Truyền thông Nghiệm thu',
+      subs: [
+        'Upload source hình ảnh/video gốc lên folder "Source Media (Gốc trong Google Drive)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
+        'Edit hình ảnh thực tế (Lightroom) và dựng video Recap ngắn (CapCut)',
+        'Upload các hình/video đã edit vào trong folder "Source Media (Đã Edit)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
+        'Thêm hình ảnh đã edit vào trong link URL (Cung cấp sau bằng việc edit to-do)',
+        'Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok'
+      ]
+    },
+    {
+      id: 'step9', day: 'Ngày 7',
+      label: 'Bước 9: Báo cáo Google',
+      subs: CHARACTERS.map(function(c) {
+        return 'Điền form báo cáo Workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)';
+      }).concat([
+        'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
+      ])
+    },
+    {
+      id: 'step10', day: 'Ngày 8',
+      label: 'Bước 10: Bài học & Cải tiến cho workshop',
+      subs: CHARACTERS.map(function(c) {
+        return c.name + ' - Nộp báo cáo cải tiến';
+      })
+    },
+    {
+      id: 'step11', day: 'Ngày 9',
+      label: 'Bước 11: Tìm trường mới',
+      subs: [
+        'Tìm trường mới (quay lại Bước 1, dùng video Recap làm vũ khí tiếp cận)',
+        'Nếu trường mới chưa có trong CRM: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền.',
+        'Điền đầy đủ thông tin trường mới vào CRM School trước khi tạo dự án workshop mới.'
+      ]
+    }
+  ];
+}
 
 const STORAGE_KEY = 'gsa_workshops_v2';
 const USER_KEY = 'gsa_user_v2';
@@ -2675,6 +2776,22 @@ function initSupabaseRealtime() {
           }
         }
       })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.characters' }, (payload) => {
+        if (payload.new && payload.new.value) {
+          const oldStr = localStorage.getItem('gsa_characters_v2');
+          const newStr = JSON.stringify(payload.new.value);
+          if (oldStr !== newStr) {
+            CHARACTERS = payload.new.value;
+            try { localStorage.setItem('gsa_characters_v2', newStr); } catch(e) {}
+            TODO_STEPS = getDynamicTodoSteps();
+            workshops = upgradeWorkshops(workshops);
+            if (currentMainTab === 'members') renderMembers();
+            if (currentMainTab === 'workshops') renderWorkshops();
+            renderCharGrid();
+            showToast('🔄 Đã tự động cập nhật Thành viên Realtime!', 'success');
+          }
+        }
+      })
       .subscribe();
   } catch(e) {
     console.error("Lỗi cấu hình Realtime:", e);
@@ -2722,48 +2839,41 @@ function upgradeWorkshops(arr) {
   if (!Array.isArray(arr)) return [];
   return arr.map(function(ws) {
     if (!ws.todos) return ws;
-    
-    var hasStep10 = ws.todos.some(function(t) { return t.id === 'step10'; });
-    var hasStep11 = ws.todos.some(function(t) { return t.id === 'step11'; });
-    if (ws.todos.length === 11 && hasStep10 && hasStep11) {
-      return ws;
-    }
-
-    var oldSubStates = {};
-    ws.todos.forEach(function(step) {
-      if (Array.isArray(step.subs)) {
-        step.subs.forEach(function(sub) {
-          if (sub.text) {
-            oldSubStates[sub.text] = !!sub.done;
-          }
-        });
-      }
-    });
-
-    function getOldDone(text, kw) {
-      if (oldSubStates[text] !== undefined) {
-        return oldSubStates[text];
-      }
-      var foundKey = Object.keys(oldSubStates).find(function(k) {
-        return k.indexOf(kw) !== -1;
-      });
-      if (foundKey !== undefined) {
-        return oldSubStates[foundKey];
-      }
-      return false;
-    }
 
     var newTodos = TODO_STEPS.map(function(stepTmpl) {
       var oldStep = ws.todos.find(function(t) { return t.id === stepTmpl.id; }) || {};
       
+      var oldStepSubStates = {};
+      if (Array.isArray(oldStep.subs)) {
+        oldStep.subs.forEach(function(sub) {
+          if (sub.text) {
+            oldStepSubStates[sub.text] = !!sub.done;
+          }
+        });
+      }
+
+      function getOldDone(text, kw) {
+        if (oldStepSubStates[text] !== undefined) {
+          return oldStepSubStates[text];
+        }
+        if (kw) {
+          var foundKey = Object.keys(oldStepSubStates).find(function(k) {
+            return k.indexOf(kw) !== -1;
+          });
+          if (foundKey !== undefined) {
+            return oldStepSubStates[foundKey];
+          }
+        }
+        return false;
+      }
+
       var newSubs = stepTmpl.subs.map(function(subText, subIdx) {
         var subId = stepTmpl.id + '_' + subIdx;
         var doneState = false;
         
-        if (stepTmpl.id === 'step10') {
-          if (subText.indexOf('Chí Thắng') !== -1) doneState = getOldDone(subText, 'Chí Thắng');
-          else if (subText.indexOf('Xuân Thi') !== -1) doneState = getOldDone(subText, 'Xuân Thi');
-          else if (subText.indexOf('Thảo') !== -1) doneState = getOldDone(subText, 'Thảo');
+        var matchedChar = CHARACTERS.find(function(c) { return subText.indexOf(c.name) !== -1; });
+        if (matchedChar) {
+          doneState = getOldDone(subText, matchedChar.name);
         } else if (stepTmpl.id === 'step11') {
           doneState = getOldDone(subText, 'Tìm trường mới');
         } else {
@@ -2795,6 +2905,35 @@ function upgradeWorkshops(arr) {
 
 function loadData() {
   try {
+    var storedChars = localStorage.getItem('gsa_characters_v2');
+    if (storedChars) {
+      CHARACTERS = JSON.parse(storedChars);
+    } else {
+      CHARACTERS = [
+        { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', canDelete: false },
+        { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: true }
+      ];
+      localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS));
+    }
+
+    // Migration: Remove Xuân Thi and force update link-deck URL in local/supabase storage
+    if (Array.isArray(CHARACTERS)) {
+      var oldLength = CHARACTERS.length;
+      CHARACTERS = CHARACTERS.filter(function(c) { return c.id !== 'xuan-thi'; });
+      if (CHARACTERS.length !== oldLength) {
+        try { localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS)); } catch(e) {}
+        if (supabaseClient) {
+          supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS }).then();
+        }
+      }
+    }
+  } catch(e) {
+    console.error("Lỗi load characters:", e);
+  }
+
+  TODO_STEPS = getDynamicTodoSteps();
+
+  try {
     workshops = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     workshops = upgradeWorkshops(workshops);
   } catch(e) { workshops = []; }
@@ -2811,6 +2950,18 @@ function loadData() {
   if (linkResources.length === 0) {
     linkResources = DEFAULT_LINK_RESOURCES.slice();
     try { localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(linkResources)); } catch(e) {}
+  } else {
+    // Migration: Update the link-deck URL to use ?usp=drive_link
+    var deckResource = linkResources.find(function(r) { return r.id === 'link-deck'; });
+    if (deckResource && (deckResource.url === 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k' || deckResource.url === 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link')) {
+      if (deckResource.url !== 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link') {
+        deckResource.url = 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link';
+        try { localStorage.setItem(RESOURCE_STORAGE_KEY, JSON.stringify(linkResources)); } catch(e) {}
+        if (supabaseClient) {
+          supabaseClient.from('gsa_storage').upsert({ key: 'link_resources', value: linkResources }).then();
+        }
+      }
+    }
   }
 
   if (supabaseClient) {
@@ -2901,6 +3052,26 @@ function loadData() {
       .catch(function(err) {
         console.error("Lỗi đồng bộ mật khẩu từ Supabase:", err);
       });
+
+    supabaseClient.from('gsa_storage').select('value').eq('key', 'characters').single()
+      .then(function(res) {
+        if (res.data && res.data.value) {
+          const oldStr = localStorage.getItem('gsa_characters_v2');
+          const newStr = JSON.stringify(res.data.value);
+          if (oldStr !== newStr) {
+            CHARACTERS = res.data.value;
+            try { localStorage.setItem('gsa_characters_v2', newStr); } catch(e) {}
+            TODO_STEPS = getDynamicTodoSteps();
+            workshops = upgradeWorkshops(workshops);
+            if (currentMainTab === 'members') renderMembers();
+            if (currentMainTab === 'workshops') renderWorkshops();
+            renderCharGrid();
+          }
+        } else {
+          supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS }).then();
+        }
+      })
+      .catch(function(err) { console.error("Lỗi tải characters từ Supabase:", err); });
   }
 }
 
@@ -3095,14 +3266,31 @@ function selectChar(id) {
   selectedCharId = id;
   document.querySelectorAll('.char-card').forEach(function(el) { el.classList.remove('selected'); });
   document.getElementById('char-' + id).classList.add('selected');
-  if (id === 'chi-thang') {
+  
+  var c = getChar(id);
+  if (!c) return;
+  
+  var requiresPassword = false;
+  if (c.id === 'chi-thang') {
+    requiresPassword = true;
+  } else if (c.password && c.password.trim() !== '') {
+    requiresPassword = true;
+  }
+  
+  if (requiresPassword) {
     document.getElementById('charPassword').value = '';
+    
+    // Update password modal content dynamically
+    var emojiEl = document.getElementById('passwordCharEmoji');
+    var nameEl = document.getElementById('passwordCharName');
+    if (emojiEl) emojiEl.textContent = c.emoji;
+    if (nameEl) nameEl.textContent = c.name;
+    
     openModal('passwordModal');
     setTimeout(function() {
       document.getElementById('charPassword').focus();
     }, 100);
   } else {
-    var c = getChar(id);
     saveUser({ id: c.id, name: c.name });
     showDashboard(c);
   }
@@ -3111,8 +3299,17 @@ function selectChar(id) {
 function verifyPassword(e) {
   e.preventDefault();
   var pwd = document.getElementById('charPassword').value;
-  if (pwd === getCTPassword()) {
-    var c = getChar('chi-thang');
+  var c = getChar(selectedCharId);
+  if (!c) return;
+  
+  var correctPwd = '';
+  if (c.id === 'chi-thang') {
+    correctPwd = getCTPassword();
+  } else {
+    correctPwd = c.password || '';
+  }
+  
+  if (correctPwd && pwd === correctPwd) {
     saveUser({ id: c.id, name: c.name });
     showDashboard(c);
     closePasswordModal();
@@ -3154,6 +3351,11 @@ function showDashboard(c) {
   var cpBtn = document.getElementById('changePasswordHeaderBtn');
   if (cpBtn) {
     cpBtn.style.display = c.id === 'chi-thang' ? 'inline-block' : 'none';
+  }
+  
+  var mainTabMembers = document.getElementById('mainTabMembers');
+  if (mainTabMembers) {
+    mainTabMembers.style.display = c.id === 'chi-thang' ? 'inline-block' : 'none';
   }
   
   showScreen('dashboardScreen');
@@ -3610,7 +3812,7 @@ function toggleSub(wsId, stepId, subId) {
     if (step10) {
       var allDone = step10.subs.every(function(s) { return s.done; });
       if (!allDone) {
-        showToast('⚠️ Cần nộp đủ 3 báo cáo Bài học & Cải tiến (Bước 10) trước khi tìm trường mới!', 'warning');
+        showToast('⚠️ Cần nộp đủ ' + step10.subs.length + ' báo cáo Bài học & Cải tiến (Bước 10) trước khi tìm trường mới!', 'warning');
         return;
       }
     }
@@ -4875,7 +5077,7 @@ const DEFAULT_LINK_RESOURCES = [
   {
     id: 'link-deck',
     name: 'Bộ Training Deck',
-    url: 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k'
+    url: 'https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link'
   }
 ];
 
@@ -5229,18 +5431,22 @@ function switchMainTab(tab) {
   const tabW = document.getElementById('mainTabWorkshops');
   const tabC = document.getElementById('mainTabCRM');
   const tabT = document.getElementById('mainTabTemplates');
+  const tabM = document.getElementById('mainTabMembers');
   
   if (tabW) tabW.classList.toggle('active', tab === 'workshops');
   if (tabC) tabC.classList.toggle('active', tab === 'crm');
   if (tabT) tabT.classList.toggle('active', tab === 'templates');
+  if (tabM) tabM.classList.toggle('active', tab === 'members');
   
   const secW = document.getElementById('sectionWorkshops');
   const secC = document.getElementById('sectionCRM');
   const secT = document.getElementById('sectionTemplates');
+  const secM = document.getElementById('sectionMembers');
   
   if (secW) secW.style.display = tab === 'workshops' ? 'block' : 'none';
   if (secC) secC.style.display = tab === 'crm' ? 'block' : 'none';
   if (secT) secT.style.display = tab === 'templates' ? 'block' : 'none';
+  if (secM) secM.style.display = tab === 'members' ? 'block' : 'none';
   
   if (tab === 'workshops') {
     renderWorkshops();
@@ -5248,6 +5454,8 @@ function switchMainTab(tab) {
     renderCRM();
   } else if (tab === 'templates') {
     renderTemplates();
+  } else if (tab === 'members') {
+    renderMembers();
   }
 }
 
@@ -5255,18 +5463,19 @@ function switchMainTab(tab) {
 function openImprovementForm(wsId, subId) {
   currentChatWsId = wsId;
   
-  var charIndex = -1;
-  if (subId.indexOf('_0') !== -1) charIndex = 0;
-  else if (subId.indexOf('_1') !== -1) charIndex = 1;
-  else if (subId.indexOf('_2') !== -1) charIndex = 2;
-  else if (subId.indexOf('_3') !== -1) charIndex = 3;
+  var ws = workshops.find(function(w) { return w.id === wsId; });
+  if (!ws) return;
+  var step10 = ws.todos.find(function(t) { return t.id === 'step10'; });
+  if (!step10) return;
+  var sub = step10.subs.find(function(s) { return s.id === subId; });
+  if (!sub) return;
   
-  if (charIndex === -1) {
+  var charObj = CHARACTERS.find(function(c) { return sub.text.indexOf(c.name) !== -1; });
+  if (!charObj) {
     showToast('⚠️ Không xác định được nhân vật phụ trách.', 'error');
     return;
   }
   
-  var charObj = CHARACTERS[charIndex];
   currentChatCharId = charObj.id;
   
   document.getElementById('improvementModalSubtitle').innerHTML = 'Đang nộp cho: <strong>' + charObj.emoji + ' ' + charObj.name + '</strong>';
@@ -5550,10 +5759,10 @@ function submitImprovementReport(isAnonymous) {
   
   updateWs(currentChatWsId, function(ws) {
     var step10 = ws.todos.find(function(t) { return t.id === 'step10'; });
-    if (step10) {
-      var charIdx = CHARACTERS.findIndex(function(c) { return c.id === currentChatCharId; });
-      if (charIdx !== -1 && step10.subs[charIdx]) {
-        step10.subs[charIdx].done = true;
+    if (step10 && step10.subs) {
+      var sub = step10.subs.find(function(s) { return s.text.indexOf(charObj.name) !== -1; });
+      if (sub) {
+        sub.done = true;
       }
     }
   });
@@ -5630,6 +5839,172 @@ function toggleAccordion(headerEl) {
   var acc = headerEl.parentElement;
   if (!acc) return;
   acc.classList.toggle('open');
+}
+
+/* ========== GSA MEMBERS CRUD ========== */
+function saveCharactersData() {
+  try { localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS)); } catch(e) {}
+  
+  TODO_STEPS = getDynamicTodoSteps();
+  workshops = upgradeWorkshops(workshops);
+  saveLocal();
+  
+  broadcast();
+  renderCharGrid();
+  
+  if (supabaseClient) {
+    supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS })
+      .then(function(res) {
+        if (res.error) console.error("Lỗi sync Members lên Supabase:", res.error);
+      });
+  }
+}
+
+function renderMembers() {
+  var tbody = document.getElementById('membersTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  
+  if (CHARACTERS.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Không có thành viên nào.</td></tr>';
+    return;
+  }
+  
+  var html = CHARACTERS.map(function(c) {
+    var actionsHTML = '';
+    if (c.id !== 'chi-thang') {
+      actionsHTML = '<div style="display: flex; gap: 8px; justify-content: flex-end;">' +
+        '<button class="sub-action-btn edit" onclick="openEditMemberModal(\'' + c.id + '\')" title="Sửa">✏️</button>' +
+        '<button class="sub-action-btn delete" onclick="deleteMember(\'' + c.id + '\')" title="Xóa">🗑️</button>' +
+        '</div>';
+    } else {
+      actionsHTML = '<span style="color: var(--text-muted); font-size: 0.85rem; padding-right: 8px;">Mặc định (Admin)</span>';
+    }
+    
+    var pwdHTML = c.password ? '<code>' + esc(c.password) + '</code>' : '<span style="color: var(--text-muted);">Không có</span>';
+    if (c.id === 'chi-thang') {
+      pwdHTML = '<code>' + esc(getCTPassword()) + '</code>';
+    }
+    
+    return '<tr>' +
+      '<td><div class="char-avatar" style="width: 40px; height: 40px; font-size: 1.2rem; margin: 0; background: linear-gradient(135deg,' + c.color + '22,' + c.color + '11)">' + c.emoji + '</div></td>' +
+      '<td style="font-weight: 600;">' + esc(c.name) + '</td>' +
+      '<td><div style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; border-radius: 4px; display: inline-block; background-color: ' + c.color + ';"></span><code>' + c.color + '</code></div></td>' +
+      '<td><code>' + c.id + '</code></td>' +
+      '<td>' + pwdHTML + '</td>' +
+      '<td>' + actionsHTML + '</td>' +
+      '</tr>';
+  }).join('');
+  
+  tbody.innerHTML = html;
+}
+
+function openAddMemberModal() {
+  document.getElementById('memberModalTitle').textContent = 'Thêm thành viên mới';
+  document.getElementById('memberId').value = '';
+  document.getElementById('memberName').value = '';
+  document.getElementById('memberEmoji').value = '👨‍💻';
+  document.getElementById('memberColor').value = '#4285F4';
+  document.getElementById('memberColorHex').value = '#4285F4';
+  document.getElementById('memberPassword').value = '';
+  openModal('memberModal');
+}
+
+function openEditMemberModal(id) {
+  var c = getChar(id);
+  if (!c) return;
+  
+  if (id === 'chi-thang') {
+    showToast('⚠️ Không thể sửa đổi tài khoản quản trị viên Chí Thắng!', 'error');
+    return;
+  }
+  
+  document.getElementById('memberModalTitle').textContent = 'Chỉnh sửa thành viên';
+  document.getElementById('memberId').value = c.id;
+  document.getElementById('memberName').value = c.name;
+  document.getElementById('memberEmoji').value = c.emoji;
+  document.getElementById('memberColor').value = c.color;
+  document.getElementById('memberColorHex').value = c.color;
+  document.getElementById('memberPassword').value = c.password || '';
+  openModal('memberModal');
+}
+
+function saveMember(event) {
+  event.preventDefault();
+  
+  var idInput = document.getElementById('memberId').value.trim();
+  var name = document.getElementById('memberName').value.trim();
+  var emoji = document.getElementById('memberEmoji').value.trim();
+  var color = document.getElementById('memberColor').value.trim();
+  var password = document.getElementById('memberPassword').value.trim();
+  
+  if (!name || !emoji || !color) {
+    showToast('⚠️ Vui lòng điền đầy đủ các trường thông tin bắt buộc.', 'error');
+    return;
+  }
+  
+  if (idInput === 'chi-thang') {
+    showToast('⚠️ Không thể thay đổi tài khoản quản trị viên Chí Thắng!', 'error');
+    return;
+  }
+  
+  if (idInput) {
+    var idx = CHARACTERS.findIndex(function(c) { return c.id === idInput; });
+    if (idx !== -1) {
+      CHARACTERS[idx].name = name;
+      CHARACTERS[idx].emoji = emoji;
+      CHARACTERS[idx].color = color;
+      CHARACTERS[idx].password = password;
+      showToast('🔄 Đã cập nhật thành viên thành công!', 'success');
+    }
+  } else {
+    var id = name.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+    
+    if (id === 'chi-thang') {
+      showToast('⚠️ Không thể thêm tài khoản quản trị viên trùng lặp!', 'error');
+      return;
+    }
+    
+    if (getChar(id)) {
+      id = id + '-' + Date.now().toString(36).substr(2, 3);
+    }
+    
+    CHARACTERS.push({
+      id: id,
+      name: name,
+      emoji: emoji,
+      color: color,
+      password: password,
+      canDelete: true
+    });
+    showToast('🎉 Đã thêm thành viên mới thành công!', 'success');
+  }
+  
+  saveCharactersData();
+  closeModal('memberModal');
+  renderMembers();
+}
+
+function deleteMember(id) {
+  if (id === 'chi-thang') {
+    showToast('⚠️ Không thể xóa quản trị viên Chí Thắng!', 'error');
+    return;
+  }
+  
+  if (!confirm('Bạn có chắc chắn muốn xóa thành viên này? Tất cả các to-do và phân công liên quan sẽ được cấu trúc lại.')) {
+    return;
+  }
+  
+  CHARACTERS = CHARACTERS.filter(function(c) { return c.id !== id; });
+  saveCharactersData();
+  renderMembers();
+  showToast('🗑️ Đã xóa thành viên thành công!', 'success');
 }
 
 /* ========== START ========== */
