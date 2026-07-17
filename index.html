@@ -509,6 +509,8 @@
     @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
     .toast.hiding { animation: toastOut 0.3s ease forwards; }
 
+    .show-mobile { display: none !important; }
+
     @media (max-width: 900px) {}
     @media (max-width: 768px) {
       .form-row { grid-template-columns: 1fr; }
@@ -516,7 +518,7 @@
       .main-content { padding: 16px 12px; }
       .header { padding: 0 12px; gap: 6px; }
       .header-title { font-size: 0.9rem; }
-      .detail-meta-grid { grid-template-columns: 1fr 1fr; }
+      .detail-meta-grid { grid-template-columns: 1fr; }
       .modal-body { padding: 0 16px 16px; }
       .modal-header { padding: 16px 16px 0; }
       .header-crm-btn .crm-text { display: none; }
@@ -543,6 +545,9 @@
       .preview-header-row { flex-wrap: wrap; }
     }
     @media (max-width: 480px) {
+      .hide-mobile { display: none !important; }
+      .show-mobile { display: inline-block !important; }
+
       .char-grid {
         display: grid !important;
         grid-template-columns: repeat(2, minmax(130px, 1fr)) !important;
@@ -558,14 +563,133 @@
       }
       .char-avatar { width: 60px; height: 60px; font-size: 1.5rem; }
       .main-content { padding: 12px 10px; }
-      .header { padding: 0 10px; height: 52px; }
-      /* Header nav buttons */
-      .header-nav { gap: 4px; }
-      .btn-secondary, .btn-primary { padding: 5px 10px; font-size: 0.78rem; }
-      /* Workshop detail popup */
-      .modal { padding: 0; }
-      .modal-body { padding: 0 12px 12px; }
-      .modal-header { padding: 12px 12px 0; }
+      .header { padding: 0 10px; height: 52px; gap: 8px !important; }
+      .header-logo-text { font-size: 0.9rem !important; }
+      .header-user-name { display: none !important; }
+      .header-user { padding: 4px !important; }
+      .header-switch-btn { padding: 6px 8px !important; font-size: 0.72rem !important; }
+
+      /* Tabs spacing and layout on mobile */
+      .tabs {
+        width: 100% !important;
+        display: flex !important;
+        gap: 2px !important;
+      }
+      .tabs .tab-btn {
+        flex: 1 !important;
+        padding: 8px 4px !important;
+        font-size: 0.78rem !important;
+        text-align: center !important;
+      }
+
+      /* Dashboard title row */
+      .dashboard-title-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        margin-bottom: 20px !important;
+      }
+      .dashboard-title {
+        font-size: 1.4rem !important;
+        text-align: left !important;
+      }
+      .add-workshop-btn {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* Filter bar layout */
+      .filter-bar {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: 100% !important;
+      }
+      .filter-bar > input,
+      .filter-bar > select,
+      .filter-bar > .sort-select {
+        flex: 1 1 auto !important;
+        min-width: 110px !important;
+        width: auto !important;
+      }
+      #crmSearchInput {
+        width: 100% !important;
+        flex: 1 0 100% !important;
+      }
+      .workshop-count {
+        margin-left: 0 !important;
+        width: 100% !important;
+        text-align: right !important;
+        font-size: 0.78rem !important;
+      }
+
+      /* Modal responsive overlay */
+      .modal-overlay { padding: 8px !important; }
+      .modal { max-width: 100% !important; margin: 0 !important; max-height: calc(100vh - 16px) !important; padding: 0; }
+      .modal-body { padding: 0 12px 12px !important; }
+      .modal-header { padding: 12px 12px 0 !important; }
+
+      /* Todo Step Header and Sub-item */
+      .todo-step-header {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        padding: 12px 10px !important;
+        gap: 8px !important;
+      }
+      .todo-step-toggle {
+        order: 1 !important;
+      }
+      .todo-step-label {
+        order: 2 !important;
+        font-size: 0.85rem !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+      }
+      .todo-step-expand {
+        order: 3 !important;
+      }
+      .step-header-actions {
+        order: 4 !important;
+      }
+      .todo-count {
+        order: 5 !important;
+        font-size: 0.72rem !important;
+        margin-left: auto !important;
+      }
+      .todo-step-assign {
+        order: 6 !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        border-top: 1px solid var(--border);
+        padding-top: 8px;
+        margin-top: 4px;
+        gap: 10px !important;
+      }
+      .todo-step-assign .assign-select {
+        flex: 1 !important;
+        width: 100% !important;
+      }
+      .todo-sub-item {
+        padding: 8px 4px !important;
+        gap: 8px !important;
+        flex-wrap: wrap !important;
+      }
+      .sub-text {
+        font-size: 0.8rem !important;
+        min-width: 140px !important;
+      }
+      .btn-sub-chat {
+        padding: 3px 6px !important;
+        font-size: 0.68rem !important;
+      }
+      .sub-actions {
+        display: flex !important;
+        gap: 4px !important;
+      }
+
       /* Templates viewer full height on mobile */
       .templates-viewer { min-height: 400px; }
       /* Word var buttons - smaller on mobile */
@@ -838,9 +962,10 @@
       padding: 20px;
       overflow-x: auto;
     }
-    .crm-table-wrapper {
+    .crm-table-wrapper, .table-container {
       width: 100%;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .crm-table {
       width: 100%;
@@ -1723,17 +1848,17 @@
       <div class="header-user-avatar" id="headerAvatar"></div>
       <span class="header-user-name" id="headerName"></span>
     </div>
-    <button class="header-switch-btn" id="changePasswordHeaderBtn" onclick="openChangePasswordModal()" style="display: none; margin-right: 8px;">🔑 Đổi mật khẩu</button>
-    <button class="header-switch-btn" onclick="switchCharacter()">🚪 Đăng xuất</button>
+    <button class="header-switch-btn" id="changePasswordHeaderBtn" onclick="openChangePasswordModal()" style="display: none; margin-right: 8px;"><span class="hide-mobile">🔑 Đổi mật khẩu</span><span class="show-mobile">🔑</span></button>
+    <button class="header-switch-btn" onclick="switchCharacter()"><span class="hide-mobile">🚪 Đăng xuất</span><span class="show-mobile">🚪</span></button>
   </header>
 
   <div class="main-content">
     <!-- Main Tab Navigation -->
     <div class="tabs main-tabs">
-      <button class="tab-btn active" id="mainTabWorkshops" onclick="switchMainTab('workshops')">📋 Quản lý Workshop</button>
-      <button class="tab-btn" id="mainTabCRM" onclick="switchMainTab('crm')">📊 CRM Trường học</button>
-      <button class="tab-btn" id="mainTabTemplates" onclick="switchMainTab('templates')">📂 Tài liệu & Mẫu</button>
-      <button class="tab-btn" id="mainTabMembers" onclick="switchMainTab('members')" style="display: none;">👥 Quản lý Thành viên GSA</button>
+      <button class="tab-btn active" id="mainTabWorkshops" onclick="switchMainTab('workshops')">📋 <span class="hide-mobile">Quản lý </span>Workshop</button>
+      <button class="tab-btn" id="mainTabCRM" onclick="switchMainTab('crm')">📊 CRM<span class="hide-mobile"> Trường học</span></button>
+      <button class="tab-btn" id="mainTabTemplates" onclick="switchMainTab('templates')">📂 Tài liệu<span class="hide-mobile"> & Mẫu</span></button>
+      <button class="tab-btn" id="mainTabMembers" onclick="switchMainTab('members')" style="display: none;">👥 <span class="hide-mobile">Quản lý </span>Thành viên<span class="hide-mobile"> GSA</span></button>
     </div>
 
     <!-- ===== SECTION: WORKSHOPS ===== -->
