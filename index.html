@@ -494,37 +494,47 @@
     }
     .assign-select:focus { border-color: var(--primary); }
 
-    /* ===== Multi-assignee avatar chip picker ===== */
-    .assign-avatars { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
-    .assign-avatar-btn {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2px solid transparent;
+    /* ===== Multi-assignee compact dropdown picker ===== */
+    .assign-dropdown { position: relative; flex-shrink: 0; }
+    .assign-dropdown-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--bg-dark); border: 1px solid var(--border);
+      color: var(--text); padding: 4px 10px 4px 8px;
+      border-radius: 6px; cursor: pointer; font-family: 'Inter', sans-serif;
+      font-size: 0.78rem; transition: var(--transition); white-space: nowrap;
+      outline: none;
+    }
+    .assign-dropdown-btn:hover { border-color: var(--border-bright); }
+    .assign-dropdown-btn .adb-arrow { font-size: 0.6rem; opacity: 0.5; margin-left: 2px; transition: transform 0.2s; }
+    .assign-dropdown-btn.open .adb-arrow { transform: rotate(180deg); }
+    .assign-dropdown-panel {
+      display: none; position: absolute;
+      top: calc(100% + 5px); right: 0;
+      background: var(--bg-card); border: 1px solid var(--border-bright);
+      border-radius: 10px; padding: 6px;
+      z-index: 200; min-width: 160px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      animation: dropFade 0.15s ease;
+    }
+    @keyframes dropFade { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+    .assign-dropdown-panel.open { display: block; }
+    .assign-dp-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; border-radius: 6px; cursor: pointer;
+      transition: background 0.12s; font-size: 0.8rem;
+    }
+    .assign-dp-item:hover { background: rgba(255,255,255,0.06); }
+    .assign-dp-item.selected { background: rgba(66,133,244,0.12); }
+    .assign-dp-check {
+      width: 15px; height: 15px; border-radius: 4px;
+      border: 1.5px solid var(--border-bright);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; cursor: pointer; transition: all 0.18s;
-      background: rgba(255,255,255,0.06);
-      position: relative; flex-shrink: 0;
+      font-size: 9px; flex-shrink: 0; transition: all 0.15s;
     }
-    .assign-avatar-btn:hover { border-color: rgba(255,255,255,0.4); transform: scale(1.12); }
-    .assign-avatar-btn.selected {
-      border-color: var(--primary);
-      background: rgba(66,133,244,0.18);
-      box-shadow: 0 0 0 2px rgba(66,133,244,0.25);
+    .assign-dp-item.selected .assign-dp-check {
+      background: var(--primary); border-color: var(--primary); color: #fff;
     }
-    .assign-avatar-btn .av-check {
-      position: absolute; bottom: -2px; right: -2px;
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--primary); border: 1.5px solid var(--bg-card);
-      display: none; align-items: center; justify-content: center;
-      font-size: 7px; color: #fff; line-height: 1;
-    }
-    .assign-avatar-btn.selected .av-check { display: flex; }
-    .assign-avatar-btn[title]:hover::after {
-      content: attr(title);
-      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
-      background: var(--bg-dark); color: var(--text); padding: 3px 7px;
-      border-radius: 5px; font-size: 0.68rem; white-space: nowrap;
-      border: 1px solid var(--border); pointer-events: none; z-index: 20;
-    }
+    .assign-dp-name { flex: 1; }
     .todo-step-expand { width: 24px; height: 24px; border: none; background: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); font-size: 0.8rem; flex-shrink: 0; }
     .todo-step-expand.open { transform: rotate(180deg); }
     .todo-step-body { padding: 0 16px 12px; border-top: 1px solid var(--border); display: none; }
@@ -722,9 +732,10 @@
         margin-top: 4px;
         gap: 10px !important;
       }
-      .todo-step-assign .assign-avatars {
+      .todo-step-assign .assign-dropdown-btn {
         flex: 1 !important;
         width: 100% !important;
+        justify-content: space-between !important;
       }
       .todo-sub-item {
         padding: 8px 4px !important;
@@ -1891,7 +1902,7 @@
     body.user-role-viewer button[onclick*="startEdit"] {
       display: none !important;
     }
-    body.user-role-viewer .assign-avatar-btn {
+    body.user-role-viewer .assign-dropdown-btn {
       pointer-events: none !important;
       opacity: 0.65;
     }
@@ -2696,7 +2707,7 @@ function getDynamicTodoSteps(format) {
         subs: [
           'Vào Google Drive tạo thư mục lưu trữ riêng cho trường.',
           'Gửi Email Đề xuất (bản Online chúng ta vừa chốt) cho nhà trường, đính kèm link folder poster/banner.'
-        ].concat(CHARACTERS.map(function(c) {
+        ].concat(getEligibleAssignees().map(function(c) {
           return 'Điền form đăng ký workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)';
         }))
       },
@@ -2762,14 +2773,14 @@ function getDynamicTodoSteps(format) {
         subs: [
           'Điểm mới: Xuất dữ liệu (Export Data) lịch sử người tham dự từ nền tảng Meet/Zoom để đối chiếu số lượng thực tế.',
           'Phân tích số liệu đăng ký và phản hồi từ khảo sát.'
-        ].concat(CHARACTERS.map(function(c) {
+        ].concat(getEligibleAssignees().map(function(c) {
           return 'Điền form báo cáo Workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)';
         }))
       },
       {
         id: 'step10', day: 'Ngày 8',
         label: 'Bước 10: Bài học & Cải tiến cho workshop',
-        subs: CHARACTERS.map(function(c) {
+        subs: getEligibleAssignees().map(function(c) {
           return c.name + ' - Nộp báo cáo cải tiến (Đánh giá chất lượng đường truyền và độ tương tác online)';
         })
       },
@@ -2800,7 +2811,7 @@ function getDynamicTodoSteps(format) {
         subs: [
           'Vào Google Drive tạo thư mục (folder) có tên trường dựa theo thư mục ví dụ hoặc thư mục của trường khác đã tổ chức trước đó để lưu trữ toàn bộ tài liệu và ấn phẩm của trường này.',
           'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).'
-        ].concat(CHARACTERS.map(function(c) {
+        ].concat(getEligibleAssignees().map(function(c) {
           return 'Điền form đăng ký workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)';
         }))
       },
@@ -2871,7 +2882,7 @@ function getDynamicTodoSteps(format) {
       {
         id: 'step9', day: 'Ngày 7',
         label: 'Bước 9: Báo cáo Google',
-        subs: CHARACTERS.map(function(c) {
+        subs: getEligibleAssignees().map(function(c) {
           return 'Điền form báo cáo Workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)';
         }).concat([
           'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
@@ -2880,7 +2891,7 @@ function getDynamicTodoSteps(format) {
       {
         id: 'step10', day: 'Ngày 8',
         label: 'Bước 10: Bài học & Cải tiến cho workshop',
-        subs: CHARACTERS.map(function(c) {
+        subs: getEligibleAssignees().map(function(c) {
           return c.name + ' - Nộp báo cáo cải tiến';
         })
       },
@@ -4342,21 +4353,34 @@ function buildTodoStep(wsId, step) {
     '<span class="todo-count">' + doneCount + '/' + total + '</span>' +
     '<div class="todo-step-assign" onclick="event.stopPropagation()">' +
     '<span class="assign-label">Phụ trách:</span>' +
-    '<div class="assign-avatars">' +
     (function() {
       var eligible = getEligibleAssignees();
       var currentAssignees = step.assignees || (step.assignee ? [step.assignee] : []);
-      return eligible.map(function(c) {
-        var isSelected = currentAssignees.indexOf(c.id) !== -1;
-        return '<button class="assign-avatar-btn' + (isSelected ? ' selected' : '') + '"' +
-          ' title="' + esc(c.name) + '"' +
-          ' onclick="toggleAssignee(\'' + wsId + '\',\'' + step.id + '\',\'' + c.id + '\')">' +
-          c.emoji +
-          '<span class="av-check">✔</span>' +
-          '</button>';
-      }).join('');
+      var btnLabel = currentAssignees.length
+        ? currentAssignees.map(function(id) {
+            var m = eligible.find(function(c){ return c.id === id; });
+            return m ? m.emoji + '\u00a0' + m.name : '';
+          }).filter(Boolean).join(', ')
+        : '-- Chọn --';
+      var uid = wsId + '-' + step.id;
+      return '<div class="assign-dropdown" id="adrop-' + uid + '">' +
+        '<button class="assign-dropdown-btn" onclick="toggleAssignDropdown(\'' + uid + '\',event)">' +
+        '<span class="adb-label" id="adb-label-' + uid + '">' + esc(btnLabel) + '</span>' +
+        '<span class="adb-arrow">▼</span>' +
+        '</button>' +
+        '<div class="assign-dropdown-panel" id="adp-' + uid + '">' +
+        eligible.map(function(c) {
+          var isSel = currentAssignees.indexOf(c.id) !== -1;
+          return '<div class="assign-dp-item' + (isSel ? ' selected' : '') + '"' +
+            ' onclick="toggleAssignee(\'' + wsId + '\',\'' + step.id + '\',\'' + c.id + '\')">' +
+            '<div class="assign-dp-check">' + (isSel ? '✔' : '') + '</div>' +
+            '<span>' + c.emoji + '</span>' +
+            '<span class="assign-dp-name">' + esc(c.name) + '</span>' +
+            '</div>';
+        }).join('') +
+        '</div></div>';
     })() +
-    '</div></div>' +
+    '</div>' +
     '<button class="todo-step-expand ' + (step.expanded?'open':'') + '">▼</button>' +
     '</div>' +
     '<div class="todo-step-body ' + (step.expanded?'open':'') + '">' +
@@ -4479,6 +4503,37 @@ function toggleSub(wsId, stepId, subId) {
 }
 
 
+function toggleAssignDropdown(uid, event) {
+  if (event) event.stopPropagation();
+  var panel = document.getElementById('adp-' + uid);
+  var btn   = document.querySelector('#adrop-' + uid + ' .assign-dropdown-btn');
+  if (!panel) return;
+  var isOpen = panel.classList.contains('open');
+  // Đóng tất cả dropdown khác trước
+  document.querySelectorAll('.assign-dropdown-panel.open').forEach(function(p) {
+    p.classList.remove('open');
+  });
+  document.querySelectorAll('.assign-dropdown-btn.open').forEach(function(b) {
+    b.classList.remove('open');
+  });
+  if (!isOpen) {
+    panel.classList.add('open');
+    if (btn) btn.classList.add('open');
+  }
+}
+
+// Đóng dropdown khi click bên ngoài
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.assign-dropdown')) {
+    document.querySelectorAll('.assign-dropdown-panel.open').forEach(function(p) {
+      p.classList.remove('open');
+    });
+    document.querySelectorAll('.assign-dropdown-btn.open').forEach(function(b) {
+      b.classList.remove('open');
+    });
+  }
+});
+
 function toggleAssignee(wsId, stepId, charId) {
   if (isViewer()) {
     showToast('❌ Cấp bậc Viewer chỉ có quyền xem, không được thay đổi người phụ trách!', 'error');
@@ -4499,26 +4554,40 @@ function toggleAssignee(wsId, stepId, charId) {
       step.assignees.push(charId);    // chọn thêm
     }
   });
-  // Cập nhật UI tại chỗ (không re-render toàn bộ)
+  // Cập nhật UI dropdown tại chỗ
   var ws = workshops.find(function(w) { return w.id === wsId; });
-  if (ws) {
-    var step = ws.todos.find(function(t) { return t.id === stepId; });
-    if (step) {
-      var avatarsEl = document.querySelector('#ts-' + wsId + '-' + stepId + ' .assign-avatars');
-      if (avatarsEl) {
-        var eligible = getEligibleAssignees();
-        var currentAssignees = step.assignees || [];
-        avatarsEl.innerHTML = eligible.map(function(c) {
-          var isSel = currentAssignees.indexOf(c.id) !== -1;
-          return '<button class="assign-avatar-btn' + (isSel ? ' selected' : '') + '"' +
-            ' title="' + esc(c.name) + '"' +
-            ' onclick="toggleAssignee(\'' + wsId + '\',\'' + stepId + '\',\'' + c.id + '\')">' +
-            c.emoji +
-            '<span class="av-check">✔</span>' +
-            '</button>';
-        }).join('');
-      }
-    }
+  if (!ws) return;
+  var step = ws.todos.find(function(t) { return t.id === stepId; });
+  if (!step) return;
+  var eligible = getEligibleAssignees();
+  var currentAssignees = step.assignees || [];
+  var uid = wsId + '-' + stepId;
+
+  // Cập nhật label button
+  var labelEl = document.getElementById('adb-label-' + uid);
+  if (labelEl) {
+    var btnLabel = currentAssignees.length
+      ? currentAssignees.map(function(id) {
+          var m = eligible.find(function(c){ return c.id === id; });
+          return m ? m.emoji + '\u00a0' + m.name : '';
+        }).filter(Boolean).join(', ')
+      : '-- Chọn --';
+    labelEl.textContent = btnLabel;
+  }
+
+  // Cập nhật panel items
+  var panel = document.getElementById('adp-' + uid);
+  if (panel) {
+    panel.querySelectorAll('.assign-dp-item').forEach(function(item) {
+      var onclick = item.getAttribute('onclick') || '';
+      var match = onclick.match(/'([^']+)'\s*\)\s*"?\s*$/);
+      if (!match) return;
+      var cId = match[1];
+      var isSel = currentAssignees.indexOf(cId) !== -1;
+      item.className = 'assign-dp-item' + (isSel ? ' selected' : '');
+      var chk = item.querySelector('.assign-dp-check');
+      if (chk) chk.textContent = isSel ? '✔' : '';
+    });
   }
 }
 
