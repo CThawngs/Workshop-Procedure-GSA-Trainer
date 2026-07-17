@@ -493,6 +493,38 @@
       font-size: 0.78rem; cursor: pointer; outline: none; transition: var(--transition);
     }
     .assign-select:focus { border-color: var(--primary); }
+
+    /* ===== Multi-assignee avatar chip picker ===== */
+    .assign-avatars { display: flex; align-items: center; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
+    .assign-avatar-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; cursor: pointer; transition: all 0.18s;
+      background: rgba(255,255,255,0.06);
+      position: relative; flex-shrink: 0;
+    }
+    .assign-avatar-btn:hover { border-color: rgba(255,255,255,0.4); transform: scale(1.12); }
+    .assign-avatar-btn.selected {
+      border-color: var(--primary);
+      background: rgba(66,133,244,0.18);
+      box-shadow: 0 0 0 2px rgba(66,133,244,0.25);
+    }
+    .assign-avatar-btn .av-check {
+      position: absolute; bottom: -2px; right: -2px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--primary); border: 1.5px solid var(--bg-card);
+      display: none; align-items: center; justify-content: center;
+      font-size: 7px; color: #fff; line-height: 1;
+    }
+    .assign-avatar-btn.selected .av-check { display: flex; }
+    .assign-avatar-btn[title]:hover::after {
+      content: attr(title);
+      position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%);
+      background: var(--bg-dark); color: var(--text); padding: 3px 7px;
+      border-radius: 5px; font-size: 0.68rem; white-space: nowrap;
+      border: 1px solid var(--border); pointer-events: none; z-index: 20;
+    }
     .todo-step-expand { width: 24px; height: 24px; border: none; background: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: var(--transition); font-size: 0.8rem; flex-shrink: 0; }
     .todo-step-expand.open { transform: rotate(180deg); }
     .todo-step-body { padding: 0 16px 12px; border-top: 1px solid var(--border); display: none; }
@@ -690,7 +722,7 @@
         margin-top: 4px;
         gap: 10px !important;
       }
-      .todo-step-assign .assign-select {
+      .todo-step-assign .assign-avatars {
         flex: 1 !important;
         width: 100% !important;
       }
@@ -1859,9 +1891,9 @@
     body.user-role-viewer button[onclick*="startEdit"] {
       display: none !important;
     }
-    body.user-role-viewer .assign-select {
+    body.user-role-viewer .assign-avatar-btn {
       pointer-events: none !important;
-      opacity: 0.7;
+      opacity: 0.65;
     }
   </style>
 </head>
@@ -3231,15 +3263,18 @@ function upgradeWorkshopToFormat(ws, format) {
       };
     });
 
-    return {
-      id: stepTmpl.id,
-      day: stepTmpl.day,
-      label: stepTmpl.label,
-      done: newSubs.every(function(s) { return s.done; }),
-      assignee: oldStep.assignee || null,
-      expanded: !!oldStep.expanded,
-      subs: newSubs
-    };
+      // Migrate old single assignee → array
+      var oldAssignees = oldStep.assignees ||
+        (oldStep.assignee ? [oldStep.assignee] : []);
+      return {
+        id: stepTmpl.id,
+        day: stepTmpl.day,
+        label: stepTmpl.label,
+        done: newSubs.every(function(s) { return s.done; }),
+        assignees: oldAssignees,
+        expanded: !!oldStep.expanded,
+        subs: newSubs
+      };
   });
 
   ws.todos = newTodos;
@@ -3702,14 +3737,24 @@ function calcPct(ws) {
   return total === 0 ? 0 : Math.round(done / total * 100);
 }
 
+// Thành viên đủ điều kiện phụ trách (GSA Trainer trở lên, không tính Viewer)
+function getEligibleAssignees() {
+  return CHARACTERS.filter(function(c) { return c.role !== 'viewer'; });
+}
+
 function getAssignees(ws) {
   var seen = {}, result = [];
   ws.todos.forEach(function(step) {
-    if (step.assignee && !seen[step.assignee]) {
-      seen[step.assignee] = true;
-      var c = getChar(step.assignee);
-      if (c) result.push(c);
-    }
+    // Hỗ trợ cả format cũ (assignee: string) và mới (assignees: array)
+    var ids = step.assignees ||
+      (step.assignee ? [step.assignee] : []);
+    ids.forEach(function(id) {
+      if (id && !seen[id]) {
+        seen[id] = true;
+        var c = getChar(id);
+        if (c) result.push(c);
+      }
+    });
   });
   return result;
 }
@@ -4126,7 +4171,7 @@ function saveWorkshop(e) {
       todos: getDynamicTodoSteps(format).map(function(step) {
         return {
           id: step.id, label: step.label, day: step.day,
-          done: false, assignee: null, expanded: false,
+          done: false, assignees: [], expanded: false,
           subs: step.subs.map(function(s, i) { return { id: step.id + '_' + i, text: s, done: false }; })
         };
       })
@@ -4297,12 +4342,21 @@ function buildTodoStep(wsId, step) {
     '<span class="todo-count">' + doneCount + '/' + total + '</span>' +
     '<div class="todo-step-assign" onclick="event.stopPropagation()">' +
     '<span class="assign-label">Phụ trách:</span>' +
-    '<select class="assign-select" onchange="assignStep(\'' + wsId + '\',\'' + step.id + '\',this.value)">' +
-    '<option value="">-- Chọn --</option>' +
-    CHARACTERS.map(function(c) {
-      return '<option value="' + c.id + '"' + (step.assignee===c.id?' selected':'') + '>' + c.emoji + ' ' + c.name + '</option>';
-    }).join('') +
-    '</select></div>' +
+    '<div class="assign-avatars">' +
+    (function() {
+      var eligible = getEligibleAssignees();
+      var currentAssignees = step.assignees || (step.assignee ? [step.assignee] : []);
+      return eligible.map(function(c) {
+        var isSelected = currentAssignees.indexOf(c.id) !== -1;
+        return '<button class="assign-avatar-btn' + (isSelected ? ' selected' : '') + '"' +
+          ' title="' + esc(c.name) + '"' +
+          ' onclick="toggleAssignee(\'' + wsId + '\',\'' + step.id + '\',\'' + c.id + '\')">' +
+          c.emoji +
+          '<span class="av-check">✔</span>' +
+          '</button>';
+      }).join('');
+    })() +
+    '</div></div>' +
     '<button class="todo-step-expand ' + (step.expanded?'open':'') + '">▼</button>' +
     '</div>' +
     '<div class="todo-step-body ' + (step.expanded?'open':'') + '">' +
@@ -4424,7 +4478,8 @@ function toggleSub(wsId, stepId, subId) {
   });
 }
 
-function assignStep(wsId, stepId, charId) {
+
+function toggleAssignee(wsId, stepId, charId) {
   if (isViewer()) {
     showToast('❌ Cấp bậc Viewer chỉ có quyền xem, không được thay đổi người phụ trách!', 'error');
     return;
@@ -4432,9 +4487,42 @@ function assignStep(wsId, stepId, charId) {
   updateWs(wsId, function(ws) {
     var step = ws.todos.find(function(t) { return t.id === stepId; });
     if (!step) return;
-    step.assignee = charId || null;
+    // Migrate format cũ (assignee: string) -> mới (assignees: array)
+    if (!step.assignees) {
+      step.assignees = step.assignee ? [step.assignee] : [];
+      delete step.assignee;
+    }
+    var idx = step.assignees.indexOf(charId);
+    if (idx !== -1) {
+      step.assignees.splice(idx, 1);  // bỏ chọn
+    } else {
+      step.assignees.push(charId);    // chọn thêm
+    }
   });
+  // Cập nhật UI tại chỗ (không re-render toàn bộ)
+  var ws = workshops.find(function(w) { return w.id === wsId; });
+  if (ws) {
+    var step = ws.todos.find(function(t) { return t.id === stepId; });
+    if (step) {
+      var avatarsEl = document.querySelector('#ts-' + wsId + '-' + stepId + ' .assign-avatars');
+      if (avatarsEl) {
+        var eligible = getEligibleAssignees();
+        var currentAssignees = step.assignees || [];
+        avatarsEl.innerHTML = eligible.map(function(c) {
+          var isSel = currentAssignees.indexOf(c.id) !== -1;
+          return '<button class="assign-avatar-btn' + (isSel ? ' selected' : '') + '"' +
+            ' title="' + esc(c.name) + '"' +
+            ' onclick="toggleAssignee(\'' + wsId + '\',\'' + stepId + '\',\'' + c.id + '\')">' +
+            c.emoji +
+            '<span class="av-check">✔</span>' +
+            '</button>';
+        }).join('');
+      }
+    }
+  }
 }
+
+
 
 function submitAddStep(wsId) {
   if (isViewer()) {
@@ -4452,7 +4540,7 @@ function submitAddStep(wsId) {
       label: name,
       day: '',
       done: false,
-      assignee: null,
+      assignees: [],
       expanded: true,
       subs: []
     });
