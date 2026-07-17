@@ -2778,10 +2778,14 @@ function initSupabaseRealtime() {
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.characters' }, (payload) => {
         if (payload.new && payload.new.value) {
+          var fetchedChars = payload.new.value;
+          if (Array.isArray(fetchedChars)) {
+            fetchedChars = fetchedChars.filter(function(c) { return c.id !== 'xuan-thi'; });
+          }
           const oldStr = localStorage.getItem('gsa_characters_v2');
-          const newStr = JSON.stringify(payload.new.value);
+          const newStr = JSON.stringify(fetchedChars);
           if (oldStr !== newStr) {
-            CHARACTERS = payload.new.value;
+            CHARACTERS = fetchedChars;
             try { localStorage.setItem('gsa_characters_v2', newStr); } catch(e) {}
             TODO_STEPS = getDynamicTodoSteps();
             workshops = upgradeWorkshops(workshops);
@@ -3056,16 +3060,24 @@ function loadData() {
     supabaseClient.from('gsa_storage').select('value').eq('key', 'characters').single()
       .then(function(res) {
         if (res.data && res.data.value) {
+          var fetchedChars = res.data.value;
+          if (Array.isArray(fetchedChars)) {
+            fetchedChars = fetchedChars.filter(function(c) { return c.id !== 'xuan-thi'; });
+          }
           const oldStr = localStorage.getItem('gsa_characters_v2');
-          const newStr = JSON.stringify(res.data.value);
+          const newStr = JSON.stringify(fetchedChars);
           if (oldStr !== newStr) {
-            CHARACTERS = res.data.value;
+            CHARACTERS = fetchedChars;
             try { localStorage.setItem('gsa_characters_v2', newStr); } catch(e) {}
             TODO_STEPS = getDynamicTodoSteps();
             workshops = upgradeWorkshops(workshops);
             if (currentMainTab === 'members') renderMembers();
             if (currentMainTab === 'workshops') renderWorkshops();
             renderCharGrid();
+            // If the database version had xuan-thi, update the database!
+            if (JSON.stringify(res.data.value) !== newStr) {
+              supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: fetchedChars }).then();
+            }
           }
         } else {
           supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS }).then();
