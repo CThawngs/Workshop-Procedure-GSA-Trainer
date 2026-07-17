@@ -265,6 +265,8 @@
     }
     .badge-upcoming { background: rgba(66,133,244,0.15); color: #4285F4; border: 1px solid rgba(66,133,244,0.3); }
     .badge-completed { background: rgba(52,168,83,0.15); color: #34A853; border: 1px solid rgba(52,168,83,0.3); }
+    .badge-online { background: rgba(168, 52, 235, 0.15); color: #a834eb; border: 1px solid rgba(168, 52, 235, 0.3); }
+    .badge-offline { background: rgba(251, 188, 5, 0.15); color: #FBBC05; border: 1px solid rgba(251, 188, 5, 0.3); }
 
     .card-actions { display: flex; gap: 8px; }
     .card-action-btn {
@@ -2209,12 +2211,21 @@
             <input class="form-input" id="wsDeadline" type="text" placeholder="Chọn ngày deadline..." required/>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label" for="wsStatus">Trạng thái</label>
-          <select class="form-select" id="wsStatus">
-            <option value="upcoming">🗓️ Sắp diễn ra</option>
-            <option value="completed">✅ Đã hoàn thành</option>
-          </select>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="wsStatus">Trạng thái</label>
+            <select class="form-select" id="wsStatus">
+              <option value="upcoming">🗓️ Sắp diễn ra</option>
+              <option value="completed">✅ Đã hoàn thành</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="wsFormat">Hình thức tổ chức *</label>
+            <select class="form-select" id="wsFormat" required>
+              <option value="offline">🏢 Offline (Trực tiếp)</option>
+              <option value="online">🌐 Online (Trực tuyến)</option>
+            </select>
+          </div>
         </div>
         <div class="form-actions">
           <button type="button" class="btn-secondary" onclick="closeModal('workshopFormModal')">Hủy</button>
@@ -2611,117 +2622,224 @@ let CHARACTERS = [
 
 let TODO_STEPS = [];
 
-function getDynamicTodoSteps() {
-  return [
-    {
-      id: 'step1', day: 'Ngày 1',
-      label: 'Bước 1: Tìm trường & Quét thông tin',
-      subs: [
-        'Rà soát danh sách trường tiềm năng từ CRM School. Nếu chưa có trường: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền... và điền các thông tin đó vào CRM trước khi tạo dự án và bắt đầu.',
-        'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC) để trao đổi hợp tác sơ bộ và pitch proposal.',
-        'Thảo luận để đạt được sự đồng ý hợp tác từ phía nhà trường, chốt lịch chính thức với thông tin rõ ràng về thời gian, địa điểm/hội trường, ngày tổ chức.'
-      ]
-    },
-    {
-      id: 'step2', day: 'Ngày 2',
-      label: 'Bước 2: Thủ tục Google & Gửi Email Đề xuất',
-      subs: [
-        'Vào Google Drive tạo thư mục (folder) có tên trường dựa theo thư mục ví dụ hoặc thư mục của trường khác đã tổ chức trước đó để lưu trữ toàn bộ tài liệu và ấn phẩm của trường này.',
-        'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).'
-      ].concat(CHARACTERS.map(function(c) {
-        return 'Điền form đăng ký workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)';
-      }))
-    },
-    {
-      id: 'step3', day: 'Ngày 3',
-      label: 'Bước 3: Thiết kế Asset Poster/Banner & QR Code',
-      subs: [
-        'Truy cập link Google Drive (bổ sung sau), nhân bản và đổi tên form "Check-in for Students" theo tên trường mục tiêu.',
-        'Copy link Google Form đó, truy cập https://me-qr.com/vi/qr-code-generator/google-form để tạo QR Code, đặt tên QR Code theo tên trường và tải ảnh QR Code về.',
-        'Vào Gemini tạo poster/banner theo 3 tỷ lệ: Dọc, Vuông, Ngang; kích hoạt tính năng Canva và dùng câu lệnh "Make it editable" để có thể tùy chỉnh các phần tử trên Canva.',
-        'Trên Canva: Thay đổi tên trường, chèn Logo của trường và dán hình ảnh QR Code vừa tải về.',
-        'Tải ảnh banner/poster hoàn thiện lên folder (Tên trường đó) trong Google Drive (để đính kèm cho nhà trường).',
-        'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link)'
-      ]
-    },
-    {
-      id: 'step4', day: 'Ngày 4',
-      label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
-      subs: [
-        'Setup một project/workflow n8n riêng theo tên trường dựa trên Google Form Check-in đã tạo.',
-        'Cấu hình luồng n8n gửi email xác nhận check-in tự động (kèm tên trường tương ứng) ngay khi sinh viên nộp form check-in thành công.',
-        'Setup và hẹn giờ trên n8n để tự động gửi email Check-out & Quà tặng đến các sinh viên đã check-in vào lúc 23h55 cùng ngày tổ chức workshop.',
-        'Test luồng automation hoàn chỉnh: Google Form → n8n → Gmail xác nhận.',
-        'Đăng link form đăng ký lên các kênh truyền thông và kêu gọi đăng ký (+250 SV)'
-      ]
-    },
-    {
-      id: 'step5', day: 'Ngày 5',
-      label: 'Bước 5: Duyệt & Chụp hình Truyền thông',
-      subs: [
-        'Đến trường duyệt lại hội trường và banner đã treo tại campus',
-        'Chụp hình truyền thông thực tế: không gian hội trường, banner',
-        'Đăng bài nhắc hẹn kèm hình thực tế (hâm nóng không khí)',
-        'Kiểm tra đường truyền mạng và room họp trực tuyến (nâng cấp 250+ người)',
-        'Thúc đẩy trường/khoa/CLB chia sẻ link phòng vào group lớp'
-      ]
-    },
-    {
-      id: 'step6', day: 'Ngày 6',
-      label: 'Bước 6: Vận hành & Diễn thuyết',
-      subs: [
-        'Có mặt trước 2 tiếng setup âm thanh, máy chiếu, micro (Sound-check)',
-        'Mở phòng họp trực tuyến trước 1 tiếng, setup quyền Host/Co-host',
-        'Bật tính năng Record cuộc họp, bật nhạc nền chờ sinh viên',
-        'Đội media quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người',
-        'Chụp ảnh toàn cảnh khoảnh khắc "giơ điện thoại Gemini" đặc sắc'
-      ]
-    },
-    {
-      id: 'step7', day: 'Ngày 6',
-      label: 'Bước 7: Automation Check-out & Tặng quà',
-      subs: [
-        'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform) để sinh viên điền khảo sát.',
-        'Kiểm tra tiến độ hàng chờ n8n để email Check-out & Quà tặng tự động gửi đi vào lúc 23h55 cùng ngày.'
-      ]
-    },
-    {
-      id: 'step8', day: 'Ngày 7',
-      label: 'Bước 8: Hậu kỳ & Truyền thông Nghiệm thu',
-      subs: [
-        'Upload source hình ảnh/video gốc lên folder "Source Media (Gốc trong Google Drive)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
-        'Edit hình ảnh thực tế (Lightroom) và dựng video Recap ngắn (CapCut)',
-        'Upload các hình/video đã edit vào trong folder "Source Media (Đã Edit)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
-        'Thêm hình ảnh đã edit vào trong link URL (Cung cấp sau bằng việc edit to-do)',
-        'Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok'
-      ]
-    },
-    {
-      id: 'step9', day: 'Ngày 7',
-      label: 'Bước 9: Báo cáo Google',
-      subs: CHARACTERS.map(function(c) {
-        return 'Điền form báo cáo Workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)';
-      }).concat([
-        'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
-      ])
-    },
-    {
-      id: 'step10', day: 'Ngày 8',
-      label: 'Bước 10: Bài học & Cải tiến cho workshop',
-      subs: CHARACTERS.map(function(c) {
-        return c.name + ' - Nộp báo cáo cải tiến';
-      })
-    },
-    {
-      id: 'step11', day: 'Ngày 9',
-      label: 'Bước 11: Tìm trường mới',
-      subs: [
-        'Tìm trường mới (quay lại Bước 1, dùng video Recap làm vũ khí tiếp cận)',
-        'Nếu trường mới chưa có trong CRM: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền.',
-        'Điền đầy đủ thông tin trường mới vào CRM School trước khi tạo dự án workshop mới.'
-      ]
-    }
-  ];
+function getDynamicTodoSteps(format) {
+  format = format || 'offline';
+  if (format === 'online') {
+    return [
+      {
+        id: 'step1', day: 'Ngày 1',
+        label: 'Bước 1: Tìm trường & Quét thông tin (Online Focus)',
+        subs: [
+          'Rà soát danh sách trường tiềm năng từ CRM. Tìm kiếm thông tin liên hệ của các Thầy/Cô Đoàn Hội hoặc CLB liên quan.',
+          'Liên hệ để trao đổi sơ bộ, nhưng trọng tâm "pitching" là giải pháp tổ chức 100% Online, nhấn mạnh tính tiện lợi và khả năng tiếp cận đông đảo sinh viên.',
+          'Chốt lịch tổ chức trực tuyến (ngày, giờ, nền tảng sử dụng như Google Meet/Zoom).'
+        ]
+      },
+      {
+        id: 'step2', day: 'Ngày 2',
+        label: 'Bước 2: Thủ tục Google & Gửi Email Đề xuất',
+        subs: [
+          'Vào Google Drive tạo thư mục lưu trữ riêng cho trường.',
+          'Gửi Email Đề xuất (bản Online chúng ta vừa chốt) cho nhà trường, đính kèm link folder poster/banner.'
+        ].concat(CHARACTERS.map(function(c) {
+          return 'Điền form đăng ký workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)';
+        }))
+      },
+      {
+        id: 'step3', day: 'Ngày 3',
+        label: 'Bước 3: Thiết kế Asset Số & Link đăng nhập',
+        subs: [
+          'Nhân bản và đổi tên form "Check-in for Students".',
+          'Dùng Canva thiết kế poster/banner theo 3 tỷ lệ.',
+          'Tạo QR Code cho form đăng ký. Điểm mới: Tạo thêm Link rút gọn (Short link) dễ nhớ để sẵn sàng gửi trực tiếp vào các nhóm chat Zalo của sinh viên.',
+          'Chuẩn bị và lưu slide bài giảng vào folder (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link)'
+        ]
+      },
+      {
+        id: 'step4', day: 'Ngày 4',
+        label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
+        subs: [
+          'Setup workflow n8n theo tên trường.',
+          'Điểm mới: Cấu hình n8n gửi email xác nhận tự động kèm Link phòng họp trực tuyến (Meet/Zoom) ngay khi sinh viên nộp form check-in thành công.',
+          'Setup luồng hẹn giờ 23h55 tự động gửi email Check-out & Quà tặng.',
+          'Test kỹ luồng đăng ký này để đảm bảo link phòng họp được gửi đi trơn tru.'
+        ]
+      },
+      {
+        id: 'step5', day: 'Ngày 5',
+        label: 'Bước 5: Kỹ thuật (Tech-check) & Truyền thông',
+        subs: [
+          'Điểm mới: Thay vì đến trường duyệt hội trường, team tiến hành kiểm tra đường truyền mạng, setup các phòng họp (nâng cấp giới hạn 250+ người nếu cần).',
+          'Thúc đẩy nhà trường/Khoa/CLB chia sẻ link phòng họp và thư mời vào các group lớp nội bộ.',
+          'Đăng bài nhắc hẹn trên Fanpage trước giờ G.'
+        ]
+      },
+      {
+        id: 'step6', day: 'Ngày 6',
+        label: 'Bước 6: Vận hành & Diễn thuyết (Online)',
+        subs: [
+          'Mở phòng họp trực tuyến trước 30-45 phút, phân quyền Host/Co-host cho team, bật nhạc chờ.',
+          'Bật tính năng Record cuộc họp.',
+          'Diễn thuyết: Chuyển đổi mượt mà giữa phần trình bày lý thuyết trên slide Canva sang các công cụ tương tác trực tiếp như Mentimeter để giữ không khí luôn bùng nổ, tránh việc sinh viên bị nhàm chán khi nhìn màn hình quá lâu.',
+          'Đội media chụp ảnh toàn cảnh màn hình 250+ sinh viên bật camera tương tác (thay cho ảnh hội trường).'
+        ]
+      },
+      {
+        id: 'step7', day: 'Ngày 6',
+        label: 'Bước 7: Automation Check-out & Tặng quà',
+        subs: [
+          'Điểm mới: Cuối buổi, MC chiếu slide QR Code, đồng thời ghim trực tiếp link Form Check-out vào khung chat (Chatbox) của phòng họp để sinh viên nhấp vào ngay.',
+          'Kiểm tra tiến độ hàng chờ n8n để đảm bảo email quà tặng tự động đi vào 23h55.'
+        ]
+      },
+      {
+        id: 'step8', day: 'Ngày 7',
+        label: 'Bước 8: Hậu kỳ & Truyền thông Nghiệm thu',
+        subs: [
+          'Tải bản Record (video) từ nền tảng họp trực tuyến về thư mục "Source Media".',
+          'Dùng Capcut edit các đoạn highlight ngắn, thú vị trong buổi workshop.',
+          'Đăng bài nghiệm thu, cảm ơn nhà trường trên Fanpage & TikTok.'
+        ]
+      },
+      {
+        id: 'step9', day: 'Ngày 7',
+        label: 'Bước 9: Báo cáo Google',
+        subs: [
+          'Điểm mới: Xuất dữ liệu (Export Data) lịch sử người tham dự từ nền tảng Meet/Zoom để đối chiếu số lượng thực tế.',
+          'Phân tích số liệu đăng ký và phản hồi từ khảo sát.'
+        ].concat(CHARACTERS.map(function(c) {
+          return 'Điền form báo cáo Workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)';
+        }))
+      },
+      {
+        id: 'step10', day: 'Ngày 8',
+        label: 'Bước 10: Bài học & Cải tiến cho workshop',
+        subs: CHARACTERS.map(function(c) {
+          return c.name + ' - Nộp báo cáo cải tiến (Đánh giá chất lượng đường truyền và độ tương tác online)';
+        })
+      },
+      {
+        id: 'step11', day: 'Ngày 9',
+        label: 'Bước 11: Tìm trường mới',
+        subs: [
+          'Sử dụng hình ảnh chụp màn hình 250+ người và video Recap ngắn làm minh chứng sống động để tiếp cận (pitch) các trường mới.',
+          'Cập nhật thông tin vào CRM và bắt đầu vòng lặp dự án mới.'
+        ]
+      }
+    ];
+  } else {
+    // Offline template (default)
+    return [
+      {
+        id: 'step1', day: 'Ngày 1',
+        label: 'Bước 1: Tìm trường & Quét thông tin',
+        subs: [
+          'Rà soát danh sách trường tiềm năng từ CRM School. Nếu chưa có trường: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền... và điền các thông tin đó vào CRM trước khi tạo dự án và bắt đầu.',
+          'Liên hệ đầu mối tại trường (Thầy/Cô, CLB Google DSC) để trao đổi hợp tác sơ bộ và pitch proposal.',
+          'Thảo luận để đạt được sự đồng ý hợp tác từ phía nhà trường, chốt lịch chính thức với thông tin rõ ràng về thời gian, địa điểm/hội trường, ngày tổ chức.'
+        ]
+      },
+      {
+        id: 'step2', day: 'Ngày 2',
+        label: 'Bước 2: Thủ tục Google & Gửi Email Đề xuất',
+        subs: [
+          'Vào Google Drive tạo thư mục (folder) có tên trường dựa theo thư mục ví dụ hoặc thư mục của trường khác đã tổ chức trước đó để lưu trữ toàn bộ tài liệu và ấn phẩm của trường này.',
+          'Gửi email booking hội trường và Đề xuất Phối hợp chính thức cho nhà trường, đính kèm link folder poster/banner của trường (sau khi đã chuẩn bị xong folder ở Bước 3).'
+        ].concat(CHARACTERS.map(function(c) {
+          return 'Điền form đăng ký workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSfyvkFWuPQjTPPf8y9OdiKqooQu-D-aVuXcyfNmf0XMBlE7ag/viewform)';
+        }))
+      },
+      {
+        id: 'step3', day: 'Ngày 3',
+        label: 'Bước 3: Thiết kế Asset Poster/Banner & QR Code',
+        subs: [
+          'Truy cập link Google Drive (bổ sung sau), nhân bản và đổi tên form "Check-in for Students" theo tên trường mục tiêu.',
+          'Copy link Google Form đó, truy cập https://me-qr.com/vi/qr-code-generator/google-form để tạo QR Code, đặt tên QR Code theo tên trường và tải ảnh QR Code về.',
+          'Vào Gemini tạo poster/banner theo 3 tỷ lệ: Dọc, Vuông, Ngang; kích hoạt tính năng Canva và dùng câu lệnh "Make it editable" để có thể tùy chỉnh các phần tử trên Canva.',
+          'Trên Canva: Thay đổi tên trường, chèn Logo của trường và dán hình ảnh QR Code vừa tải về.',
+          'Tải ảnh banner/poster hoàn thiện lên folder (Tên trường đó) trong Google Drive (để đính kèm cho nhà trường).',
+          'Chuẩn bị slide bài giảng AI & Gemini (https://drive.google.com/drive/folders/1dn_c4lL1G9G40-EoIugZSQTTEqdHGz2k?usp=drive_link)'
+        ]
+      },
+      {
+        id: 'step4', day: 'Ngày 4',
+        label: 'Bước 4: Cài đặt Automation Đăng ký (n8n)',
+        subs: [
+          'Setup một project/workflow n8n riêng theo tên trường dựa trên Google Form Check-in đã tạo.',
+          'Cấu hình luồng n8n gửi email xác nhận check-in tự động (kèm tên trường tương ứng) ngay khi sinh viên nộp form check-in thành công.',
+          'Setup và hẹn giờ trên n8n để tự động gửi email Check-out & Quà tặng đến các sinh viên đã check-in vào lúc 23h55 cùng ngày tổ chức workshop.',
+          'Test luồng automation hoàn chỉnh: Google Form → n8n → Gmail xác nhận.',
+          'Đăng link form đăng ký lên các kênh truyền thông và kêu gọi đăng ký (+250 SV)'
+        ]
+      },
+      {
+        id: 'step5', day: 'Ngày 5',
+        label: 'Bước 5: Duyệt & Chụp hình Truyền thông',
+        subs: [
+          'Đến trường duyệt lại hội trường và banner đã treo tại campus',
+          'Chụp hình truyền thông thực tế: không gian hội trường, banner',
+          'Đăng bài nhắc hẹn kèm hình thực tế (hâm nóng không khí)',
+          'Kiểm tra đường truyền mạng và room họp trực tuyến (nâng cấp 250+ người)',
+          'Thúc đẩy trường/khoa/CLB chia sẻ link phòng vào group lớp'
+        ]
+      },
+      {
+        id: 'step6', day: 'Ngày 6',
+        label: 'Bước 6: Vận hành & Diễn thuyết',
+        subs: [
+          'Có mặt trước 2 tiếng setup âm thanh, máy chiếu, micro (Sound-check)',
+          'Mở phòng họp trực tuyến trước 1 tiếng, setup quyền Host/Co-host',
+          'Bật tính năng Record cuộc họp, bật nhạc nền chờ sinh viên',
+          'Đội media quay chụp, bắt khoảnh khắc hội trường bùng nổ +250 người',
+          'Chụp ảnh toàn cảnh khoảnh khắc "giơ điện thoại Gemini" đặc sắc'
+        ]
+      },
+      {
+        id: 'step7', day: 'Ngày 6',
+        label: 'Bước 7: Automation Check-out & Tặng quà',
+        subs: [
+          'Cuối WS: Chiếu slide QR Code Form Check-out (Khảo sát) (https://docs.google.com/forms/d/e/1FAIpQLSfwTIQ7nSaCdEnnOsQ0W9YzSkmP0cehLXuau2AXOVj0D5loxQ/viewform) để sinh viên điền khảo sát.',
+          'Kiểm tra tiến độ hàng chờ n8n để email Check-out & Quà tặng tự động gửi đi vào lúc 23h55 cùng ngày.'
+        ]
+      },
+      {
+        id: 'step8', day: 'Ngày 7',
+        label: 'Bước 8: Hậu kỳ & Truyền thông Nghiệm thu',
+        subs: [
+          'Upload source hình ảnh/video gốc lên folder "Source Media (Gốc trong Google Drive)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
+          'Edit hình ảnh thực tế (Lightroom) và dựng video Recap ngắn (CapCut)',
+          'Upload các hình/video đã edit vào trong folder "Source Media (Đã Edit)" - thông qua link URL (Cung cấp sau bằng việc edit to-do)',
+          'Thêm hình ảnh đã edit vào trong link URL (Cung cấp sau bằng việc edit to-do)',
+          'Đăng bài nghiệm thu truyền thông trên Fanpage & TikTok'
+        ]
+      },
+      {
+        id: 'step9', day: 'Ngày 7',
+        label: 'Bước 9: Báo cáo Google',
+        subs: CHARACTERS.map(function(c) {
+          return 'Điền form báo cáo Workshop cho Google (Cá nhân - ' + c.name + ') (https://docs.google.com/forms/d/e/1FAIpQLSeNSgFg6dh-wlPgZVJJLqwlO-Y5UM0ItuukdbZ-ffiZFyJrYQ/viewform)';
+        }).concat([
+          'Phân tích số liệu đăng ký và phản hồi từ khảo sát cuối buổi'
+        ])
+      },
+      {
+        id: 'step10', day: 'Ngày 8',
+        label: 'Bước 10: Bài học & Cải tiến cho workshop',
+        subs: CHARACTERS.map(function(c) {
+          return c.name + ' - Nộp báo cáo cải tiến';
+        })
+      },
+      {
+        id: 'step11', day: 'Ngày 9',
+        label: 'Bước 11: Tìm trường mới',
+        subs: [
+          'Tìm trường mới (quay lại Bước 1, dùng video Recap làm vũ khí tiếp cận)',
+          'Nếu trường mới chưa có trong CRM: Lên internet tìm kiếm thông tin trường, email liên hệ, số điện thoại (Zalo) của giảng viên có thẩm quyền.',
+          'Điền đầy đủ thông tin trường mới vào CRM School trước khi tạo dự án workshop mới.'
+        ]
+      }
+    ];
+  }
 }
 
 const STORAGE_KEY = 'gsa_workshops_v2';
@@ -2976,9 +3094,6 @@ function initSupabaseRealtime() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gsa_storage', filter: 'key=eq.characters' }, (payload) => {
         if (payload.new && payload.new.value) {
           var fetchedChars = payload.new.value;
-          if (Array.isArray(fetchedChars)) {
-            fetchedChars = fetchedChars.filter(function(c) { return c.id !== 'xuan-thi'; });
-          }
           const oldStr = localStorage.getItem('gsa_characters_v2');
           const newStr = JSON.stringify(fetchedChars);
           if (oldStr !== newStr) {
@@ -3036,71 +3151,81 @@ function saveResourcesData() {
   }
 }
 
-function upgradeWorkshops(arr) {
-  if (!Array.isArray(arr)) return [];
-  return arr.map(function(ws) {
-    if (!ws.todos) return ws;
-
-    var newTodos = TODO_STEPS.map(function(stepTmpl) {
-      var oldStep = ws.todos.find(function(t) { return t.id === stepTmpl.id; }) || {};
-      
-      var oldStepSubStates = {};
-      if (Array.isArray(oldStep.subs)) {
-        oldStep.subs.forEach(function(sub) {
-          if (sub.text) {
-            oldStepSubStates[sub.text] = !!sub.done;
-          }
-        });
-      }
-
-      function getOldDone(text, kw) {
-        if (oldStepSubStates[text] !== undefined) {
-          return oldStepSubStates[text];
+function upgradeWorkshopToFormat(ws, format) {
+  if (!ws || !Array.isArray(ws.todos)) return ws;
+  format = format || ws.format || 'offline';
+  
+  var stepTmpls = getDynamicTodoSteps(format);
+  
+  var oldStepSubStates = {};
+  ws.todos.forEach(function(oldStep) {
+    if (Array.isArray(oldStep.subs)) {
+      oldStep.subs.forEach(function(sub) {
+        if (sub.text) {
+          oldStepSubStates[sub.text] = !!sub.done;
         }
-        if (kw) {
-          var foundKey = Object.keys(oldStepSubStates).find(function(k) {
-            return k.indexOf(kw) !== -1;
-          });
-          if (foundKey !== undefined) {
-            return oldStepSubStates[foundKey];
-          }
-        }
-        return false;
-      }
-
-      var newSubs = stepTmpl.subs.map(function(subText, subIdx) {
-        var subId = stepTmpl.id + '_' + subIdx;
-        var doneState = false;
-        
-        var matchedChar = CHARACTERS.find(function(c) { return subText.indexOf(c.name) !== -1; });
-        if (matchedChar) {
-          doneState = getOldDone(subText, matchedChar.name);
-        } else if (stepTmpl.id === 'step11') {
-          doneState = getOldDone(subText, 'Tìm trường mới');
-        } else {
-          doneState = getOldDone(subText, subText.substring(0, 15));
-        }
-
-        return {
-          id: subId,
-          text: subText,
-          done: doneState
-        };
       });
+    }
+  });
+
+  function getOldDone(text, kw) {
+    if (oldStepSubStates[text] !== undefined) {
+      return oldStepSubStates[text];
+    }
+    if (kw) {
+      var foundKey = Object.keys(oldStepSubStates).find(function(k) {
+        return k.indexOf(kw) !== -1;
+      });
+      if (foundKey !== undefined) {
+        return oldStepSubStates[foundKey];
+      }
+    }
+    return false;
+  }
+
+  var newTodos = stepTmpls.map(function(stepTmpl) {
+    var oldStep = ws.todos.find(function(t) { return t.id === stepTmpl.id; }) || {};
+    
+    var newSubs = stepTmpl.subs.map(function(subText, subIdx) {
+      var subId = stepTmpl.id + '_' + subIdx;
+      var doneState = false;
+      
+      var matchedChar = CHARACTERS.find(function(c) { return subText.indexOf(c.name) !== -1; });
+      if (matchedChar) {
+        doneState = getOldDone(subText, matchedChar.name);
+      } else if (stepTmpl.id === 'step11') {
+        doneState = getOldDone(subText, 'Tìm trường mới');
+      } else {
+        doneState = getOldDone(subText, subText.substring(0, 15));
+      }
 
       return {
-        id: stepTmpl.id,
-        day: stepTmpl.day,
-        label: stepTmpl.label,
-        done: newSubs.every(function(s) { return s.done; }),
-        assignee: oldStep.assignee || null,
-        expanded: !!oldStep.expanded,
-        subs: newSubs
+        id: subId,
+        text: subText,
+        done: doneState
       };
     });
 
-    ws.todos = newTodos;
-    return ws;
+    return {
+      id: stepTmpl.id,
+      day: stepTmpl.day,
+      label: stepTmpl.label,
+      done: newSubs.every(function(s) { return s.done; }),
+      assignee: oldStep.assignee || null,
+      expanded: !!oldStep.expanded,
+      subs: newSubs
+    };
+  });
+
+  ws.todos = newTodos;
+  ws.format = format;
+  return ws;
+}
+
+function upgradeWorkshops(arr) {
+  if (!Array.isArray(arr)) return [];
+  return arr.map(function(ws) {
+    return upgradeWorkshopToFormat(ws, ws.format || 'offline');
   });
 }
 
@@ -3117,12 +3242,22 @@ function loadData() {
       localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS));
     }
 
-    // Migration: Remove Xuân Thi and force update link-deck URL in local/supabase storage, and ensure roles exist
+    // One-time migration to clean up obsolete characters and align workshops
+    if (localStorage.getItem('gsa_migration_v4_clean_chars') !== 'true') {
+      CHARACTERS = [
+        { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', role: 'admin', canDelete: false },
+        { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', role: 'trainer', canDelete: true }
+      ];
+      localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS));
+      localStorage.setItem('gsa_migration_v4_clean_chars', 'true');
+      if (supabaseClient) {
+        supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS }).then();
+      }
+    }
+
+    // Ensure all characters have roles assigned
     if (Array.isArray(CHARACTERS)) {
-      var oldLength = CHARACTERS.length;
-      CHARACTERS = CHARACTERS.filter(function(c) { return c.id !== 'xuan-thi'; });
-      var migrated = CHARACTERS.length !== oldLength;
-      
+      var migrated = false;
       CHARACTERS.forEach(function(c) {
         if (!c.role) {
           if (c.id === 'chi-thang') {
@@ -3271,8 +3406,14 @@ function loadData() {
       .then(function(res) {
         if (res.data && res.data.value) {
           var fetchedChars = res.data.value;
+          if (localStorage.getItem('gsa_migration_v4_clean_chars') !== 'true') {
+            fetchedChars = [
+              { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', role: 'admin', canDelete: false },
+              { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', role: 'trainer', canDelete: true }
+            ];
+            localStorage.setItem('gsa_migration_v4_clean_chars', 'true');
+          }
           if (Array.isArray(fetchedChars)) {
-            fetchedChars = fetchedChars.filter(function(c) { return c.id !== 'xuan-thi'; });
             // Migration: Ensure all characters have roles assigned
             var migrated = false;
             fetchedChars.forEach(function(c) {
@@ -3735,6 +3876,11 @@ function buildCard(ws, c) {
   }
   var badgeCls = ws.status === 'upcoming' ? 'badge-upcoming' : 'badge-completed';
   var badgeTxt = ws.status === 'upcoming' ? '🗓️ Sắp diễn ra' : '✅ Hoàn thành';
+  
+  var format = ws.format || 'offline';
+  var fmtBadgeCls = format === 'online' ? 'badge-online' : 'badge-offline';
+  var fmtBadgeTxt = format === 'online' ? '🌐 Online' : '🏢 Offline';
+
   var delBtn = c ?
     '<button class="card-action-btn delete" onclick="confirmDelete(\'' + ws.id + '\',event)" title="Xóa">🗑️</button>' : '';
   var chips = assignees.length ?
@@ -3744,7 +3890,11 @@ function buildCard(ws, c) {
 
   return '<article class="workshop-card" onclick="openDetail(\'' + ws.id + '\')" tabindex="0"' +
     ' onkeydown="if(event.key===\'Enter\')openDetail(\'' + ws.id + '\')">' +
-    '<div class="card-header"><span class="card-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
+    '<div class="card-header">' +
+    '<div style="display:flex; gap:6px;">' +
+    '<span class="card-badge ' + badgeCls + '">' + badgeTxt + '</span>' +
+    '<span class="card-badge ' + fmtBadgeCls + '">' + fmtBadgeTxt + '</span>' +
+    '</div>' +
     '<div class="card-actions" onclick="event.stopPropagation()">' +
     '<button class="card-action-btn edit" onclick="openEdit(\'' + ws.id + '\',event)" title="Sửa">✏️</button>' + delBtn + '</div></div>' +
     '<div class="card-title">' + esc(ws.name) + '</div>' +
@@ -3806,6 +3956,7 @@ function openAddWorkshop() {
   inputCreate.dataset.iso = now.toISOString();
   
   if (fpDeadline) fpDeadline.setDate("");
+  document.getElementById('wsFormat').value = 'offline';
   
   openModal('workshopFormModal');
 }
@@ -3830,6 +3981,7 @@ function openEdit(id, event) {
   if (fpDeadline) fpDeadline.setDate(ws.deadline);
   
   document.getElementById('wsStatus').value = ws.status;
+  document.getElementById('wsFormat').value = ws.format || 'offline';
   openModal('workshopFormModal');
 }
 
@@ -3845,19 +3997,26 @@ function saveWorkshop(e) {
   var dateCreate = document.getElementById('wsDateCreate').dataset.iso || new Date().toISOString();
   var deadline = document.getElementById('wsDeadline').value;
   var status = document.getElementById('wsStatus').value;
+  var format = document.getElementById('wsFormat').value;
 
   if (editingId) {
     var idx = workshops.findIndex(function(w) { return w.id === editingId; });
     if (idx !== -1) {
-      workshops[idx] = Object.assign({}, workshops[idx], { name: name, school: school, address: address, dateCreate: dateCreate, deadline: deadline, status: status });
+      var oldFormat = workshops[idx].format || 'offline';
+      workshops[idx] = Object.assign({}, workshops[idx], { name: name, school: school, address: address, dateCreate: dateCreate, deadline: deadline, status: status, format: format });
+      
+      if (oldFormat !== format) {
+        workshops[idx] = upgradeWorkshopToFormat(workshops[idx], format);
+      }
       showToast('✅ Đã cập nhật workshop!', 'success');
     }
   } else {
     var newWs = {
       id: genId(), name: name, school: school, address: address,
       dateCreate: dateCreate, deadline: deadline, status: status,
+      format: format,
       createdBy: currentUser ? currentUser.id : null,
-      todos: TODO_STEPS.map(function(step) {
+      todos: getDynamicTodoSteps(format).map(function(step) {
         return {
           id: step.id, label: step.label, day: step.day,
           done: false, assignee: null, expanded: false,
@@ -3985,6 +4144,7 @@ function renderDetail(ws) {
     '<div class="detail-meta-card"><div class="detail-meta-card-label">Ngày tạo</div><div class="detail-meta-card-value">' + fmtDate(ws.dateCreate) + '</div></div>' +
     '<div class="detail-meta-card"><div class="detail-meta-card-label">Deadline</div><div class="detail-meta-card-value" style="color:' + dlColor + '">' + fmtDate(ws.deadline) + dlInfo + '</div></div>' +
     '<div class="detail-meta-card"><div class="detail-meta-card-label">Trạng thái</div><div class="detail-meta-card-value">' + (ws.status==='upcoming'?'🗓️ Sắp diễn ra':'✅ Đã hoàn thành') + '</div></div>' +
+    '<div class="detail-meta-card"><div class="detail-meta-card-label">Hình thức</div><div class="detail-meta-card-value">' + (ws.format==='online'?'🌐 Online':'🏢 Offline') + '</div></div>' +
     '<div class="detail-meta-card"><div class="detail-meta-card-label">Tiến độ</div><div class="detail-meta-card-value" style="color:#4285F4">' + pct + '%</div></div>' +
     '</div></div>' +
     '<div class="detail-progress-section">' +
