@@ -193,6 +193,26 @@
     }
     .header-switch-btn:hover { border-color: var(--border-bright); color: var(--text); }
 
+    /* Cloud sync status pill */
+    .cloud-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 50px;
+      font-size: 0.7rem; font-weight: 600;
+      border: 1px solid var(--border);
+      transition: all 0.4s ease;
+      cursor: default; user-select: none;
+    }
+    .cloud-status.synced  { background: rgba(52,168,83,0.1);  color: #34A853; border-color: rgba(52,168,83,0.3); }
+    .cloud-status.offline { background: rgba(234,67,53,0.1);  color: #EA4335; border-color: rgba(234,67,53,0.3); }
+    .cloud-status.syncing { background: rgba(251,188,5,0.1);  color: #FBBC05; border-color: rgba(251,188,5,0.3); }
+    .cloud-status.local   { background: rgba(139,148,158,0.1); color: #8b949e; border-color: rgba(139,148,158,0.2); }
+    .cloud-status .cs-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+      background: currentColor;
+    }
+    .cloud-status.syncing .cs-dot { animation: csPulse 1s ease-in-out infinite; }
+    @keyframes csPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
     .main-content { flex: 1; padding: 32px 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
 
     .dashboard-title-row {
@@ -1875,6 +1895,9 @@
       <div class="header-user-avatar" id="headerAvatar"></div>
       <span class="header-user-name" id="headerName"></span>
     </div>
+    <div class="cloud-status local hide-mobile" id="cloudStatusPill" title="Trạng thái đồng bộ đám mây">
+      <span class="cs-dot"></span><span id="cloudStatusText">Offline</span>
+    </div>
     <button class="header-switch-btn" id="changePasswordHeaderBtn" onclick="openChangePasswordModal()" style="display: none; margin-right: 8px;"><span class="hide-mobile">🔑 Đổi mật khẩu</span><span class="show-mobile">🔑</span></button>
     <button class="header-switch-btn" onclick="switchCharacter()"><span class="hide-mobile">🚪 Đăng xuất</span><span class="show-mobile">🚪</span></button>
   </header>
@@ -2990,6 +3013,8 @@ function initSupabase() {
       try {
         supabaseClient = window.supabase.createClient(url, key);
         initSupabaseRealtime();
+        // Health-check ngay sau khi khởi tạo
+        setTimeout(checkSupabaseHealth, 2000);
       } catch(e) {
         console.error("Lỗi khởi tạo Supabase client:", e);
       }
@@ -3445,24 +3470,106 @@ function loadData() {
   }
 }
 
+/* ========== CLOUD SYNC STATUS ========== */
+var _cloudOnline = false;
+var _syncErrShown = false;  // debounce: chỉ hiện toast lỗi 1 lần
+var _pendingSync  = false;  // có data chờ sync khi mạng về
+
+function setCloudStatus(state) {
+  // state: 'syncing' | 'synced' | 'offline' | 'local'
+  var pill = document.getElementById('cloudStatusPill');
+  var txt  = document.getElementById('cloudStatusText');
+  if (!pill || !txt) return;
+  pill.className = 'cloud-status hide-mobile ' + state;
+  var labels = { syncing:'Đang đồng bộ…', synced:'Đã đồng bộ', offline:'Mất kết nối', local:'Chỉ lưu local' };
+  txt.textContent = labels[state] || state;
+  if (state === 'synced') {
+    // Tự chuyển về trạng thái ổn định sau 3s
+    clearTimeout(pill._timer);
+    pill._timer = setTimeout(function() { setCloudStatus('synced'); }, 3000);
+  }
+}
+
+function checkSupabaseHealth() {
+  if (!supabaseClient) { setCloudStatus('local'); return; }
+  setCloudStatus('syncing');
+  supabaseClient.from('gsa_storage').select('key').limit(1)
+    .then(function(res) {
+      if (res.error) {
+        _cloudOnline = false;
+        setCloudStatus('offline');
+        if (!_syncErrShown) {
+          _syncErrShown = true;
+          showToast('⚠️ Không thể kết nối đám mây. Dữ liệu đang lưu tạm trên thiết bị này.', 'warning');
+        }
+      } else {
+        _cloudOnline = true;
+        _syncErrShown = false;
+        setCloudStatus('synced');
+        if (_pendingSync) { _pendingSync = false; saveLocal(false); }
+      }
+    })
+    .catch(function() {
+      _cloudOnline = false;
+      setCloudStatus('offline');
+      if (!_syncErrShown) {
+        _syncErrShown = true;
+        showToast('⚠️ Supabase không khả dụng (có thể đang tạm dừng). Dữ liệu đã lưu local.', 'warning');
+      }
+    });
+}
+
+// Khi mạng khôi phục, thử kết nối lại tự động
+window.addEventListener('online', function() {
+  if (supabaseClient) {
+    setTimeout(function() {
+      showToast('🔄 Đã có mạng — đang kết nối lại đám mây…', 'info');
+      _syncErrShown = false;
+      checkSupabaseHealth();
+    }, 1500);
+  }
+});
+window.addEventListener('offline', function() {
+  _cloudOnline = false;
+  setCloudStatus('offline');
+  showToast('📴 Mất kết nối mạng. Dữ liệu sẽ được lưu local.', 'warning');
+});
+
 function saveLocal(doBroadcast) {
-  // 1. Save cache to localStorage
+  // 1. Luôn lưu vào localStorage trước (không bao giờ mất data)
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(workshops)); } catch(e) {}
   if (doBroadcast !== false) broadcast(null);
 
-  // 2. Sync to Supabase in background
-  if (supabaseClient) {
-    supabaseClient.from('gsa_storage').upsert({ key: 'workshops', value: workshops, updated_at: new Date().toISOString() })
-      .then(function(res) {
-        if (res.error) {
-          console.error("Lỗi lưu Supabase:", res.error);
-          showToast("⚠️ Không thể đồng bộ đám mây. Đã lưu cache tạm.", "warning");
+  // 2. Sync lên Supabase nếu đang online
+  if (!supabaseClient) { setCloudStatus('local'); return; }
+  if (!_cloudOnline) { _pendingSync = true; return; }  // chờ khi có mạng
+
+  setCloudStatus('syncing');
+  supabaseClient.from('gsa_storage').upsert({ key: 'workshops', value: workshops, updated_at: new Date().toISOString() })
+    .then(function(res) {
+      if (res.error) {
+        console.error('Lỗi lưu Supabase:', res.error);
+        _cloudOnline = false;
+        _pendingSync = true;
+        setCloudStatus('offline');
+        if (!_syncErrShown) {
+          _syncErrShown = true;
+          showToast('⚠️ Không thể đồng bộ đám mây. Đã lưu cache tạm.', 'warning');
         }
-      })
-      .catch(function(err) {
-        console.error("Lỗi kết nối Supabase:", err);
-      });
-  }
+      } else {
+        setCloudStatus('synced');
+      }
+    })
+    .catch(function(err) {
+      console.error('Lỗi kết nối Supabase:', err);
+      _cloudOnline = false;
+      _pendingSync = true;
+      setCloudStatus('offline');
+      if (!_syncErrShown) {
+        _syncErrShown = true;
+        showToast('⚠️ Không thể đồng bộ đám mây. Đã lưu cache tạm.', 'warning');
+      }
+    });
 }
 
 function saveImprovements() {
