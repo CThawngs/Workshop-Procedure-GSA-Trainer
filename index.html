@@ -1816,6 +1816,31 @@
       border-radius: 6px;
       border-left: 3px solid var(--primary);
     }
+    
+    /* VIEWER ROLE CSS RULES */
+    body.user-role-viewer .add-workshop-btn,
+    body.user-role-viewer .card-action-btn,
+    body.user-role-viewer .card-actions,
+    body.user-role-viewer .sub-action-btn,
+    body.user-role-viewer .add-sub-row,
+    body.user-role-viewer .btn-sub-chat,
+    body.user-role-viewer .template-crud-btn,
+    body.user-role-viewer .add-link-btn,
+    body.user-role-viewer .word-editor-actions,
+    body.user-role-viewer .word-var-insert-panel,
+    body.user-role-viewer .btn-inline-edit,
+    body.user-role-viewer #sectionWorkshops button.btn-danger,
+    body.user-role-viewer button[onclick*="delete"],
+    body.user-role-viewer button[onclick*="edit"],
+    body.user-role-viewer button[onclick*="add"],
+    body.user-role-viewer button[onclick*="openAdd"],
+    body.user-role-viewer button[onclick*="startEdit"] {
+      display: none !important;
+    }
+    body.user-role-viewer .assign-select {
+      pointer-events: none !important;
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
@@ -1981,10 +2006,11 @@
             <tr>
               <th style="width: 80px;">Avatar</th>
               <th>Họ và Tên</th>
+              <th>Cấp bậc</th>
               <th>Màu đại diện</th>
               <th>ID hệ thống</th>
               <th>Mật khẩu</th>
-              <th style="text-align: right; width: 120px;">Hành động</th>
+              <th style="text-align: right; width: 160px;">Hành động</th>
             </tr>
           </thead>
           <tbody id="membersTableBody">
@@ -2501,6 +2527,14 @@
           <input class="form-input" id="memberPassword" type="password" placeholder="VD: 123456"/>
         </div>
         
+        <div class="form-group">
+          <label class="form-label" for="memberRole">Cấp bậc *</label>
+          <select class="form-select" id="memberRole" required style="width: 100%; height: 38px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-dark); color: var(--text); padding: 0 10px; font-family: 'Inter', sans-serif;">
+            <option value="trainer">GSA Trainer (Được thao tác CRUD)</option>
+            <option value="viewer">Viewer (Chỉ xem, không được CRUD)</option>
+          </select>
+        </div>
+        
         <div class="form-row">
           <div class="form-group" style="flex: 1;">
             <label class="form-label" for="memberEmoji">Emoji đại diện *</label>
@@ -2528,13 +2562,51 @@
   </div>
 </div>
 
+<!-- ===== MODAL: ADMIN TRANSFER ===== -->
+<div class="modal-overlay" id="adminTransferModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2 class="modal-title">Chuyển nhượng quyền Admin</h2>
+      <button class="modal-close" onclick="closeModal('adminTransferModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="adminTransferForm" onsubmit="executeAdminTransfer(event)">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 3rem; margin-bottom: 12px;">👑</div>
+          <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;">Xác nhận chuyển nhượng quyền Admin</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+            Bạn đang thực hiện chuyển nhượng quyền Admin tối cao cho thành viên <strong id="transferTargetName" style="color: var(--primary);">[Tên]</strong>.<br/>
+            Sau khi chuyển nhượng, tài khoản của bạn sẽ từ chức xuống cấp bậc <strong>GSA Trainer</strong>.
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="transferAdminPassword">Nhập mật khẩu Admin hiện tại để xác minh *</label>
+          <div class="password-input-wrapper">
+            <input class="form-input" id="transferAdminPassword" type="password" placeholder="Nhập mật khẩu của bạn..." required style="text-align: center; font-size: 1.1rem; letter-spacing: 0.1em;"/>
+            <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('transferAdminPassword')">
+              <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-closed" style="display:none" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-actions" style="margin-top: 24px; border-top: none; padding-top: 0;">
+          <button type="button" class="btn-secondary" onclick="closeModal('adminTransferModal')" style="width: 100%;">Hủy</button>
+          <button type="submit" class="btn-primary" style="width: 100%; background-color: #DB4437; border-color: #DB4437;">Xác nhận chuyển nhượng</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
 /* ========== DATA ========== */
 let CHARACTERS = [
-  { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', canDelete: false },
-  { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: true }
+  { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', role: 'admin', canDelete: false },
+  { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', role: 'trainer', canDelete: true }
 ];
 
 let TODO_STEPS = [];
@@ -3039,17 +3111,30 @@ function loadData() {
       CHARACTERS = JSON.parse(storedChars);
     } else {
       CHARACTERS = [
-        { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', canDelete: false },
-        { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', canDelete: true }
+        { id: 'chi-thang',    name: 'Chí Thắng',    emoji: '👨‍💼', color: '#4285F4', role: 'admin', canDelete: false },
+        { id: 'thao',        name: 'Thảo',          emoji: '👩‍💻', color: '#34A853', role: 'trainer', canDelete: true }
       ];
       localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS));
     }
 
-    // Migration: Remove Xuân Thi and force update link-deck URL in local/supabase storage
+    // Migration: Remove Xuân Thi and force update link-deck URL in local/supabase storage, and ensure roles exist
     if (Array.isArray(CHARACTERS)) {
       var oldLength = CHARACTERS.length;
       CHARACTERS = CHARACTERS.filter(function(c) { return c.id !== 'xuan-thi'; });
-      if (CHARACTERS.length !== oldLength) {
+      var migrated = CHARACTERS.length !== oldLength;
+      
+      CHARACTERS.forEach(function(c) {
+        if (!c.role) {
+          if (c.id === 'chi-thang') {
+            c.role = 'admin';
+          } else {
+            c.role = 'trainer';
+          }
+          migrated = true;
+        }
+      });
+      
+      if (migrated) {
         try { localStorage.setItem('gsa_characters_v2', JSON.stringify(CHARACTERS)); } catch(e) {}
         if (supabaseClient) {
           supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS }).then();
@@ -3188,6 +3273,15 @@ function loadData() {
           var fetchedChars = res.data.value;
           if (Array.isArray(fetchedChars)) {
             fetchedChars = fetchedChars.filter(function(c) { return c.id !== 'xuan-thi'; });
+            // Migration: Ensure all characters have roles assigned
+            var migrated = false;
+            fetchedChars.forEach(function(c) {
+              if (!c.role) {
+                if (c.id === 'chi-thang') c.role = 'admin';
+                else c.role = 'trainer';
+                migrated = true;
+              }
+            });
           }
           const oldStr = localStorage.getItem('gsa_characters_v2');
           const newStr = JSON.stringify(fetchedChars);
@@ -3199,10 +3293,8 @@ function loadData() {
             if (currentMainTab === 'members') renderMembers();
             if (currentMainTab === 'workshops') renderWorkshops();
             renderCharGrid();
-            // If the database version had xuan-thi, update the database!
-            if (JSON.stringify(res.data.value) !== newStr) {
-              supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: fetchedChars }).then();
-            }
+            // Update the database with migrated structure
+            supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: fetchedChars }).then();
           }
         } else {
           supabaseClient.from('gsa_storage').upsert({ key: 'characters', value: CHARACTERS }).then();
@@ -3274,6 +3366,84 @@ function daysLeft(s) {
 }
 
 function getChar(id) { return CHARACTERS.find(function(c) { return c.id === id; }); }
+
+function isViewer() {
+  if (!currentUser) return false;
+  var c = getChar(currentUser.id);
+  return c ? (c.role === 'viewer') : false;
+}
+
+function isAdmin() {
+  if (!currentUser) return false;
+  var c = getChar(currentUser.id);
+  return c ? (c.role === 'admin') : false;
+}
+
+let transferTargetId = null;
+
+function startAdminTransfer(targetId) {
+  if (!isAdmin()) {
+    showToast('❌ Chỉ có Admin mới có quyền chuyển nhượng!', 'error');
+    return;
+  }
+  var target = getChar(targetId);
+  if (!target) return;
+  
+  transferTargetId = targetId;
+  document.getElementById('transferTargetName').textContent = target.name;
+  document.getElementById('transferAdminPassword').value = '';
+  
+  var passInput = document.getElementById('transferAdminPassword');
+  if (passInput) passInput.type = 'password';
+  
+  document.querySelectorAll('#adminTransferModal .password-toggle-btn').forEach(function(btn) {
+    var openIcon = btn.querySelector('.eye-open');
+    var closedIcon = btn.querySelector('.eye-closed');
+    if (openIcon) openIcon.style.display = 'block';
+    if (closedIcon) closedIcon.style.display = 'none';
+  });
+
+  openModal('adminTransferModal');
+}
+
+function executeAdminTransfer(e) {
+  e.preventDefault();
+  if (!isAdmin()) {
+    showToast('❌ Chỉ có Admin mới có quyền chuyển nhượng!', 'error');
+    return;
+  }
+  if (!transferTargetId) return;
+  
+  var target = getChar(transferTargetId);
+  var currentAdmin = getChar(currentUser.id);
+  if (!target || !currentAdmin) return;
+  
+  var pwdInput = document.getElementById('transferAdminPassword').value;
+  var correctPwd = getCTPassword();
+  
+  if (pwdInput !== correctPwd) {
+    showToast('❌ Mật khẩu xác minh không chính xác!', 'error');
+    return;
+  }
+  
+  target.role = 'admin';
+  target.canDelete = false;
+  
+  currentAdmin.role = 'trainer';
+  currentAdmin.canDelete = true;
+  currentAdmin.password = correctPwd;
+  
+  saveCharactersData();
+  closeModal('adminTransferModal');
+  showToast('👑 Chuyển nhượng quyền Admin thành công!', 'success');
+  
+  setTimeout(function() {
+    showToast('🚪 Đang đăng xuất để cập nhật vai trò mới...', 'info');
+    setTimeout(function() {
+      switchCharacter();
+    }, 1500);
+  }, 1000);
+}
 
 function calcPct(ws) {
   var total = 0, done = 0;
@@ -3408,7 +3578,7 @@ function selectChar(id) {
   if (!c) return;
   
   var requiresPassword = false;
-  if (c.id === 'chi-thang') {
+  if (c.role === 'admin') {
     requiresPassword = true;
   } else if (c.password && c.password.trim() !== '') {
     requiresPassword = true;
@@ -3440,7 +3610,7 @@ function verifyPassword(e) {
   if (!c) return;
   
   var correctPwd = '';
-  if (c.id === 'chi-thang') {
+  if (c.role === 'admin') {
     correctPwd = getCTPassword();
   } else {
     correctPwd = c.password || '';
@@ -3470,6 +3640,9 @@ function switchCharacter() {
   selectedCharId = null;
   document.querySelectorAll('.char-card').forEach(function(el) { el.classList.remove('selected'); });
   
+  // Clean up role class from body
+  document.body.className = document.body.className.replace(/\buser-role-\S+/g, '');
+  
   // Hide change password button when logged out
   var cpBtn = document.getElementById('changePasswordHeaderBtn');
   if (cpBtn) cpBtn.style.display = 'none';
@@ -3484,15 +3657,19 @@ function showDashboard(c) {
   document.getElementById('headerName').textContent = c.name;
   document.getElementById('dashGreeting').textContent = 'của ' + c.name;
   
-  // Show change password button only if character is Chí Thắng
+  // Apply role class to body for CSS enforcement
+  document.body.className = document.body.className.replace(/\buser-role-\S+/g, '');
+  document.body.classList.add('user-role-' + (c.role || 'trainer'));
+  
+  // Show change password button only if character is Admin
   var cpBtn = document.getElementById('changePasswordHeaderBtn');
   if (cpBtn) {
-    cpBtn.style.display = c.id === 'chi-thang' ? 'inline-block' : 'none';
+    cpBtn.style.display = c.role === 'admin' ? 'inline-block' : 'none';
   }
   
   var mainTabMembers = document.getElementById('mainTabMembers');
   if (mainTabMembers) {
-    mainTabMembers.style.display = c.id === 'chi-thang' ? 'inline-block' : 'none';
+    mainTabMembers.style.display = c.role === 'admin' ? 'inline-block' : 'none';
   }
   
   showScreen('dashboardScreen');
@@ -3658,6 +3835,10 @@ function openEdit(id, event) {
 
 function saveWorkshop(e) {
   e.preventDefault();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var name = document.getElementById('wsName').value.trim();
   var school = document.getElementById('wsSchool').value.trim();
   var address = document.getElementById('wsAddress').value.trim();
@@ -3714,6 +3895,10 @@ function executeDelete() {
 
 function confirmDelete(id, event) {
   if (event) event.stopPropagation();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var c = getChar(currentUser && currentUser.id);
   if (!c) { showToast('❌ Vui lòng đăng nhập để xóa workshop!', 'error'); return; }
   var ws = workshops.find(function(w) { return w.id === id; });
@@ -3923,6 +4108,10 @@ function toggleExpand(wsId, stepId) {
 
 function toggleAllSubs(wsId, stepId, event) {
   event.stopPropagation();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem, không được thay đổi trạng thái!', 'error');
+    return;
+  }
   if (stepId === 'step10') {
     showToast('⚠️ Bạn bắt buộc phải nộp báo cáo bài học & cải tiến để hoàn thành bước này.', 'warning');
     return;
@@ -3936,6 +4125,10 @@ function toggleAllSubs(wsId, stepId, event) {
 }
 
 function toggleSub(wsId, stepId, subId) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem, không được thay đổi trạng thái!', 'error');
+    return;
+  }
   var ws = workshops.find(function(w) { return w.id === wsId; });
   if (!ws) return;
 
@@ -3965,6 +4158,10 @@ function toggleSub(wsId, stepId, subId) {
 }
 
 function assignStep(wsId, stepId, charId) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem, không được thay đổi người phụ trách!', 'error');
+    return;
+  }
   updateWs(wsId, function(ws) {
     var step = ws.todos.find(function(t) { return t.id === stepId; });
     if (!step) return;
@@ -3973,6 +4170,10 @@ function assignStep(wsId, stepId, charId) {
 }
 
 function submitAddStep(wsId) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var name = prompt("Nhập tên cho bước mới:");
   if (name === null) return;
   name = name.trim();
@@ -3994,6 +4195,10 @@ function submitAddStep(wsId) {
 
 function editStep(wsId, stepId, event) {
   if (event) event.stopPropagation();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var labelEl = document.getElementById('step-label-' + wsId + '-' + stepId);
   if (!labelEl) return;
   var currentText = labelEl.textContent;
@@ -4037,6 +4242,10 @@ function saveEditStep(wsId, stepId, newText) {
 
 function deleteStep(wsId, stepId, event) {
   if (event) event.stopPropagation();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var ws = workshops.find(function(w) { return w.id === wsId; });
   if (!ws) return;
   var step = ws.todos.find(function(t) { return t.id === stepId; });
@@ -4055,6 +4264,10 @@ function deleteStep(wsId, stepId, event) {
 }
 
 function submitAddSub(wsId, stepId) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var input = document.getElementById('add-sub-input-' + wsId + '-' + stepId);
   if (!input) return;
   var text = input.value.trim();
@@ -4072,6 +4285,10 @@ function submitAddSub(wsId, stepId) {
 
 function deleteSub(wsId, stepId, subId, event) {
   if (event) event.stopPropagation();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var ws = workshops.find(function(w) { return w.id === wsId; });
   if (!ws) return;
   var step = ws.todos.find(function(t) { return t.id === stepId; });
@@ -4095,6 +4312,10 @@ function deleteSub(wsId, stepId, subId, event) {
 var isSavingSub = false;
 function startEditSub(wsId, stepId, subId, event) {
   if (event) event.stopPropagation();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   var textEl = document.getElementById('sub-text-' + wsId + '-' + stepId + '-' + subId);
   if (!textEl) return;
   var currentText = textEl.textContent;
@@ -4994,6 +5215,10 @@ function changeCRMPage(p) {
 }
 
 function openAddCRMSchool() {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   editingCrmId = null;
   document.getElementById('crmModalTitle').textContent = 'Thêm Trường học mới';
   document.getElementById('crmSchoolForm').reset();
@@ -5003,6 +5228,10 @@ function openAddCRMSchool() {
 }
 
 function openEditCRMSchool(id) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   const s = crmSchools.find(function(item) { return item.id === id; });
   if (!s) return;
   editingCrmId = id;
@@ -5028,6 +5257,10 @@ function openEditCRMSchool(id) {
 
 function saveCRMSchool(e) {
   e.preventDefault();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   const id = document.getElementById('crmSchoolId').value;
   const schoolData = {
     id: id || 'crm-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
@@ -5060,8 +5293,8 @@ function saveCRMSchool(e) {
 }
 
 function deleteCRMSchool(id) {
-  if (!currentUser || currentUser.id !== 'chi-thang') {
-    showToast('❌ Chỉ admin (Chí Thắng) mới có quyền xóa dữ liệu này!', 'error');
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
     return;
   }
   
@@ -5450,6 +5683,10 @@ function cancelEmailTemplateInline() {
 }
 
 function saveWordEmail() {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   const t = emailTemplates.find(function(item) { return item.id === selectedTemplateId; });
   if (!t) return;
   const nameEl = document.getElementById('wordEditorName');
@@ -5486,8 +5723,8 @@ function saveEmailTemplate(e) {
 }
 
 function deleteEmailTemplate(id) {
-  if (!currentUser || currentUser.id !== 'chi-thang') {
-    showToast('❌ Chỉ admin (Chí Thắng) mới có quyền xóa dữ liệu này!', 'error');
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
     return;
   }
   
@@ -5504,6 +5741,10 @@ function deleteEmailTemplate(id) {
 }
 
 function openAddResourceLink() {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   editingResourceLinkId = null;
   document.getElementById('resourceLinkModalTitle').textContent = 'Thêm Liên kết Tài nguyên';
   document.getElementById('resourceLinkForm').reset();
@@ -5512,6 +5753,10 @@ function openAddResourceLink() {
 }
 
 function openEditResourceLink(id) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   const r = linkResources.find(function(item) { return item.id === id; });
   if (!r) return;
   editingResourceLinkId = id;
@@ -5524,6 +5769,10 @@ function openEditResourceLink(id) {
 
 function saveResourceLink(e) {
   e.preventDefault();
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
+    return;
+  }
   const id = document.getElementById('resourceLinkId').value;
   const rData = {
     id: id || 'link-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
@@ -5545,8 +5794,8 @@ function saveResourceLink(e) {
 }
 
 function deleteResourceLink(id) {
-  if (!currentUser || currentUser.id !== 'chi-thang') {
-    showToast('❌ Chỉ admin (Chí Thắng) mới có quyền xóa dữ liệu này!', 'error');
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem!', 'error');
     return;
   }
   
@@ -5861,6 +6110,10 @@ function showSubmitConfirmModal() {
 }
 
 function submitImprovementReport(isAnonymous) {
+  if (isViewer()) {
+    showToast('❌ Cấp bậc Viewer chỉ có quyền xem, không được nộp báo cáo!', 'error');
+    return;
+  }
   var charObj = getChar(currentChatCharId);
   if (!charObj) return;
   
@@ -6003,29 +6256,42 @@ function renderMembers() {
   tbody.innerHTML = '';
   
   if (CHARACTERS.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Không có thành viên nào.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Không có thành viên nào.</td></tr>';
     return;
   }
   
   var html = CHARACTERS.map(function(c) {
     var actionsHTML = '';
-    if (c.id !== 'chi-thang') {
+    var roleBadge = '';
+    
+    if (c.role === 'admin') {
+      roleBadge = '<span class="crm-status-badge success">👑 Admin</span>';
+      actionsHTML = '<span style="color: var(--text-muted); font-size: 0.85rem; padding-right: 8px;">Mặc định (Admin)</span>';
+    } else if (c.role === 'trainer') {
+      roleBadge = '<span class="crm-status-badge info">👨‍💻 GSA Trainer</span>';
       actionsHTML = '<div style="display: flex; gap: 8px; justify-content: flex-end;">' +
+        '<button class="sub-action-btn edit" onclick="startAdminTransfer(\'' + c.id + '\')" title="Chuyển nhượng quyền Admin">👑</button>' +
         '<button class="sub-action-btn edit" onclick="openEditMemberModal(\'' + c.id + '\')" title="Sửa">✏️</button>' +
         '<button class="sub-action-btn delete" onclick="deleteMember(\'' + c.id + '\')" title="Xóa">🗑️</button>' +
         '</div>';
     } else {
-      actionsHTML = '<span style="color: var(--text-muted); font-size: 0.85rem; padding-right: 8px;">Mặc định (Admin)</span>';
+      roleBadge = '<span class="crm-status-badge warning" style="background: rgba(244,180,0,0.1); color: #F4B400; border: 1px solid rgba(244,180,0,0.3)">👁️ Viewer</span>';
+      actionsHTML = '<div style="display: flex; gap: 8px; justify-content: flex-end;">' +
+        '<button class="sub-action-btn edit" onclick="startAdminTransfer(\'' + c.id + '\')" title="Chuyển nhượng quyền Admin">👑</button>' +
+        '<button class="sub-action-btn edit" onclick="openEditMemberModal(\'' + c.id + '\')" title="Sửa">✏️</button>' +
+        '<button class="sub-action-btn delete" onclick="deleteMember(\'' + c.id + '\')" title="Xóa">🗑️</button>' +
+        '</div>';
     }
     
     var pwdHTML = c.password ? '<code>' + esc(c.password) + '</code>' : '<span style="color: var(--text-muted);">Không có</span>';
-    if (c.id === 'chi-thang') {
+    if (c.role === 'admin') {
       pwdHTML = '<code>' + esc(getCTPassword()) + '</code>';
     }
     
     return '<tr>' +
       '<td><div class="char-avatar" style="width: 40px; height: 40px; font-size: 1.2rem; margin: 0; background: linear-gradient(135deg,' + c.color + '22,' + c.color + '11)">' + c.emoji + '</div></td>' +
       '<td style="font-weight: 600;">' + esc(c.name) + '</td>' +
+      '<td>' + roleBadge + '</td>' +
       '<td><div style="display: flex; align-items: center; gap: 8px;"><span style="width: 14px; height: 14px; border-radius: 4px; display: inline-block; background-color: ' + c.color + ';"></span><code>' + c.color + '</code></div></td>' +
       '<td><code>' + c.id + '</code></td>' +
       '<td>' + pwdHTML + '</td>' +
@@ -6044,6 +6310,7 @@ function openAddMemberModal() {
   document.getElementById('memberColor').value = '#4285F4';
   document.getElementById('memberColorHex').value = '#4285F4';
   document.getElementById('memberPassword').value = '';
+  document.getElementById('memberRole').value = 'trainer';
   openModal('memberModal');
 }
 
@@ -6051,8 +6318,8 @@ function openEditMemberModal(id) {
   var c = getChar(id);
   if (!c) return;
   
-  if (id === 'chi-thang') {
-    showToast('⚠️ Không thể sửa đổi tài khoản quản trị viên Chí Thắng!', 'error');
+  if (c.role === 'admin') {
+    showToast('⚠️ Không thể sửa đổi trực tiếp tài khoản Admin! Hãy dùng chức năng Chuyển nhượng.', 'error');
     return;
   }
   
@@ -6063,35 +6330,44 @@ function openEditMemberModal(id) {
   document.getElementById('memberColor').value = c.color;
   document.getElementById('memberColorHex').value = c.color;
   document.getElementById('memberPassword').value = c.password || '';
+  document.getElementById('memberRole').value = c.role || 'trainer';
   openModal('memberModal');
 }
 
 function saveMember(event) {
   event.preventDefault();
   
+  if (!isAdmin()) {
+    showToast('❌ Chỉ có Admin mới có quyền thực hiện thao tác này!', 'error');
+    return;
+  }
+  
   var idInput = document.getElementById('memberId').value.trim();
   var name = document.getElementById('memberName').value.trim();
   var emoji = document.getElementById('memberEmoji').value.trim();
   var color = document.getElementById('memberColor').value.trim();
   var password = document.getElementById('memberPassword').value.trim();
+  var role = document.getElementById('memberRole').value;
   
   if (!name || !emoji || !color) {
     showToast('⚠️ Vui lòng điền đầy đủ các trường thông tin bắt buộc.', 'error');
     return;
   }
   
-  if (idInput === 'chi-thang') {
-    showToast('⚠️ Không thể thay đổi tài khoản quản trị viên Chí Thắng!', 'error');
-    return;
-  }
-  
   if (idInput) {
-    var idx = CHARACTERS.findIndex(function(c) { return c.id === idInput; });
+    var c = getChar(idInput);
+    if (c && c.role === 'admin') {
+      showToast('⚠️ Không thể sửa đổi trực tiếp tài khoản Admin!', 'error');
+      return;
+    }
+    
+    var idx = CHARACTERS.findIndex(function(ch) { return ch.id === idInput; });
     if (idx !== -1) {
       CHARACTERS[idx].name = name;
       CHARACTERS[idx].emoji = emoji;
       CHARACTERS[idx].color = color;
       CHARACTERS[idx].password = password;
+      CHARACTERS[idx].role = role;
       showToast('🔄 Đã cập nhật thành viên thành công!', 'success');
     }
   } else {
@@ -6118,6 +6394,7 @@ function saveMember(event) {
       emoji: emoji,
       color: color,
       password: password,
+      role: role,
       canDelete: true
     });
     showToast('🎉 Đã thêm thành viên mới thành công!', 'success');
@@ -6129,8 +6406,16 @@ function saveMember(event) {
 }
 
 function deleteMember(id) {
-  if (id === 'chi-thang') {
-    showToast('⚠️ Không thể xóa quản trị viên Chí Thắng!', 'error');
+  if (!isAdmin()) {
+    showToast('❌ Chỉ có Admin mới có quyền thực hiện thao tác này!', 'error');
+    return;
+  }
+  
+  var c = getChar(id);
+  if (!c) return;
+  
+  if (c.role === 'admin') {
+    showToast('⚠️ Không thể xóa tài khoản Admin!', 'error');
     return;
   }
   
@@ -6138,7 +6423,7 @@ function deleteMember(id) {
     return;
   }
   
-  CHARACTERS = CHARACTERS.filter(function(c) { return c.id !== id; });
+  CHARACTERS = CHARACTERS.filter(function(ch) { return ch.id !== id; });
   saveCharactersData();
   renderMembers();
   showToast('🗑️ Đã xóa thành viên thành công!', 'success');
