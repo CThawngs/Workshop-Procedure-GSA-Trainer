@@ -2922,7 +2922,7 @@ let deletingId = null;
 let supabaseClient = null;
 
 let currentMainTab = 'workshops';
-let crmSchools = [
+const CRM_SEED_SCHOOLS = [
   {
     id: 'crm_01',
     schoolName: 'Cao đẳng Kinh tế Đối ngoại',
@@ -3948,6 +3948,8 @@ let crmSchools = [
     eventNotes: ''
   }
 ];
+
+let crmSchools = [];
 let emailTemplates = [];
 let linkResources = [];
 
@@ -4427,16 +4429,27 @@ function loadData() {
 
     supabaseClient.from('gsa_storage').select('value').eq('key', 'crm_schools').single()
       .then(function(res) {
-        if (res.data && res.data.value) {
-          const oldStr = localStorage.getItem(CRM_STORAGE_KEY);
-          const newStr = JSON.stringify(res.data.value);
-          if (oldStr !== newStr) {
-            crmSchools = res.data.value;
-            try { localStorage.setItem(CRM_STORAGE_KEY, newStr); } catch(e) {}
-            if (currentMainTab === 'crm') renderCRM();
-          }
+        if (res.data && res.data.value && Array.isArray(res.data.value)) {
+          // Merge existing Supabase data with CRM_SEED_SCHOOLS to ensure all 64 schools present
+          var existingMap = {};
+          res.data.value.forEach(function(s) { if (s.schoolName) existingMap[s.schoolName] = s; });
+          var merged = [];
+          CRM_SEED_SCHOOLS.forEach(function(seed) {
+            if (existingMap[seed.schoolName]) {
+              merged.push(existingMap[seed.schoolName]); // keep existing data (status preserved)
+            } else {
+              merged.push(seed); // add new from seed
+            }
+          });
+          crmSchools = merged;
+          try { localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(crmSchools)); } catch(e) {}
+          if (currentMainTab === 'crm') renderCRM();
         } else {
-          supabaseClient.from('gsa_storage').upsert({ key: 'crm_schools', value: crmSchools }).then();
+          // No existing data in Supabase - push entire seed
+          crmSchools = CRM_SEED_SCHOOLS;
+          supabaseClient.from('gsa_storage').upsert({ key: 'crm_schools', value: CRM_SEED_SCHOOLS }).then();
+          try { localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(CRM_SEED_SCHOOLS)); } catch(e) {}
+          if (currentMainTab === 'crm') renderCRM();
         }
       })
       .catch(function(err) { console.error("Lỗi tải CRM:", err); });
