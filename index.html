@@ -332,15 +332,15 @@
 
     /* PAGINATION */
     .pagination { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
-    .page-btn {
-      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+    .pag-btn {
+      height: 36px; min-width: 36px; border-radius: 8px; border: 1px solid var(--border);
       background: var(--bg-card); color: var(--text-muted); font-family: 'Inter', sans-serif;
       font-size: 0.85rem; cursor: pointer; transition: var(--transition);
-      display: flex; align-items: center; justify-content: center;
+      display: inline-flex; align-items: center; justify-content: center; padding: 0 12px;
     }
-    .page-btn:hover:not(:disabled) { border-color: var(--border-bright); color: var(--text); }
-    .page-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
-    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .pag-btn:hover:not(:disabled) { border-color: var(--border-bright); color: var(--text); }
+    .pag-btn.active { background: var(--primary); border-color: var(--primary); color: white; font-weight: 600; }
+    .pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
     /* MODAL */
     .modal-overlay {
@@ -5115,11 +5115,11 @@ function buildCard(ws, c) {
 function renderPagination(cur, total) {
   var el = document.getElementById('pagination');
   if (total <= 1) { el.innerHTML = ''; return; }
-  var html = '<button class="page-btn" onclick="goPage(' + (cur-1) + ')" ' + (cur===1?'disabled':'') + '>‹</button>';
+  var html = '<button class="pag-btn" onclick="goPage(' + (cur-1) + ')" ' + (cur===1?'disabled':'') + '>‹</button>';
   for (var i = 1; i <= total; i++) {
-    html += '<button class="page-btn ' + (i===cur?'active':'') + '" onclick="goPage(' + i + ')">' + i + '</button>';
+    html += '<button class="pag-btn ' + (i===cur?'active':'') + '" onclick="goPage(' + i + ')">' + i + '</button>';
   }
-  html += '<button class="page-btn" onclick="goPage(' + (cur+1) + ')" ' + (cur===total?'disabled':'') + '>›</button>';
+  html += '<button class="pag-btn" onclick="goPage(' + (cur+1) + ')" ' + (cur===total?'disabled':'') + '>›</button>';
   el.innerHTML = html;
 }
 
@@ -6663,11 +6663,14 @@ function renderCRMPagination(totalPages) {
     return;
   }
   var html = '';
-  html += '<button class="pag-btn" ' + (crmPage === 1 ? 'disabled' : '') + ' onclick="changeCRMPage(' + (crmPage - 1) + ')">Trước</button>';
+  // Prev button
+  html += '<button class="pag-btn" onclick="changeCRMPage(' + (crmPage - 1) + ')" ' + (crmPage === 1 ? 'disabled' : '') + '>‹</button>';
+  // Page numbers
   for (var i = 1; i <= totalPages; i++) {
     html += '<button class="pag-btn ' + (crmPage === i ? 'active' : '') + '" onclick="changeCRMPage(' + i + ')">' + i + '</button>';
   }
-  html += '<button class="pag-btn" ' + (crmPage === totalPages ? 'disabled' : '') + ' onclick="changeCRMPage(' + (crmPage + 1) + ')">Sau</button>';
+  // Next button
+  html += '<button class="pag-btn" onclick="changeCRMPage(' + (crmPage + 1) + ')" ' + (crmPage === totalPages ? 'disabled' : '') + '>›</button>';
   pagEl.innerHTML = html;
 }
 
