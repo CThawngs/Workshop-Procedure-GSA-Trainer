@@ -2113,8 +2113,8 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label" for="crmSchoolAddress">Địa chỉ *</label>
-          <input class="form-input" id="crmSchoolAddress" type="text" placeholder="VD: 15 Đường D5, Bình Thạnh, TP.HCM" required/>
+          <label class="form-label" for="crmSchoolAddress">Địa chỉ</label>
+          <input class="form-input" id="crmSchoolAddress" type="text" placeholder="VD: 15 Đường D5, Bình Thạnh, TP.HCM"/>
         </div>
 
         <h4 style="margin: 20px 0 10px 0; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 4px; font-size: 0.85rem; text-transform: uppercase;">📞 Thông tin Liên hệ</h4>
@@ -2964,7 +2964,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'tuyensinh@vaa.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -3012,7 +3012,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'admissions@saigontech.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -3092,7 +3092,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'ktcaothang@caothang.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -3125,7 +3125,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'tuyensinh@saigontech.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -3173,7 +3173,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'daivietsaigon@daivietsaigon.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -3189,7 +3189,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'dhbrvt@bvu.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -3205,7 +3205,7 @@ const CRM_SEED_SCHOOLS = [
     contactRole: '',
     contactPhone: '',
     contactEmail: 'tuyensinh.cm@bdu.edu.vn',
-    negotiationStatus: 'chua-li',
+    negotiationStatus: 'dang-li',
     negotiationNotes: '',
     workshopName: '',
     workshopDate: '',
@@ -4403,15 +4403,24 @@ function loadData() {
           var existingMap = {};
           res.data.value.forEach(function(s) { if (s.schoolName) existingMap[s.schoolName] = s; });
           var merged = [];
+          var needsSync = false;
           CRM_SEED_SCHOOLS.forEach(function(seed) {
             if (existingMap[seed.schoolName]) {
-              merged.push(existingMap[seed.schoolName]); // keep existing data (status preserved)
+              var existing = existingMap[seed.schoolName];
+              // Propagate status from seed if existing is still default 'chua-li' and seed has explicit status
+              if (seed.negotiationStatus && seed.negotiationStatus !== 'chua-li' &&
+                  (!existing.negotiationStatus || existing.negotiationStatus === 'chua-li')) {
+                existing = Object.assign({}, existing, { negotiationStatus: seed.negotiationStatus });
+                needsSync = true;
+              }
+              merged.push(existing);
             } else {
               merged.push(seed); // add new from seed
             }
           });
           crmSchools = merged;
           try { localStorage.setItem(CRM_STORAGE_KEY, JSON.stringify(crmSchools)); } catch(e) {}
+          if (needsSync) saveCRMData(); // Persist updated statuses to Supabase
           if (currentMainTab === 'crm') renderCRM();
         } else {
           // No existing data in Supabase - push entire seed
